@@ -145,7 +145,7 @@ export default async function Home() {
         <div className="submit-copy">
           <p>完成度より、現場で動かしたことを大切にします。小さなアプリ、便利なフロー、ひとつのコンポーネントや試行錯誤から持ち寄れます。</p>
           {submissionUrl ? (
-            <a className="submit-button" href={submissionUrl} target="_blank" rel="noreferrer">匿名フォームから掲載申請 <span aria-hidden="true">↗</span></a>
+            <a className="submit-button" href={submissionUrl} target="_blank" rel="noreferrer">サインイン不要のフォームから掲載申請 <span aria-hidden="true">↗</span></a>
           ) : (
             <span className="submit-button disabled" aria-disabled="true">掲載フォーム準備中</span>
           )}

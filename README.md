@@ -45,6 +45,8 @@ The command accepts PNG, JPEG, or WebP files up to 10 MB and 25 MP. It creates a
 
 Copy `.env.example` to `.env.local` and fill only the public Forms URLs when they are ready. Application Insights remains disabled until its collection settings, retention, region, and cost receive human review.
 
+The submission form questions, privacy boundary, review-only fields, and release checklist are defined in [`docs/submission-form.md`](docs/submission-form.md).
+
 ## Project links
 
 - [PLUG Guide](https://plug365.github.io/PLUGGuide/)
