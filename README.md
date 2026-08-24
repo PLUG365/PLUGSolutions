@@ -2,6 +2,8 @@
 
 PLUG Solutions is a field-first catalog for portable solutions created by individual makers. It starts from the Power Platform community and also covers web, mobile, desktop, AI, and open-source projects.
 
+Repository: [PLUG365/PLUGSolutions](https://github.com/PLUG365/PLUGSolutions)
+
 ## Local development
 
 Requirements: Node.js 22 or newer.

@@ -5,8 +5,9 @@
 - 完了：標準 Next.js 静的出力、公開 JSON スキーマ、一覧・詳細・404、MIT 表示、PLUG ブランド反映。
 - 完了：lint、カタログ検証、テスト、静的ビルドを実行する GitHub Actions CI。
 - 完了：人が確認済みのローカル画像を 1200×675 WebP に再エンコードし、メタデータを除去する処理とテスト。
-- 未接続：GitHub リモート、Azure Static Web Apps、Microsoft Forms、SharePoint、Power Automate、Application Insights。
-- 人手ゲート：Azure デプロイ設定、GitHub Secret、Forms 公開設定、SharePoint 権限、アクセス解析は、各サービス上の設定確認後に有効化する。
+- 完了：公開リポジトリ `PLUG365/PLUGSolutions`、GitHub Actions CI、main 保護、`production` Environment の minoru365 承認ゲート。
+- 未接続：Azure Static Web Apps、Microsoft Forms、SharePoint、Power Automate、Application Insights。
+- 人手ゲート：Azure デプロイ設定、`production` Environment Secret、Forms 公開設定、SharePoint 権限、アクセス解析は、各サービス上の設定確認後に有効化する。
 
 ## 方針
 
