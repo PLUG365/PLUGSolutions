@@ -23,7 +23,7 @@ npm run check
 
 The static site is exported to `out/`. Azure Static Web Apps should deploy that directory without rebuilding it.
 
-Production deployment runs only after the `CI` workflow succeeds for a push to protected `main`. The deployment job uses the `production` environment and waits for approval from `minoru365` before it can access the Azure deployment token.
+Production deployment is started manually from the `Deploy production` workflow after changes have accumulated on protected `main`. The selected `main` commit is checked again with `npm run check`, then the deployment job waits for approval from `minoru365` before it can access the Azure deployment token.
 
 ## Catalog records
 

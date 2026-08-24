@@ -7,6 +7,7 @@
 - 完了：人が確認済みのローカル画像を 1200×675 WebP に再エンコードし、メタデータを除去する処理とテスト。
 - 完了：公開リポジトリ `PLUG365/PLUGSolutions`、GitHub Actions CI、main 保護、`production` Environment の minoru365 承認ゲート。
 - 完了：Azure Static Web Apps `plug-solutions-web`（Free／East Asia）と、`production` Environment Secretへのデプロイトークン登録。
+- 完了：更新を `main` に蓄積し、任意のタイミングで開始する手動本番リリースと `minoru365` 承認ゲート。
 - 未接続：Microsoft Forms、SharePoint、Power Automate、Application Insights。
 - 人手ゲート：初回を含むAzure本番デプロイ、Forms公開設定、SharePoint権限、アクセス解析は、各サービス上の設定確認後に有効化する。
 
@@ -81,13 +82,13 @@
 
 ### GitHub Actions
 
-- `main` への push で本番デプロイする。
+- 日々の変更は保護された `main` へ蓄積し、本番デプロイは GitHub Actions の `workflow_dispatch` から任意のタイミングで開始する。
 - Pull Request では秘密情報を使わず、テストと静的ビルドだけを行う。v1 では Azure のプレビュー環境へ自動デプロイしない。
 - ワークフロー内で Node 22、`npm ci`、JSON 検証、テスト、静的ビルドを実行する。
 - ビルド済み `out` を `skip_app_build: true` で Azure へ渡し、Azure 側の暗黙ビルドに依存しない。
 - Azure のデプロイトークンは GitHub Actions Secret だけに保存し、リポジトリ、ログ、設定ファイルへ出力しない。
 - Azure のデプロイトークンは GitHub の `production` Environment Secret とし、Repository Secret には置かない。
-- 本番公開はテスト成功済みの `main` だけに限定し、`production` Environment で `minoru365` の承認後に実行する。
+- 手動リリースは `main` 以外からの起動を拒否し、起動時点のコミット SHA を再検証したうえで、`production` Environment で `minoru365` の承認後に実行する。
 - Organization メンバーは Azure テナント権限を持たなくても CI を実行できるが、承認なしでは本番 Secret を利用できない構成にする。
 
 ## カタログデータと申請フロー
@@ -170,7 +171,8 @@
 | JSON 生成 | 承認 → 承認 | Power Automate |
 | GitHub 取込 | 承認 → 承認 | 人 |
 | Pull Request | 変更 → CI 合格／不合格 | GitHub Actions（Azure Secret なし） |
-| main 反映 | CI 合格 → 本番承認待ち | 人の merge＋GitHub Environment |
+| main 反映 | CI 合格 → リリース候補 | 人の merge＋GitHub Actions CI |
+| 手動リリース開始 | リリース候補 → 本番承認待ち | minoru365＋GitHub Actions |
 | Azure 公開 | 本番承認待ち → 公開済み | minoru365 承認＋GitHub Actions |
 | 取り下げ | 公開済み → 取り下げ | 登録 X からの依頼を人が確認 |
 | リアクション回答 | なし → 非公開記録 | Forms＋Power Automate |
