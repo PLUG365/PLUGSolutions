@@ -6,8 +6,9 @@
 - 完了：lint、カタログ検証、テスト、静的ビルドを実行する GitHub Actions CI。
 - 完了：人が確認済みのローカル画像を 1200×675 WebP に再エンコードし、メタデータを除去する処理とテスト。
 - 完了：公開リポジトリ `PLUG365/PLUGSolutions`、GitHub Actions CI、main 保護、`production` Environment の minoru365 承認ゲート。
-- 未接続：Azure Static Web Apps、Microsoft Forms、SharePoint、Power Automate、Application Insights。
-- 人手ゲート：Azure デプロイ設定、`production` Environment Secret、Forms 公開設定、SharePoint 権限、アクセス解析は、各サービス上の設定確認後に有効化する。
+- 完了：Azure Static Web Apps `plug-solutions-web`（Free／East Asia）と、`production` Environment Secretへのデプロイトークン登録。
+- 未接続：Microsoft Forms、SharePoint、Power Automate、Application Insights。
+- 人手ゲート：初回を含むAzure本番デプロイ、Forms公開設定、SharePoint権限、アクセス解析は、各サービス上の設定確認後に有効化する。
 
 ## 方針
 
