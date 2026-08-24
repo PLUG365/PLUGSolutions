@@ -23,6 +23,8 @@ npm run check
 
 The static site is exported to `out/`. Azure Static Web Apps should deploy that directory without rebuilding it.
 
+Production deployment runs only after the `CI` workflow succeeds for a push to protected `main`. The deployment job uses the `production` environment and waits for approval from `minoru365` before it can access the Azure deployment token.
+
 ## Catalog records
 
 Add one approved public record per solution under `catalog/solutions/<slug>.json`. The public schema is documented in `catalog/schema.json` and enforced by `npm run validate:catalog`.
