@@ -1,0 +1,4 @@
+# Production automation and hosting policy require review by the operator.
+/.github/workflows/ @minoru365
+/public/staticwebapp.config.json @minoru365
+/plan.md @minoru365

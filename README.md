@@ -1,100 +1,49 @@
-# vinext-starter
+# PLUG Solutions
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+PLUG Solutions is a field-first catalog for portable solutions created by individual makers. It starts from the Power Platform community and also covers web, mobile, desktop, AI, and open-source projects.
 
-## Prerequisites
+## Local development
 
-- Node.js `>=22.13.0`
-
-## Quick Start
+Requirements: Node.js 22 or newer.
 
 ```bash
 npm install
 npm run dev
-npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+Open `http://localhost:3000/`.
 
-## Included Shape
+## Validation and static export
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+npm run check
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+The static site is exported to `out/`. Azure Static Web Apps should deploy that directory without rebuilding it.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+## Catalog records
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+Add one approved public record per solution under `catalog/solutions/<slug>.json`. The public schema is documented in `catalog/schema.json` and enforced by `npm run validate:catalog`.
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+Private Forms responses, review notes, email addresses, consent records, and candidate thumbnail URLs must never be copied into this repository. Only aggregate reactions belong in `catalog/reactions.json`.
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+### Process an approved thumbnail
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+After a human has checked the public source URL, usage rights, sensitive content, and personal information, save the source image locally and run:
 
-## Useful Commands
+```bash
+npm run thumbnail -- path/to/source.png solution-slug
+```
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+The command accepts PNG, JPEG, or WebP files up to 10 MB and 25 MP. It creates a metadata-free 1200×675 WebP at `public/images/solutions/<slug>.webp`. Use the resulting `/images/solutions/<slug>.webp` value in the approved catalog record. Do not run this command directly against an unreviewed remote URL.
 
-## Learn More
+## Forms and analytics
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+Copy `.env.example` to `.env.local` and fill only the public Forms URLs when they are ready. Application Insights remains disabled until its collection settings, retention, region, and cost receive human review.
+
+## Project links
+
+- [PLUG Guide](https://plug365.github.io/PLUGGuide/)
+- [PLUG on connpass](https://plug.connpass.com/)
+
+PLUG Solutions is operated personally by minoru365 and is not an official Microsoft service.

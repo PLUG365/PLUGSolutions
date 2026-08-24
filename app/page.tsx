@@ -1,236 +1,79 @@
-"use client";
+import Image from "next/image";
+import plugLogo from "../assets/完成品(縁あり).png";
+import CatalogExplorer from "./CatalogExplorer";
+import { getAllSolutions, getReactionCounts } from "../lib/catalog";
 
-import { useEffect, useMemo, useState } from "react";
+const plugGuideUrl = "https://plug365.github.io/PLUGGuide/";
+const plugConnpassUrl = "https://plug.connpass.com/";
 
-type Solution = {
-  title: string;
-  maker: string;
-  type: string;
-  description: string;
-  categories: string[];
-  tags: string[];
-  color: string;
-  mark: string;
-  setup: string;
-  cost: string;
-  adoption: number;
-  premium: boolean;
-  updated: string;
-  license: string;
-  deliverable: string;
-  prerequisites: string;
-};
-
-const solutions: Solution[] = [
-  {
-    title: "経費スナップ",
-    maker: "Haru / Power Maker",
-    type: "Canvas App",
-    description: "レシートを撮って申請。小さなチーム向けの、迷わない経費精算アプリ。",
-    categories: ["Power Platform", "業務テンプレート"],
-    tags: ["経費精算", "SharePoint", "日本語"],
-    color: "coral",
-    mark: "領",
-    setup: "約 5 分",
-    cost: "無料",
-    adoption: 48,
-    premium: false,
-    updated: "3日前",
-    license: "MIT / 商用利用可",
-    deliverable: "unmanaged solution (.zip)",
-    prerequisites: "Microsoft 365、SharePoint リスト作成権限",
-  },
-  {
-    title: "Flow Triage",
-    maker: "Nami Works",
-    type: "Power Automate",
-    description: "共有メールの問い合わせを分類し、担当チームへ自動で振り分けます。",
-    categories: ["Power Platform", "業務テンプレート"],
-    tags: ["問い合わせ", "Outlook", "Teams"],
-    color: "blue",
-    mark: "流",
-    setup: "約 10 分",
-    cost: "無料",
-    adoption: 31,
-    premium: false,
-    updated: "1週間前",
-    license: "CC BY 4.0",
-    deliverable: "Power Automate package (.zip)",
-    prerequisites: "Outlook、Teams の標準コネクタ",
-  },
-  {
-    title: "Kakeibo Lens",
-    maker: "mono labs",
-    type: "Web App / OSS",
-    description: "CSV を読み込むだけで、家計の変化をやさしい言葉と図で振り返れる。",
-    categories: ["Web / モバイル", "OSS"],
-    tags: ["家計", "ローカル処理", "TypeScript"],
-    color: "lime",
-    mark: "家",
-    setup: "すぐ試せる",
-    cost: "OSS",
-    adoption: 76,
-    premium: false,
-    updated: "昨日",
-    license: "Apache-2.0 / 商用利用可",
-    deliverable: "GitHub repository / Web demo",
-    prerequisites: "ブラウザのみ。データは端末内で処理",
-  },
-  {
-    title: "Field Log",
-    maker: "TOPO Studio",
-    type: "Canvas + Dataverse",
-    description: "現場点検、写真、是正依頼をオフラインでも一つの流れにまとめます。",
-    categories: ["Power Platform", "業務テンプレート"],
-    tags: ["点検", "Dataverse", "オフライン"],
-    color: "purple",
-    mark: "現",
-    setup: "約 25 分",
-    cost: "無料",
-    adoption: 19,
-    premium: true,
-    updated: "2週間前",
-    license: "MIT / 商用利用可",
-    deliverable: "managed / unmanaged solution",
-    prerequisites: "Dataverse、Power Apps Premium、環境管理者の承認",
-  },
-  {
-    title: "余白日記",
-    maker: "suzume apps",
-    type: "iOS App",
-    description: "一日ひとこと。書かなかった日も責めない、静かな日記アプリです。",
-    categories: ["Web / モバイル"],
-    tags: ["日記", "iCloud", "日本語"],
-    color: "sand",
-    mark: "日",
-    setup: "App Store",
-    cost: "無料",
-    adoption: 112,
-    premium: false,
-    updated: "5日前",
-    license: "無料アプリ",
-    deliverable: "App Store distribution",
-    prerequisites: "iOS 18 以降",
-  },
-  {
-    title: "FAQ Copilot Starter",
-    maker: "Aki Automates",
-    type: "Copilot Studio",
-    description: "社内 FAQ を小さく始めるためのトピック、評価セット、運用チェックリスト。",
-    categories: ["Power Platform", "OSS"],
-    tags: ["社内FAQ", "Copilot", "評価"],
-    color: "aqua",
-    mark: "答",
-    setup: "約 15 分",
-    cost: "無料",
-    adoption: 27,
-    premium: true,
-    updated: "4日前",
-    license: "MIT / 商用利用可",
-    deliverable: "agent YAML / evaluation CSV",
-    prerequisites: "Copilot Studio ライセンス、作成者ロール",
-  },
-];
-
-const filters = ["すべて", "Power Platform", "Web / モバイル", "業務テンプレート", "OSS"];
-
-export default function Home() {
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("すべて");
-  const [selected, setSelected] = useState<Solution | null>(null);
-
-  const visibleSolutions = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    return solutions.filter((solution) => {
-      const matchesFilter = filter === "すべて" || solution.categories.includes(filter);
-      const haystack = [
-        solution.title,
-        solution.maker,
-        solution.type,
-        solution.description,
-        ...solution.tags,
-      ]
-        .join(" ")
-        .toLowerCase();
-      return matchesFilter && (!normalizedQuery || haystack.includes(normalizedQuery));
-    });
-  }, [filter, query]);
-
-  useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelected(null);
-    };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, []);
+export default async function Home() {
+  const solutions = await getAllSolutions();
+  const reactions = await getReactionCounts(solutions);
+  const submissionUrl = process.env.NEXT_PUBLIC_SUBMISSION_FORM_URL;
 
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Solution Commons ホーム">
-          <span className="brand-mark">SC</span>
-          <span>SOLUTION<br />COMMONS</span>
+        <a className="brand" href="#top" aria-label="PLUG Solutions ホーム">
+          <Image className="brand-logo" src={plugLogo} alt="" priority />
+          <span>PLUG<br />SOLUTIONS</span>
         </a>
         <nav aria-label="メインナビゲーション">
           <a href="#catalog">見つける</a>
-          <a href="#activity">コミュニティ</a>
-          <a href="#about">この場所について</a>
+          <a href="#plug">PLUGの考え方</a>
+          <a href="#about">参加の流れ</a>
         </nav>
         <a className="header-cta" href="#submit">作品を持ち寄る <span aria-hidden="true">↗</span></a>
       </header>
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow"><span /> 個人開発 × Power Platform</p>
-          <h1>いい解決策は、<br /><em>持ち帰れる。</em></h1>
+          <p className="eyebrow"><span /> A PLUG PROJECT — FIELD-FIRST CATALOG</p>
+          <h1><span>解決策をつなぎ、</span><em>現場を起動する。</em></h1>
           <p className="hero-lead">
-            つくった人の工夫を、使いたい人の現場へ。<br />
-            アプリ、フロー、コンポーネントを見つけて、試して、育てるコモンズ。
+            Power Platformを起点に、Web、モバイル、AI、OSSまで。<br />
+            現場で動いた工夫を、次の誰かが見つけ、持ち帰り、自分の環境で育てるカタログ。
           </p>
           <div className="hero-actions">
             <a className="primary-button" href="#catalog">解決策を探す <span aria-hidden="true">↓</span></a>
-            <a className="text-button" href="#about">仕組みを見る <span aria-hidden="true">→</span></a>
+            <a className="text-button" href="#plug">PLUGを知る <span aria-hidden="true">→</span></a>
           </div>
           <div className="trust-row" aria-label="カタログの特徴">
+            <span>✓ 現場起点</span>
             <span>✓ 導入条件を明記</span>
-            <span>✓ 商用利用を確認</span>
-            <span>✓ 作者に質問できる</span>
+            <span>✓ 技術の越境を歓迎</span>
           </div>
         </div>
 
-        <aside className="featured-card" aria-label="今週のピックアップ">
+        <aside className="featured-card founding-card" aria-label="掲載作品を募集しています">
           <div className="featured-topline">
-            <span>THIS WEEK&apos;S PICK</span>
-            <span>01 / 06</span>
+            <span>FOUNDING COLLECTION</span>
+            <span>OPEN CALL</span>
           </div>
-          <div className="featured-art">
-            <span className="orb orb-one" />
-            <span className="orb orb-two" />
-            <span className="receipt-sheet">
-              <i /> <i /> <i />
-              <b>¥ 8,420</b>
-            </span>
+          <div className="founding-art">
+            <Image src={plugLogo} alt="PLUG — Power Platform Local User Group" priority />
           </div>
           <div className="featured-meta">
-            <span className="type-pill">CANVAS APP</span>
-            <span className="verified">● VERIFIED MAKER</span>
+            <span className="type-pill">NOW BUILDING</span>
+            <span className="verified">● AUTHOR SUBMISSION ONLY</span>
           </div>
-          <h2>経費スナップ</h2>
-          <p>レシートを撮って、そのまま申請。小さなチームにちょうどいい経費精算。</p>
+          <h2>作品を募集しています</h2>
+          <p>完成品でなくても構いません。現場で試したアプリ、フロー、部品、OSSを作者本人から受け付けます。</p>
           <div className="featured-facts">
-            <span><small>SETUP</small>約 5 分</span>
-            <span><small>LICENSE</small>MIT</span>
-            <span><small>ADOPTED</small>48 回</span>
+            <span><small>SIGN-IN</small>不要</span>
+            <span><small>LISTING</small>無料</span>
+            <span><small>SCOPE</small>技術横断</span>
           </div>
-          <button type="button" onClick={() => setSelected(solutions[0])}>中身を見てみる <span aria-hidden="true">↗</span></button>
+          <a className="featured-link" href="#submit">掲載方法を見る <span aria-hidden="true">↓</span></a>
         </aside>
       </section>
 
-      <section className="signal-strip" aria-label="現在のコミュニティ状況">
-        <p><strong>126</strong><span>持ち帰れる作品</span></p>
-        <p><strong>38</strong><span>今月の導入成功</span></p>
-        <p><strong>72</strong><span>参加している Maker</span></p>
-        <p className="live-signal"><i /> 今日も 4 人が試しています</p>
+      <section className="signal-strip" aria-label="PLUGが大切にする価値観">
+        <p><strong>01</strong><span>現場起点<br />FIELD-FIRST</span></p>
+        <p><strong>02</strong><span>実装志向<br />BIAS TO ACTION</span></p>
+        <p><strong>03</strong><span>越境歓迎<br />BOUNDARY CROSSING</span></p>
+        <p><strong>04</strong><span>学び合い<br />LEARNING TOGETHER</span></p>
+        <p><strong>05</strong><span>エンパワメント<br />EMPOWERMENT</span></p>
       </section>
 
       <section className="catalog" id="catalog">
@@ -241,167 +84,81 @@ export default function Home() {
           </div>
           <p>人気より、使える条件で選ぶ。<br />ライセンスも前提環境も、ひと目で。</p>
         </div>
-
-        <div className="catalog-controls">
-          <label className="search-box">
-            <span aria-hidden="true">⌕</span>
-            <span className="sr-only">作品を検索</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="課題、技術、作品名で検索"
-            />
-            <kbd>⌘ K</kbd>
-          </label>
-          <div className="filter-row" aria-label="作品カテゴリ">
-            {filters.map((item) => (
-              <button
-                className={filter === item ? "active" : ""}
-                type="button"
-                key={item}
-                onClick={() => setFilter(item)}
-                aria-pressed={filter === item}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="sample-notice"><span>PROTOTYPE</span> 掲載内容は体験確認用のサンプルデータです。</div>
-
-        {visibleSolutions.length ? (
-          <div className="solution-grid">
-            {visibleSolutions.map((solution) => (
-              <article className="solution-card" key={solution.title}>
-                <div className={`card-art ${solution.color}`}>
-                  <span className="card-number">{String(solutions.indexOf(solution) + 1).padStart(2, "0")}</span>
-                  <span className="card-mark">{solution.mark}</span>
-                  <span className="art-chip">{solution.type}</span>
-                </div>
-                <div className="card-body">
-                  <div className="card-topline">
-                    <span>{solution.type}</span>
-                    <span>更新 {solution.updated}</span>
-                  </div>
-                  <h3>{solution.title}</h3>
-                  <p className="maker">by {solution.maker}</p>
-                  <p className="card-description">{solution.description}</p>
-                  <div className="tag-list">
-                    {solution.tags.map((tag) => <span key={tag}>{tag}</span>)}
-                  </div>
-                  <dl className="card-facts">
-                    <div><dt>導入</dt><dd>{solution.setup}</dd></div>
-                    <div><dt>費用</dt><dd>{solution.cost}</dd></div>
-                    <div><dt>Premium</dt><dd>{solution.premium ? "必要" : "不要"}</dd></div>
-                  </dl>
-                  <div className="card-footer">
-                    <span><b>{solution.adoption}</b> 人が導入</span>
-                    <button type="button" onClick={() => setSelected(solution)}>詳しく見る <span aria-hidden="true">→</span></button>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="empty-state">
-            <span>0 RESULTS</span>
-            <h3>まだ、この組み合わせは空いています。</h3>
-            <p>検索語を変えるか、最初の作品を持ち寄ってください。</p>
-            <button type="button" onClick={() => { setQuery(""); setFilter("すべて"); }}>条件をリセット</button>
-          </div>
-        )}
+        <CatalogExplorer solutions={solutions} reactions={reactions} />
       </section>
 
-      <section className="activity" id="activity">
+      <section className="activity" id="plug">
         <div className="section-heading light">
           <div>
-            <p className="section-index">02 — COMMUNITY</p>
-            <h2>持ち帰った先の<br />物語が続いていく</h2>
+            <p className="section-index">02 — THE PLUG CONCEPT</p>
+            <h2>つなぐ。起動する。<br />ギャップを埋める。</h2>
           </div>
-          <p>いいねの数より、使えた実感。<br />質問、導入報告、派生版が作品を育てます。</p>
+          <p>PLUGは、人や組織、ローカルとグローバルをつなぎ、変革・DXを起動し、理想と現実の距離を縮めます。</p>
         </div>
-        <div className="activity-grid">
+        <div className="plug-mission">
+          <p className="activity-label">PLUG MISSION</p>
+          <h3>地方企業の現場変革者にPowerを</h3>
+          <p>Power Platformを共通言語として、一人で抱え込まず、越境し、学び、実践できる環境をつくる。PLUG Solutionsはその実践知を、技術の境界を越えて循環させます。</p>
+        </div>
+        <div className="activity-grid plug-grid">
           <article className="activity-card accent-card">
-            <p className="activity-label">導入できた！</p>
-            <blockquote>「経費スナップ」を 8 人のチームで使い始めました。説明なしでも申請できています。</blockquote>
-            <footer><span className="avatar">KA</span><p><strong>kaori</strong><small>12 分前 · 経費スナップ</small></p><b>↗</b></footer>
+            <p className="activity-label">CONNECT</p>
+            <h3>つなぐ</h3>
+            <p>つくった人と使いたい人、組織と地域、ローカルな工夫と次の現場をつなぎます。</p>
           </article>
           <article className="activity-card">
-            <p className="activity-label question">質問</p>
-            <blockquote>ゲストユーザーを含む Teams でも、このフローは動きますか？</blockquote>
-            <footer><span className="avatar mint">YU</span><p><strong>yuji_m</strong><small>38 分前 · Flow Triage</small></p><b>2 回答</b></footer>
+            <p className="activity-label question">POWER ON</p>
+            <h3>起動する</h3>
+            <p>完璧さを待つより、まず動かす。試した事実と小さな実装を、次の変革の電源にします。</p>
           </article>
           <article className="activity-card">
-            <p className="activity-label remix">派生版</p>
-            <blockquote>英語版と学校向けカテゴリを追加した「Field Log EDU」を公開しました。</blockquote>
-            <footer><span className="avatar violet">AM</span><p><strong>ami</strong><small>2 時間前 · Field Log</small></p><b>↗</b></footer>
+            <p className="activity-label remix">BRIDGE THE GAP</p>
+            <h3>ギャップを埋める</h3>
+            <p>流行や理論だけでなく、現場の課題、制約、文脈から理想までの現実的な道筋を共有します。</p>
           </article>
+        </div>
+        <div className="plug-links">
+          <a className="plug-guide-link" href={plugGuideUrl} target="_blank" rel="noreferrer">Mission・Vision・Valuesを読む <span aria-hidden="true">↗</span></a>
+          <a className="plug-guide-link" href={plugConnpassUrl} target="_blank" rel="noreferrer">PLUGのイベント・活動を見る <span aria-hidden="true">↗</span></a>
         </div>
       </section>
 
       <section className="about" id="about">
         <p className="section-index">03 — HOW IT WORKS</p>
         <div className="about-title">
-          <h2>見つけるだけで、<br />終わらせない。</h2>
-          <p>作品の魅力と同じくらい、持ち帰るための情報を大切にします。</p>
+          <h2>現場から始め、<br />越境して育てる。</h2>
+          <p>PLUGの価値観を、作品を見つけて持ち帰る4つの行動に落とし込みます。</p>
         </div>
         <ol className="steps">
-          <li><span>01</span><h3>見つける</h3><p>やりたいこと、利用環境、費用から自分に合う作品を探す。</p></li>
-          <li><span>02</span><h3>確かめる</h3><p>必要ライセンス、導入時間、権限、作者の更新状況を確認する。</p></li>
-          <li><span>03</span><h3>持ち帰る</h3><p>デモを試す、ソースを見る、ソリューションを自分の環境へ。</p></li>
-          <li><span>04</span><h3>育てる</h3><p>導入報告や質問、派生版を残し、次の利用者へ知恵を渡す。</p></li>
+          <li><span>01 · FIELD-FIRST</span><h3>現場から探す</h3><p>流行より、解決したい課題、利用環境、費用から自分に合う作品を探す。</p></li>
+          <li><span>02 · BIAS TO ACTION</span><h3>確かめて動かす</h3><p>必要ライセンス、導入時間、権限を確認し、まず小さく試してみる。</p></li>
+          <li><span>03 · CROSS BOUNDARIES</span><h3>越境して持ち帰る</h3><p>Power Platform、Web、モバイル、AI、OSSの境界を越えて工夫を生かす。</p></li>
+          <li><span>04 · LEARN TOGETHER</span><h3>学びを返す</h3><p>リアクションや導入報告を返し、次に挑戦する人ができるようになる力を渡す。</p></li>
         </ol>
       </section>
 
       <section className="submit-section" id="submit">
         <div>
           <p className="section-index">BRING YOUR SOLUTION</p>
-          <h2>あなたの工夫を、<br />誰かのスタート地点に。</h2>
+          <h2>試した事実を、<br />誰かのPowerに。</h2>
         </div>
         <div className="submit-copy">
-          <p>完成品でなくても構いません。小さなアプリ、便利なフロー、ひとつのコンポーネントから持ち寄れます。</p>
-          <button type="button">掲載リクエストを送る <span aria-hidden="true">↗</span></button>
-          <small>初期掲載は無料 · GitHub / 配布ページへのリンクで始められます</small>
+          <p>完成度より、現場で動かしたことを大切にします。小さなアプリ、便利なフロー、ひとつのコンポーネントや試行錯誤から持ち寄れます。</p>
+          {submissionUrl ? (
+            <a className="submit-button" href={submissionUrl} target="_blank" rel="noreferrer">匿名フォームから掲載申請 <span aria-hidden="true">↗</span></a>
+          ) : (
+            <span className="submit-button disabled" aria-disabled="true">掲載フォーム準備中</span>
+          )}
+          <small>作者本人からの申請のみ · サインイン不要 · 初期掲載無料 · 行動規範への同意が必要です</small>
         </div>
       </section>
 
       <footer className="site-footer">
-        <a className="brand footer-brand" href="#top"><span className="brand-mark">SC</span><span>SOLUTION<br />COMMONS</span></a>
-        <p>つくった人と、使いたい人が出会う場所。</p>
-        <div><a href="#catalog">探す</a><a href="#about">この場所について</a><a href="#submit">掲載する</a></div>
-        <small>PROTOTYPE · 2026</small>
+        <a className="brand footer-brand" href="#top"><Image className="brand-logo" src={plugLogo} alt="" /><span>PLUG<br />SOLUTIONS</span></a>
+        <p>つなぐ × 電源を入れる × ギャップを埋める</p>
+        <div><a href="#catalog">探す</a><a href="#plug">PLUGについて</a><a href="#submit">掲載する</a><a href={plugGuideUrl} target="_blank" rel="noreferrer">ガイド ↗</a><a href={plugConnpassUrl} target="_blank" rel="noreferrer">connpass ↗</a></div>
+        <small>minoru365による個人運営 · MICROSOFT非公式 · 2026</small>
       </footer>
-
-      {selected && (
-        <div className="modal-backdrop" role="presentation" onMouseDown={() => setSelected(null)}>
-          <section
-            className="detail-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="detail-title"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <button className="modal-close" type="button" onClick={() => setSelected(null)} aria-label="詳細を閉じる">×</button>
-            <div className={`modal-art ${selected.color}`}><span>{selected.mark}</span><small>{selected.type}</small></div>
-            <p className="section-index">SOLUTION DETAILS</p>
-            <h2 id="detail-title">{selected.title}</h2>
-            <p className="modal-maker">by {selected.maker}</p>
-            <p className="modal-description">{selected.description}</p>
-            <dl className="detail-list">
-              <div><dt>持ち帰れるもの</dt><dd>{selected.deliverable}</dd></div>
-              <div><dt>ライセンス</dt><dd>{selected.license}</dd></div>
-              <div><dt>前提環境</dt><dd>{selected.prerequisites}</dd></div>
-              <div><dt>セットアップ</dt><dd>{selected.setup}</dd></div>
-            </dl>
-            <div className="modal-actions">
-              <button type="button">配布ページへ <span aria-hidden="true">↗</span></button>
-              <button className="secondary" type="button">作者に質問する</button>
-            </div>
-            <small className="prototype-note">これは体験確認用のサンプルです。ボタンから外部配布は行いません。</small>
-          </section>
-        </div>
-      )}
     </main>
   );
 }

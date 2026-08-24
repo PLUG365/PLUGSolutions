@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plug-solutions.example/schema/solution-v1.json",
+  "title": "PLUG Solutions public catalog item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "slug", "title", "maker", "description", "type",
+    "categories", "tags", "distributionUrl", "sourceUrl", "instructionsUrl",
+    "license", "cost", "premiumRequired", "setupTime", "prerequisites",
+    "thumbnail", "publishedAt", "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "maker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["displayName", "xHandle", "xUrl"],
+      "properties": {
+        "displayName": { "type": "string", "minLength": 1 },
+        "xHandle": { "type": "string", "pattern": "^@[A-Za-z0-9_]{1,15}$" },
+        "xUrl": { "type": "string", "format": "uri", "pattern": "^https://(www\\.)?x\\.com/" }
+      }
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "minLength": 1 },
+    "categories": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "tags": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "distributionUrl": { "type": "string", "format": "uri", "pattern": "^https://" },
+    "sourceUrl": { "type": ["string", "null"], "format": "uri", "pattern": "^https://" },
+    "instructionsUrl": { "type": ["string", "null"], "format": "uri", "pattern": "^https://" },
+    "license": { "type": "string", "minLength": 1 },
+    "cost": { "type": "string", "minLength": 1 },
+    "premiumRequired": { "type": ["boolean", "null"] },
+    "setupTime": { "type": "string", "minLength": 1 },
+    "prerequisites": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "thumbnail": { "type": ["string", "null"], "pattern": "^/images/solutions/[a-z0-9-]+\\.webp$" },
+    "publishedAt": { "type": "string", "format": "date" },
+    "updatedAt": { "type": "string", "format": "date" }
+  }
+}
