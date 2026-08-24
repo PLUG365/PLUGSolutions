@@ -8,6 +8,7 @@ test("pull requests run CI without access to production secrets", async () => {
   const workflow = await readFile(new URL(".github/workflows/ci.yml", root), "utf8");
 
   assert.match(workflow, /^\s*pull_request:\s*$/m);
+  assert.match(workflow, /^\s+push:\s*\n\s+branches:\s*\n\s+- main$/m);
   assert.match(workflow, /^permissions:\s*\n\s+contents: read$/m);
   assert.doesNotMatch(workflow, /AZURE_STATIC_WEB_APPS_API_TOKEN|environment:\s*production/);
 });
