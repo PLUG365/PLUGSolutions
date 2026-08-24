@@ -33,5 +33,6 @@ test("production deploy follows a successful protected-main CI run", async () =>
     /Azure\/static-web-apps-deploy@[a-f0-9]{40}/,
   );
   assert.match(workflow, /^\s+skip_app_build: true\s*$/m);
+  assert.doesNotMatch(workflow, /^\s+skip_api_build:/m);
   assert.doesNotMatch(workflow, /^\s*pull_request:\s*$/m);
 });
