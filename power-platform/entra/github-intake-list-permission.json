@@ -1,0 +1,11 @@
+{
+  "roles": [
+    "read"
+  ],
+  "grantedTo": {
+    "application": {
+      "id": "__ENTRA_APPLICATION_CLIENT_ID__",
+      "displayName": "PLUG Solutions GitHub Intake"
+    }
+  }
+}

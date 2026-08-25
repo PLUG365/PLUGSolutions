@@ -1,0 +1,115 @@
+name: Import approved submission
+
+on:
+  schedule:
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: Optional approved slug to process
+        required: false
+        type: string
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: import-approved-submission
+  cancel-in-progress: false
+
+jobs:
+  prepare-pull-request:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+      - name: Use Node.js 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Sign in to Azure with GitHub OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Read approved SharePoint item and prepare files
+        env:
+          PLUG_SHAREPOINT_SITE_ID: ${{ vars.PLUG_SHAREPOINT_SITE_ID }}
+          PLUG_SUBMISSIONS_LIST_ID: ${{ vars.PLUG_SUBMISSIONS_LIST_ID }}
+          REQUESTED_SLUG: ${{ inputs.slug }}
+        run: |
+          graph_token="$(az account get-access-token --resource-type ms-graph --query accessToken -o tsv)"
+          echo "::add-mask::$graph_token"
+          GRAPH_TOKEN="$graph_token" npm run prepare:approved
+      - name: Read safe processing result
+        id: result
+        run: |
+          status="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).status")"
+          slug="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).slug || ''")"
+          thumbnail_status="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).thumbnailStatus || ''")"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+          echo "thumbnail_status=$thumbnail_status" >> "$GITHUB_OUTPUT"
+      - name: Stop when no item is ready
+        if: steps.result.outputs.status == 'none'
+        run: echo "No approved submission is ready."
+      - name: Check for an existing automation branch
+        if: steps.result.outputs.status == 'prepared'
+        id: branch
+        env:
+          SLUG: ${{ steps.result.outputs.slug }}
+        run: |
+          branch="automation/catalog-$SLUG"
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Existing automation branch found; leaving it unchanged."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "name=$branch" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Validate prepared catalog change
+        if: steps.result.outputs.status == 'prepared' && steps.branch.outputs.exists == 'false'
+        run: npm run check
+      - name: Commit and push automation branch
+        if: steps.result.outputs.status == 'prepared' && steps.branch.outputs.exists == 'false'
+        env:
+          BRANCH: ${{ steps.branch.outputs.name }}
+          SLUG: ${{ steps.result.outputs.slug }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add -- "catalog/solutions/$SLUG.json"
+          if test -f "public/images/solutions/$SLUG.webp"; then
+            git add -- "public/images/solutions/$SLUG.webp"
+          fi
+          git commit -m "catalog: add $SLUG"
+          git push --set-upstream origin "$BRANCH"
+      - name: Create pull request
+        if: steps.result.outputs.status == 'prepared' && steps.branch.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+          SLUG: ${{ steps.result.outputs.slug }}
+          THUMBNAIL_STATUS: ${{ steps.result.outputs.thumbnail_status }}
+        run: |
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "catalog: add $SLUG" \
+            --body "Power Appsで承認済みの申請を自動準備しました。
+
+- slug: \`$SLUG\`
+- thumbnail: \`$THUMBNAIL_STATUS\`
+
+作品情報、リンク、ライセンス、画像内容、CI結果を確認してから承認してください。候補画像URLや審査用の非公開情報はこのPRに含めていません。"

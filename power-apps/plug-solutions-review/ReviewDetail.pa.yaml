@@ -1,0 +1,537 @@
+Screens:
+  ReviewDetail:
+    Properties:
+      Fill: =RGBA(244, 240, 230, 1)
+      LoadingSpinnerColor: =RGBA(255, 96, 66, 1)
+    Children:
+      - conDetailRoot:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(244, 240, 230, 1)
+            Height: =Parent.Height
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =12
+            PaddingBottom: =If(App.Width < 768, 12, 24)
+            PaddingLeft: =If(App.Width < 768, 12, 24)
+            PaddingRight: =If(App.Width < 768, 12, 24)
+            PaddingTop: =If(App.Width < 768, 12, 24)
+            Width: =Parent.Width
+          Children:
+            - conDetailHeader:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  FillPortions: =0
+                  Height: =56
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutMinHeight: =56
+                  LayoutMinWidth: =0
+                Children:
+                  - btnDetailBack:
+                      Control: Classic/Button
+                      Properties:
+                        BorderColor: =RGBA(20, 21, 18, 1)
+                        Color: =RGBA(20, 21, 18, 1)
+                        Fill: =RGBA(244, 240, 230, 1)
+                        Height: =48
+                        HoverFill: =RGBA(193, 255, 68, 1)
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =96
+                        OnSelect: =Back()
+                        PressedFill: =RGBA(193, 255, 68, 1)
+                        RadiusBottomLeft: =24
+                        RadiusBottomRight: =24
+                        RadiusTopLeft: =24
+                        RadiusTopRight: =24
+                        Text: ="← 戻る"
+                        Width: =104
+                  - lblDetailHeading:
+                      Control: Label
+                      Properties:
+                        Color: =RGBA(20, 21, 18, 1)
+                        FillPortions: =1
+                        FontWeight: =FontWeight.Bold
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =120
+                        Size: =If(App.Width < 768, 20, 24)
+                        Text: ="掲載申請の審査"
+            - conDetailScroll:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(255, 255, 255, 1)
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =8
+                  LayoutMinHeight: =120
+                  LayoutMinWidth: =0
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =16
+                  PaddingLeft: =If(App.Width < 768, 12, 24)
+                  PaddingRight: =If(App.Width < 768, 12, 24)
+                  PaddingTop: =16
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                Children:
+                  - lblNoSelection:
+                      Control: Label
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(61, 95, 89, 1)
+                        Height: =64
+                        LayoutMinHeight: =64
+                        Text: ="審査する申請を一覧から選択してください。"
+                        Visible: =IsBlank(varSelectedRequest)
+                  - lblCurrentStatus:
+                      Control: Label
+                      Properties:
+                        Color: =RGBA(61, 95, 89, 1)
+                        FontWeight: =FontWeight.Semibold
+                        Height: =44
+                        LayoutMinHeight: =44
+                        Text: |-
+                          ="現在の状態: " & Coalesce(varSelectedRequest.ReviewStatus.Value, "未設定")
+                        Visible: =!IsBlank(varSelectedRequest)
+                  - conThumbnail:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        Fill: =RGBA(193, 255, 68, 1)
+                        FillPortions: =0
+                        Height: =220
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutJustifyContent: =LayoutJustifyContent.Center
+                        LayoutMinHeight: =220
+                        LayoutMinWidth: =0
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        Visible: =!IsBlank(varSelectedRequest)
+                      Children:
+                        - imgProcessedThumbnail:
+                            Control: Image
+                            Properties:
+                              Height: =196
+                              Image: =varSelectedRequest.ThumbnailPath
+                              LayoutMinHeight: =196
+                              LayoutMinWidth: =160
+                              Visible: =!IsBlank(varSelectedRequest.ThumbnailPath)
+                              Width: =Parent.Width
+                        - lblThumbnailFallback:
+                            Control: Label
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(20, 21, 18, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =196
+                              LayoutMinHeight: =196
+                              Size: =72
+                              Text: =Upper(Left(Coalesce(varSelectedRequest.Title, "?"), 1))
+                              Visible: =IsBlank(varSelectedRequest.ThumbnailPath)
+                              Width: =Parent.Width
+                  - lblCandidateCaption:
+                      Control: Label
+                      Properties:
+                        Color: =RGBA(61, 95, 89, 1)
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="画像候補（非公開・確認用）"
+                        Visible: =!IsBlank(varSelectedRequest)
+                  - lnkThumbnailCandidate:
+                      Control: Label
+                      Properties:
+                        Color: =RGBA(61, 95, 89, 1)
+                        Height: =48
+                        LayoutMinHeight: =48
+                        OnSelect: =If(!IsBlank(varSelectedRequest.ThumbnailCandidateUrl), Launch(varSelectedRequest.ThumbnailCandidateUrl))
+                        Text: =If(IsBlank(varSelectedRequest.ThumbnailCandidateUrl), "画像候補URLなし", varSelectedRequest.ThumbnailCandidateUrl)
+                        Underline: =!IsBlank(varSelectedRequest.ThumbnailCandidateUrl)
+                        Visible: =!IsBlank(varSelectedRequest)
+                        Width: =Parent.Width
+                  - lblTitle:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="作品名 *"
+                  - txtTitle:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.Title
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblMakerDisplayName:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="作者表示名 *"
+                  - txtMakerDisplayName:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.MakerDisplayName
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblXHandle:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="Xアカウント（@から） *"
+                  - txtXHandle:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.XHandle
+                        Height: =48
+                        HintText: ="@example"
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblDescription:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="作品概要 *"
+                  - txtDescription:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.Description
+                        Height: =120
+                        LayoutMinHeight: =120
+                        LayoutMinWidth: =0
+                        Mode: =TextMode.MultiLine
+                        Width: =Parent.Width
+                  - lblDistributionUrl:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="配布先URL（https://） *"
+                  - txtDistributionUrl:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.DistributionUrl
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblSlug:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="Slug（英小文字・数字・ハイフン） *"
+                  - txtSlug:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.Slug
+                        Height: =48
+                        HintText: ="my-solution"
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblCatalogType:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="種類 *"
+                  - txtCatalogType:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.CatalogType
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblCatalogCategories:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="カテゴリ（1行に1件） *"
+                  - txtCatalogCategories:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.CatalogCategories
+                        Height: =96
+                        LayoutMinHeight: =96
+                        LayoutMinWidth: =0
+                        Mode: =TextMode.MultiLine
+                        Width: =Parent.Width
+                  - lblCatalogTags:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="タグ（1行に1件） *"
+                  - txtCatalogTags:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.CatalogTags
+                        Height: =96
+                        LayoutMinHeight: =96
+                        LayoutMinWidth: =0
+                        Mode: =TextMode.MultiLine
+                        Width: =Parent.Width
+                  - lblSourceUrl:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="ソースURL"
+                  - txtSourceUrl:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.SourceUrl
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblInstructionsUrl:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="導入手順URL"
+                  - txtInstructionsUrl:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.InstructionsUrl
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblCatalogLicense:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="ライセンス *"
+                  - txtCatalogLicense:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.CatalogLicense
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblCatalogCost:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="費用 *"
+                  - txtCatalogCost:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.CatalogCost
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblPremiumRequired:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="Premium要否 *"
+                  - cmbPremiumRequired:
+                      Control: Classic/ComboBox
+                      Properties:
+                        DefaultSelectedItems: =If(IsBlank(varSelectedRequest.PremiumRequired), Blank(), [varSelectedRequest.PremiumRequired])
+                        DisplayFields: =["Value"]
+                        Height: =48
+                        InputTextPlaceholder: ="必要／不要／不明"
+                        Items: =Choices(掲載申請.PremiumRequired)
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        SearchFields: =["Value"]
+                        SelectMultiple: =false
+                        Width: =Parent.Width
+                  - lblSetupTime:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="導入時間 *"
+                  - txtSetupTime:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.SetupTime
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblCatalogPrerequisites:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="導入条件（1行に1件）"
+                  - txtCatalogPrerequisites:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.CatalogPrerequisites
+                        Height: =96
+                        LayoutMinHeight: =96
+                        LayoutMinWidth: =0
+                        Mode: =TextMode.MultiLine
+                        Width: =Parent.Width
+                  - lblThumbnailPath:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="処理済みサムネイルパス"
+                  - txtThumbnailPath:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.ThumbnailPath
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblCatalogPublishedDate:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="初回公開日 *"
+                  - dpCatalogPublishedDate:
+                      Control: Classic/DatePicker
+                      Properties:
+                        DefaultDate: =varSelectedRequest.CatalogPublishedDate
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblCatalogUpdatedDate:
+                      Control: Label
+                      Properties:
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="更新日 *"
+                  - dpCatalogUpdatedDate:
+                      Control: Classic/DatePicker
+                      Properties:
+                        DefaultDate: =varSelectedRequest.CatalogUpdatedDate
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                  - lblReviewNotes:
+                      Control: Label
+                      Properties:
+                        Color: =RGBA(61, 95, 89, 1)
+                        FontWeight: =FontWeight.Semibold
+                        Height: =32
+                        LayoutMinHeight: =32
+                        Text: ="審査メモ（非公開・却下時必須）"
+                  - txtReviewNotes:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =varSelectedRequest.ReviewNotes
+                        Height: =112
+                        LayoutMinHeight: =112
+                        LayoutMinWidth: =0
+                        Mode: =TextMode.MultiLine
+                        Width: =Parent.Width
+                  - lblDetailNotice:
+                      Control: Label
+                      Properties:
+                        Color: =If(StartsWith(varNotice, "完了"), RGBA(61, 95, 89, 1), RGBA(170, 45, 30, 1))
+                        FontWeight: =FontWeight.Semibold
+                        Height: =If(IsBlank(varNotice), 0, 56)
+                        LayoutMinHeight: =If(IsBlank(varNotice), 0, 56)
+                        Text: =varNotice
+                        Visible: =!IsBlank(varNotice)
+                        Width: =Parent.Width
+                  - conDetailActions:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        FillPortions: =0
+                        Height: =If(App.Width < 520, 164, 56)
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =8
+                        LayoutMinHeight: =If(App.Width < 520, 164, 56)
+                        LayoutMinWidth: =0
+                        LayoutWrap: =true
+                        PaddingBottom: =4
+                        PaddingTop: =4
+                        Visible: =!IsBlank(varSelectedRequest)
+                      Children:
+                        - btnSaveDraft:
+                            Control: Classic/Button
+                            Properties:
+                              BorderColor: =RGBA(20, 21, 18, 1)
+                              Color: =RGBA(20, 21, 18, 1)
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FillPortions: =1
+                              Height: =48
+                              LayoutMinHeight: =48
+                              LayoutMinWidth: =128
+                              OnSelect: |-
+                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varCurrentRequest), Set(varNotice, "保存できません。申請が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の更新を検出しました。一覧へ戻って再読込してください。"), Set(varSelectedRequest, Patch(掲載申請, varCurrentRequest, {Title: Trim(txtTitle.Text), MakerDisplayName: Trim(txtMakerDisplayName.Text), XHandle: Trim(txtXHandle.Text), Description: Trim(txtDescription.Text), DistributionUrl: Trim(txtDistributionUrl.Text), Slug: Lower(Trim(txtSlug.Text)), CatalogType: Trim(txtCatalogType.Text), CatalogCategories: Trim(txtCatalogCategories.Text), CatalogTags: Trim(txtCatalogTags.Text), SourceUrl: Trim(txtSourceUrl.Text), InstructionsUrl: Trim(txtInstructionsUrl.Text), CatalogLicense: Trim(txtCatalogLicense.Text), CatalogCost: Trim(txtCatalogCost.Text), PremiumRequired: cmbPremiumRequired.Selected, SetupTime: Trim(txtSetupTime.Text), CatalogPrerequisites: Trim(txtCatalogPrerequisites.Text), ThumbnailPath: Trim(txtThumbnailPath.Text), CatalogPublishedDate: dpCatalogPublishedDate.SelectedDate, CatalogUpdatedDate: dpCatalogUpdatedDate.SelectedDate, ReviewNotes: Trim(txtReviewNotes.Text)})); Set(varNotice, "完了: 下書きを保存しました。")); Set(varSaving, false)
+                              Text: ="保存"
+                        - btnReject:
+                            Control: Classic/Button
+                            Properties:
+                              BorderColor: =RGBA(170, 45, 30, 1)
+                              Color: =RGBA(170, 45, 30, 1)
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FillPortions: =1
+                              Height: =48
+                              LayoutMinHeight: =48
+                              LayoutMinWidth: =128
+                              OnSelect: |-
+                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(Trim(txtReviewNotes.Text)), Set(varNotice, "却下理由を審査メモへ入力してください。"), IsBlank(varCurrentRequest), Set(varNotice, "却下できません。申請が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の更新を検出しました。一覧へ戻って再読込してください。"), Set(varSelectedRequest, Patch(掲載申請, varCurrentRequest, {Title: Trim(txtTitle.Text), MakerDisplayName: Trim(txtMakerDisplayName.Text), XHandle: Trim(txtXHandle.Text), Description: Trim(txtDescription.Text), DistributionUrl: Trim(txtDistributionUrl.Text), Slug: Lower(Trim(txtSlug.Text)), CatalogType: Trim(txtCatalogType.Text), CatalogCategories: Trim(txtCatalogCategories.Text), CatalogTags: Trim(txtCatalogTags.Text), SourceUrl: Trim(txtSourceUrl.Text), InstructionsUrl: Trim(txtInstructionsUrl.Text), CatalogLicense: Trim(txtCatalogLicense.Text), CatalogCost: Trim(txtCatalogCost.Text), PremiumRequired: cmbPremiumRequired.Selected, SetupTime: Trim(txtSetupTime.Text), CatalogPrerequisites: Trim(txtCatalogPrerequisites.Text), ThumbnailPath: Trim(txtThumbnailPath.Text), CatalogPublishedDate: dpCatalogPublishedDate.SelectedDate, CatalogUpdatedDate: dpCatalogUpdatedDate.SelectedDate, ReviewNotes: Trim(txtReviewNotes.Text), ReviewStatus: {Value: "却下"}, ReviewedAt: Now()})); Set(varNotice, "完了: 申請を却下しました。")); Set(varSaving, false)
+                              Text: ="却下"
+                        - btnApprove:
+                            Control: Classic/Button
+                            Properties:
+                              BorderColor: =RGBA(255, 96, 66, 1)
+                              Color: =RGBA(20, 21, 18, 1)
+                              Fill: =RGBA(255, 96, 66, 1)
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Bold
+                              Height: =48
+                              HoverFill: =RGBA(193, 255, 68, 1)
+                              LayoutMinHeight: =48
+                              LayoutMinWidth: =128
+                              OnSelect: |-
+                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(Trim(txtTitle.Text)) || IsBlank(Trim(txtMakerDisplayName.Text)) || !StartsWith(Trim(txtXHandle.Text), "@") || IsBlank(Trim(txtDescription.Text)) || !StartsWith(Lower(Trim(txtDistributionUrl.Text)), "https://") || !IsMatch(Trim(txtSlug.Text), "^[a-z0-9]+(-[a-z0-9]+)*$") || IsBlank(Trim(txtCatalogType.Text)) || IsBlank(Trim(txtCatalogCategories.Text)) || IsBlank(Trim(txtCatalogTags.Text)) || IsBlank(Trim(txtCatalogLicense.Text)) || IsBlank(Trim(txtCatalogCost.Text)) || IsBlank(cmbPremiumRequired.Selected.Value) || IsBlank(Trim(txtSetupTime.Text)) || IsBlank(dpCatalogPublishedDate.SelectedDate) || IsBlank(dpCatalogUpdatedDate.SelectedDate), Set(varNotice, "承認できません。必須項目と入力形式を確認してください。"), IsBlank(varCurrentRequest), Set(varNotice, "承認できません。申請が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の更新を検出しました。一覧へ戻って再読込してください。"), Set(varSelectedRequest, Patch(掲載申請, varCurrentRequest, {Title: Trim(txtTitle.Text), MakerDisplayName: Trim(txtMakerDisplayName.Text), XHandle: Trim(txtXHandle.Text), Description: Trim(txtDescription.Text), DistributionUrl: Trim(txtDistributionUrl.Text), Slug: Lower(Trim(txtSlug.Text)), CatalogType: Trim(txtCatalogType.Text), CatalogCategories: Trim(txtCatalogCategories.Text), CatalogTags: Trim(txtCatalogTags.Text), SourceUrl: Trim(txtSourceUrl.Text), InstructionsUrl: Trim(txtInstructionsUrl.Text), CatalogLicense: Trim(txtCatalogLicense.Text), CatalogCost: Trim(txtCatalogCost.Text), PremiumRequired: cmbPremiumRequired.Selected, SetupTime: Trim(txtSetupTime.Text), CatalogPrerequisites: Trim(txtCatalogPrerequisites.Text), ThumbnailPath: Trim(txtThumbnailPath.Text), CatalogPublishedDate: dpCatalogPublishedDate.SelectedDate, CatalogUpdatedDate: dpCatalogUpdatedDate.SelectedDate, ReviewNotes: Trim(txtReviewNotes.Text), ReviewStatus: {Value: "承認"}, ReviewedAt: Now()})); Set(varNotice, "完了: 申請を承認しました。")); Set(varSaving, false)
+                              PressedFill: =RGBA(193, 255, 68, 1)
+                              Text: ="承認"

@@ -1,6 +1,6 @@
 # PLUG Solutions v1 — Azure Static Web Apps 公開構成
 
-## 実装状況（2026-08-24）
+## 実装状況（2026-08-26）
 
 - 完了：標準 Next.js 静的出力、公開 JSON スキーマ、一覧・詳細・404、MIT 表示、PLUG ブランド反映。
 - 完了：lint、カタログ検証、テスト、静的ビルドを実行する GitHub Actions CI。
@@ -8,8 +8,18 @@
 - 完了：公開リポジトリ `PLUG365/PLUGSolutions`、GitHub Actions CI、main 保護、`production` Environment の minoru365 承認ゲート。
 - 完了：Azure Static Web Apps `plug-solutions-web`（Free／East Asia）と、`production` Environment Secretへのデプロイトークン登録。
 - 完了：更新を `main` に蓄積し、任意のタイミングで開始する手動本番リリースと `minoru365` 承認ゲート。
-- 未接続：Microsoft Forms、SharePoint、Power Automate、Application Insights。
-- 人手ゲート：初回を含むAzure本番デプロイ、Forms公開設定、SharePoint権限、アクセス解析は、各サービス上の設定確認後に有効化する。
+- 完了：Microsoft Forms「PLUG Solutions 掲載申請」、非公開 SharePoint サイト／審査リスト、`みのる環境` の Power Automate 取込フロー。有効化済み。正常回答の `未審査` 登録、入力不備の `要確認` 登録、同一回答の再処理による重複防止を確認済み。
+- 完了：審査リストの公開用構造化項目、非公開 `Exports` ライブラリ、承認済み申請から公開JSON候補を上書き生成するフロー。有効化済み。
+- 完了：`みのる環境` のアンマネージドSolution `PLUGSolutions`（publisher `PLUG365`、prefix `plug`）へ2本のフローと2件のconnection referenceを所属させ、ローカルでunpack／再packを検証。unpack結果はtenant固有bindingを含むためGit管理外とし、placeholder-based templateを追跡する。
+- 完了：公開JSON候補フローの初回動作試験。`未審査` は出力なし、`承認` は1件生成、同一slugは上書き、公開禁止フィールドなし、公開スキーマ適合を確認済み。
+- 完了：承認済みJSON候補を検証し、明示操作時だけ `catalog/solutions/<slug>.json` へ取り込むローカルコマンド。既存slug、非公開項目、未処理画像を安全側で拒否する。
+- 完了：Default環境のCanvas App `PLUG Solutions Review` をSharePoint審査リストへ接続し、PC・タブレットの一覧＋詳細とスマホ用1列詳細を生成。保存・承認・却下の必須値／競合ガードを含めCanvas Authoringコンパイル済み。PC二ペイン表示、600px幅の一覧、iPhone 390×844での一覧→詳細遷移と縦スクロールを実画面確認済み（データ更新操作は未実施）。
+- 完了：承認済みSharePoint行を読取専用で取得し、公開許可項目だけのJSON、SSRF対策付き画像取得、1200×675 WebP処理、専用branchと掲載PRを準備するGitHub Actionsとテスト。画像なし・通常の画像失敗は文字サムネイルへフォールバックし、危険なURLは処理を拒否する。
+- 確認済み：Microsoft 365 Business BasicのForms／SharePoint／Power Automate Standardコネクタ利用権で現行構成を実行でき、匿名回答者のPower Automateライセンスは不要。
+- 完了：専用Entraアプリ `PLUG Solutions GitHub Intake`、Graph `Lists.SelectedOperations.Selected` の管理者同意、`PLUG365/PLUGSolutions` の `main` 限定OIDC、掲載申請リストの `read` 権限、GitHub Repository variables 5件を設定。長期クライアントシークレットなし。実環境から権限を再読取確認済み。
+- 完了：`PLUG365` Organizationと `PLUGSolutions` repositoryでActionsによるPR作成・承認の複合許可を有効化。既定Workflow権限は `read` のまま。設定時だけ一時追加したGitHub CLIの `admin:org` scopeは削除済み。自動承認処理は実装せず、既存のmain保護と人の承認を維持する。
+- 未実施：Workflowのremote反映、実データでの掲載PR初回試験、Developer環境から本番利用可能な環境へのSolution移行、Application Insights。SharePointへの画像状態書戻しはv1では行わず、PRを処理状態の正本とする。
+- 人手ゲート：本番環境へのSolution import／接続設定／フロー有効化、初回を含むAzure本番デプロイ、Forms公開設定、SharePoint権限、アクセス解析は、各サービス上の設定確認後に有効化する。
 
 ## 方針
 
@@ -109,8 +119,8 @@
 - 人が作品、作者 X、URL、ライセンス、費用、導入条件、画像権利を確認して slug を設定し、「承認」にする。
 - 承認時に Power Automate が非公開ライブラリへ `Exports/<slug>.json` を生成・更新する。
 - JSON には公開情報だけを含め、回答 ID、氏名、メール、同意記録、審査メモ、画像候補 URL を含めない。
-- 人が生成 JSON を確認し、`catalog/solutions/<slug>.json` として取り込む。
-- JSON 生成や SharePoint 承認だけでは GitHub へ push せず、サイトも公開しない。
+- GitHub Actionsが承認済み行を対象リストから読取専用で取得し、`catalog/solutions/<slug>.json` と処理済み画像の専用branch／PRを作る。
+- SharePoint承認だけでは `main` へ反映せず、サイトも公開しない。人がPRを確認・承認・mergeする。
 - 公開スキーマは `schemaVersion`、slug、作品名、作者 X、概要、種類、カテゴリ、タグ、配布・ソース・手順 URL、ライセンス、費用、Premium 要否、導入時間、前提条件、ローカル画像パス、公開日、更新日で固定する。
 
 ### サイト表示
@@ -124,9 +134,8 @@
 
 ## サムネイル処理
 
-- 回答に記載された画像 URL を自動取得しない。
-- 承認後、人が公開 URL、権利、秘密情報、個人情報を確認してローカルへ保存する。
-- ローカル専用画像処理で、10 MB・25 MP 以内の PNG／JPEG／WebP だけを受け付ける。
+- 回答に記載された画像 URL は、Power Appsで人が権利と内容を確認して承認した後だけGitHub Actionsが取得する。
+- HTTPS、公開IP、資格情報なし、リダイレクト再検証、10 MB・25 MP以内のPNG／JPEG／WebPだけを受け付ける。
 - 1200×675 px、WebP 品質 82、余白調整方式で再エンコードし、EXIF・位置情報を除去する。
 - 処理済み画像だけをリポジトリへ追加し、公開サイトから外部画像を直接読み込まない。
 - 画像なし、処理失敗、審査 NG の場合は現在の色・文字サムネイルを使用する。
