@@ -72,11 +72,15 @@ test("approved submission automation uses OIDC and creates reviewable PRs only",
   assert.match(workflow, /^\s+contents: write$/m);
   assert.match(workflow, /^\s+pull-requests: write$/m);
   assert.match(workflow, /azure\/login@v2/);
+  assert.match(workflow, /^\s+allow-no-subscriptions: true$/m);
   assert.match(workflow, /Lists.SelectedOperations.Selected|PLUG_SUBMISSIONS_LIST_ID/);
   assert.match(workflow, /gh pr create/);
   assert.match(workflow, /automation\/catalog-/);
   assert.match(workflow, /npm run check/);
-  assert.doesNotMatch(workflow, /client-secret|AZURE_STATIC_WEB_APPS_API_TOKEN/);
+  assert.doesNotMatch(
+    workflow,
+    /client-secret|AZURE_STATIC_WEB_APPS_API_TOKEN|AZURE_SUBSCRIPTION_ID|subscription-id:/,
+  );
   assert.doesNotMatch(workflow, /^\s*push:\s*$/m);
   assert.doesNotMatch(workflow, /git push[^\n]*\bmain\b/);
 });

@@ -33,9 +33,10 @@ Repository variablesとして次を設定する。IDは認証秘密ではない�
 | --- | --- |
 | `AZURE_CLIENT_ID` | OIDCフェデレーションを設定したEntraアプリのclient ID |
 | `AZURE_TENANT_ID` | Microsoft 365 tenant ID |
-| `AZURE_SUBSCRIPTION_ID` | `azure/login`で使用するAzure subscription ID |
 | `PLUG_SHAREPOINT_SITE_ID` | PLUG Solutions SharePoint site ID |
 | `PLUG_SUBMISSIONS_LIST_ID` | `掲載申請` list ID |
+
+`azure/login` は `allow-no-subscriptions: true` でテナントレベル認証だけを行う。EntraアプリへAzure Subscription RBACを付与しない。
 
 GitHubリポジトリ設定では、ActionsによるPull Request作成を許可する。`main`のbranch protectionとCODEOWNERSによる人の承認は維持する。
 
@@ -43,9 +44,9 @@ GitHubリポジトリ設定では、ActionsによるPull Request作成を許可�
 
 - Entra app: `PLUG Solutions GitHub Intake`
 - Microsoft Graph application permission: `Lists.SelectedOperations.Selected` 1件
-- OIDC subject: `repo:PLUG365/PLUGSolutions:ref:refs/heads/main`
+- OIDC subject: GitHubのimmutable subject形式で `PLUG365/PLUGSolutions` の `main` に限定
 - list permission: `read`
-- GitHub Repository variables: 必要な5件を登録済み
+- GitHub Repository variables: 必要な4件を登録済み。Azure subscription IDは使用しない
 - GitHub Actionsの既定Workflow権限: `read`
 - ActionsによるPR作成・承認の許可: `PLUG365` Organizationと `PLUGSolutions` repositoryの両方で有効。既定Workflow権限は `read` のまま維持。設定変更時だけGitHub CLIへ一時的に `admin:org` scopeを追加し、変更と再読取確認後に削除済み。
 
