@@ -76,6 +76,10 @@ test("approved submission automation uses OIDC and creates reviewable PRs only",
   assert.match(workflow, /Lists.SelectedOperations.Selected|PLUG_SUBMISSIONS_LIST_ID/);
   assert.match(workflow, /gh pr create/);
   assert.match(workflow, /automation\/catalog-/);
+  assert.match(workflow, /automation\/remove-/);
+  assert.match(workflow, /catalog: remove/);
+  assert.match(workflow, /git add -A -- "catalog\/solutions\/\$SLUG\.json"/);
+  assert.match(workflow, /steps\.result\.outputs\.operation/);
   assert.match(workflow, /npm run check/);
   assert.doesNotMatch(
     workflow,

@@ -1,11 +1,21 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  createPinnedLookup,
   isPublicIpAddress,
   parsePublicHttpsUrl,
   resolvePublicAddress,
   UnsafeImageUrlError,
 } from "../lib/public-image-url.mjs";
+
+function invokeLookup(lookup, options) {
+  return new Promise((resolve, reject) => {
+    lookup("ignored.example", options, (error, address, family) => {
+      if (error) reject(error);
+      else resolve({ address, family });
+    });
+  });
+}
 
 test("public image URLs require HTTPS and omit credentials", () => {
   assert.equal(parsePublicHttpsUrl("https://images.example.com/a.png").protocol, "https:");
@@ -60,4 +70,15 @@ test("DNS rebinding candidates are rejected when any answer is non-public", asyn
     ]),
     { address: "8.8.8.8", family: 4 },
   );
+});
+
+test("pinned DNS lookup supports scalar and Node 22 multi-address callbacks", async () => {
+  const pinned = { address: "8.8.8.8", family: 4 };
+  const lookup = createPinnedLookup(pinned);
+
+  assert.deepEqual(await invokeLookup(lookup, {}), pinned);
+  assert.deepEqual(await invokeLookup(lookup, { all: true }), {
+    address: [pinned],
+    family: undefined,
+  });
 });

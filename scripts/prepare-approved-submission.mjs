@@ -4,8 +4,10 @@ import { fileURLToPath } from "node:url";
 import {
   normalizeGraphItems,
   prepareApprovedSubmission,
+  prepareWithdrawnSubmission,
   readFixtureItems,
   selectApprovedSubmission,
+  selectWithdrawnSubmission,
 } from "../lib/prepare-approved-submission.mjs";
 
 function option(name) {
@@ -53,10 +55,15 @@ export async function run({ repositoryRoot = process.cwd() } = {}) {
       });
 
   const catalogDirectory = path.join(repositoryRoot, "catalog", "solutions");
-  const fields = await selectApprovedSubmission(fieldsList, { catalogDirectory, requestedSlug });
-  const result = fields
-    ? await prepareApprovedSubmission({ fields, repositoryRoot })
-    : { status: "none", slug: null, thumbnailStatus: null };
+  const withdrawnFields = await selectWithdrawnSubmission(fieldsList, { catalogDirectory, requestedSlug });
+  const approvedFields = withdrawnFields
+    ? null
+    : await selectApprovedSubmission(fieldsList, { catalogDirectory, requestedSlug });
+  const result = withdrawnFields
+    ? await prepareWithdrawnSubmission({ fields: withdrawnFields, repositoryRoot })
+    : approvedFields
+      ? { ...(await prepareApprovedSubmission({ fields: approvedFields, repositoryRoot })), operation: "add" }
+      : { status: "none", operation: null, slug: null, thumbnailStatus: null };
 
   const resultDirectory = path.join(repositoryRoot, ".automation");
   await mkdir(resultDirectory, { recursive: true });
@@ -64,11 +71,16 @@ export async function run({ repositoryRoot = process.cwd() } = {}) {
     path.join(resultDirectory, "approved-result.json"),
     `${JSON.stringify({
       status: result.status,
+      operation: result.operation,
       slug: result.slug,
       thumbnailStatus: result.thumbnailStatus,
     })}\n`,
   );
-  console.log(result.status === "prepared" ? `Prepared approved submission: ${result.slug}` : "No approved submission to prepare");
+  console.log(
+    result.status === "prepared"
+      ? `Prepared catalog ${result.operation}: ${result.slug}`
+      : "No catalog lifecycle change to prepare",
+  );
   return result;
 }
 

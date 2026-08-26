@@ -8,10 +8,13 @@ import {
   assertNoPrivateFields,
   buildPublicSolution,
   isApprovedSubmission,
+  isWithdrawnSubmission,
 } from "../lib/approved-submission.mjs";
 import {
   prepareApprovedSubmission,
+  prepareWithdrawnSubmission,
   selectApprovedSubmission,
+  selectWithdrawnSubmission,
 } from "../lib/prepare-approved-submission.mjs";
 import { UnsafeImageUrlError } from "../lib/public-image-url.mjs";
 
@@ -54,6 +57,11 @@ test("only approved SharePoint rows are eligible", () => {
     () => buildPublicSolution(approvedFields({ ReviewStatus: "却下" })),
     /not approved/,
   );
+});
+
+test("only withdrawn SharePoint rows are eligible for catalog removal", () => {
+  assert.equal(isWithdrawnSubmission(approvedFields({ ReviewStatus: "取り下げ" })), true);
+  assert.equal(isWithdrawnSubmission(approvedFields({ ReviewStatus: "公開済み" })), false);
 });
 
 test("public solution is allowlisted and excludes review fields", () => {
@@ -151,6 +159,117 @@ test("selection skips unapproved and existing slugs without overwriting", async 
       { catalogDirectory },
     );
     assert.equal(selected.Slug, "next-item");
+    await assert.rejects(
+      selectApprovedSubmission([], {
+        catalogDirectory,
+        requestedSlug: "../unsafe",
+      }),
+      /invalid slug/,
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("withdrawal selection requires an existing catalog slug and rejects unsafe slugs", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "plug-withdraw-selection-test-"));
+  try {
+    await mkdir(root, { recursive: true });
+    await writeFile(path.join(root, "existing.json"), "{}\n");
+    const selected = await selectWithdrawnSubmission(
+      [
+        approvedFields({ ID: "1", ReviewStatus: "公開済み", Slug: "existing" }),
+        approvedFields({ ID: "2", ReviewStatus: "取り下げ", Slug: "missing" }),
+        approvedFields({ ID: "3", ReviewStatus: "取り下げ", Slug: "existing" }),
+      ],
+      { catalogDirectory: root },
+    );
+    assert.equal(selected.ID, "3");
+    await assert.rejects(
+      selectWithdrawnSubmission(
+        [approvedFields({ ReviewStatus: "取り下げ", Slug: "../unsafe" })],
+        { catalogDirectory: root },
+      ),
+      /invalid slug/,
+    );
+    await assert.rejects(
+      selectWithdrawnSubmission([], {
+        catalogDirectory: root,
+        requestedSlug: "../unsafe",
+      }),
+      /invalid slug/,
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("withdrawal removes only the validated catalog JSON and matching thumbnail", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "plug-withdraw-test-"));
+  const catalogDirectory = path.join(root, "catalog", "solutions");
+  const imageDirectory = path.join(root, "public", "images", "solutions");
+  try {
+    await mkdir(catalogDirectory, { recursive: true });
+    await mkdir(imageDirectory, { recursive: true });
+    const solution = buildPublicSolution(approvedFields(), {
+      thumbnail: "/images/solutions/field-tool.webp",
+    });
+    const catalogPath = path.join(catalogDirectory, "field-tool.json");
+    const imagePath = path.join(imageDirectory, "field-tool.webp");
+    await writeFile(catalogPath, `${JSON.stringify(solution, null, 2)}\n`);
+    await writeFile(imagePath, "processed-image");
+    const result = await prepareWithdrawnSubmission({
+      fields: approvedFields({ ReviewStatus: "取り下げ" }),
+      repositoryRoot: root,
+    });
+    assert.equal(result.operation, "remove");
+    assert.equal(result.thumbnailStatus, "removed");
+    await assert.rejects(readFile(catalogPath), /ENOENT/);
+    await assert.rejects(readFile(imagePath), /ENOENT/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("withdrawal removes a catalog item that uses the text-thumbnail fallback", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "plug-withdraw-fallback-test-"));
+  const catalogDirectory = path.join(root, "catalog", "solutions");
+  try {
+    await mkdir(catalogDirectory, { recursive: true });
+    const catalogPath = path.join(catalogDirectory, "field-tool.json");
+    await writeFile(
+      catalogPath,
+      `${JSON.stringify(buildPublicSolution(approvedFields(), { thumbnail: null }), null, 2)}\n`,
+    );
+    const result = await prepareWithdrawnSubmission({
+      fields: approvedFields({ ReviewStatus: "取り下げ" }),
+      repositoryRoot: root,
+    });
+    assert.equal(result.thumbnailStatus, "not-present");
+    await assert.rejects(readFile(catalogPath), /ENOENT/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("withdrawal fails closed for a mismatched thumbnail without deleting files", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "plug-withdraw-mismatch-test-"));
+  const catalogDirectory = path.join(root, "catalog", "solutions");
+  try {
+    await mkdir(catalogDirectory, { recursive: true });
+    const solution = buildPublicSolution(approvedFields(), {
+      thumbnail: "/images/solutions/another-item.webp",
+    });
+    const catalogPath = path.join(catalogDirectory, "field-tool.json");
+    await writeFile(catalogPath, `${JSON.stringify(solution, null, 2)}\n`);
+    await assert.rejects(
+      prepareWithdrawnSubmission({
+        fields: approvedFields({ ReviewStatus: "取り下げ" }),
+        repositoryRoot: root,
+      }),
+      /does not match withdrawn slug/,
+    );
+    assert.equal(JSON.parse(await readFile(catalogPath, "utf8")).slug, "field-tool");
   } finally {
     await rm(root, { recursive: true, force: true });
   }
