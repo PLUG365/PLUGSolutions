@@ -15,6 +15,7 @@
 - 完了：承認済みJSON候補を検証し、明示操作時だけ `catalog/solutions/<slug>.json` へ取り込むローカルコマンド。既存slug、非公開項目、未処理画像を安全側で拒否する。
 - 完了：Default環境のCanvas App `PLUG Solutions Review` をSharePoint審査リストへ接続し、PC・タブレットの一覧＋詳細とスマホ用1列詳細を生成。保存・承認・却下の必須値／競合ガードを含めCanvas Authoringコンパイル済み。PC二ペイン表示、600px幅の一覧、iPhone 390×844での一覧→詳細遷移と縦スクロールを実画面確認済み（データ更新操作は未実施）。
 - 完了：承認済みSharePoint行を読取専用で取得し、公開許可項目だけのJSON、SSRF対策付き画像取得、1200×675 WebP処理、専用branchと掲載PRを準備するGitHub Actionsとテスト。画像なし・通常の画像失敗は文字サムネイルへフォールバックし、危険なURLは処理を拒否する。
+- 実装完了・実環境確認待ち：`公開済み → 取り下げ` をPower Appsで理由必須・競合ガード付きで記録し、SharePoint履歴を残したまま同一slugの公開JSONとWebPだけを削除PRへ送る動線。PLUG所有ロゴは公開URLからの取得、1200×675 WebP化、メタデータ除去まで実経路で確認済み。掲載PRへの追加と取り下げPRでの削除を実環境で確認する。
 - 確認済み：Microsoft 365 Business BasicのForms／SharePoint／Power Automate Standardコネクタ利用権で現行構成を実行でき、匿名回答者のPower Automateライセンスは不要。
 - 完了：専用Entraアプリ `PLUG Solutions GitHub Intake`、Graph `Lists.SelectedOperations.Selected` の管理者同意、`PLUG365/PLUGSolutions` のimmutable `main` 限定OIDC、掲載申請リストの `read` 権限、GitHub Repository variables 4件を設定。Azure Subscription RBACと長期クライアントシークレットは使用しない。実環境から権限を再読取確認済み。
 - 完了：`PLUG365` Organizationと `PLUGSolutions` repositoryでActionsによるPR作成・承認の複合許可を有効化。既定Workflow権限は `read` のまま。設定時だけ一時追加したGitHub CLIの `admin:org` scopeは削除済み。自動承認処理は実装せず、既存のmain保護と人の承認を維持する。

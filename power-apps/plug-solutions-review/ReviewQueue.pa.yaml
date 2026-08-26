@@ -733,3 +733,73 @@ Screens:
                                     OnSelect: |-
                                       =If(IsBlank(Trim(txtQueueTitleField.Text)) || IsBlank(Trim(txtQueueMakerField.Text)) || !StartsWith(Trim(txtQueueXField.Text), "@") || IsBlank(Trim(txtQueueDescriptionField.Text)) || !StartsWith(Lower(Trim(txtQueueDistributionField.Text)), "https://") || !IsMatch(Lower(Trim(txtQueueSlugField.Text)), "^[a-z0-9]+(-[a-z0-9]+)*$") || IsBlank(Trim(txtQueueCatalogTypeField.Text)) || IsBlank(Trim(txtQueueCategoriesField.Text)) || IsBlank(Trim(txtQueueTagsField.Text)) || IsBlank(Trim(txtQueueLicenseField.Text)) || IsBlank(Trim(txtQueueCostField.Text)) || IsBlank(drpQueuePremiumField.Selected.Value) || IsBlank(Trim(txtQueueSetupField.Text)) || IsBlank(dpQueuePublishedDateField.SelectedDate) || IsBlank(dpQueueUpdatedDateField.SelectedDate), Set(varNotice, "承認できません。必須項目、@から始まるXアカウント、https://の配布URL、slug形式を確認してください。"), Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "対象が見つかりません。再読み込みしてください。"), varLatestRequest.Modified <> varSelectedRequest.Modified || varLatestRequest.ReviewStatus.Value <> varSelectedRequest.ReviewStatus.Value, Set(varNotice, "他の担当者が更新しました。承認せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {Title: Trim(txtQueueTitleField.Text), MakerDisplayName: Trim(txtQueueMakerField.Text), XHandle: Trim(txtQueueXField.Text), Description: Trim(txtQueueDescriptionField.Text), DistributionUrl: Trim(txtQueueDistributionField.Text), Slug: Lower(Trim(txtQueueSlugField.Text)), CatalogType: Trim(txtQueueCatalogTypeField.Text), CatalogCategories: Trim(txtQueueCategoriesField.Text), CatalogTags: Trim(txtQueueTagsField.Text), CatalogLicense: Trim(txtQueueLicenseField.Text), CatalogCost: Trim(txtQueueCostField.Text), PremiumRequired: drpQueuePremiumField.Selected, SetupTime: Trim(txtQueueSetupField.Text), SourceUrl: Trim(txtQueueSourceField.Text), InstructionsUrl: Trim(txtQueueInstructionsField.Text), CatalogPrerequisites: Trim(txtQueuePrerequisitesField.Text), ThumbnailPath: Trim(txtQueueThumbnailPathField.Text), CatalogPublishedDate: dpQueuePublishedDateField.SelectedDate, CatalogUpdatedDate: dpQueueUpdatedDateField.SelectedDate, ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "承認"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("承認しました", NotificationType.Success), Set(varNotice, "承認処理に失敗しました。入力内容と接続を確認してください。"))); Set(varSaving, false))
                                     Text: ="承認"
+                        - lblQueuePublishHint:
+                            Control: Label
+                            Properties:
+                              AutoHeight: =true
+                              Color: =RGBA(61, 95, 89, 1)
+                              Live: =Live.Polite
+                              PaddingBottom: =4
+                              PaddingTop: =4
+                              Size: =12
+                              Text: ="GitHub の掲載PRがマージされ、本番サイトで掲載を確認してから「公開済みにする」を実行してください。"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueWithdrawHint:
+                            Control: Label
+                            Properties:
+                              AutoHeight: =true
+                              Color: =RGBA(61, 95, 89, 1)
+                              Live: =Live.Polite
+                              PaddingBottom: =4
+                              PaddingTop: =4
+                              Size: =12
+                              Text: ="取り下げは公開カタログから外すための状態です。申請内容と審査履歴は削除しません。GitHub 側の反映は別途確認してください。"
+                              Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "公開済み"
+                        - conQueueLifecycleActions:
+                            Control: GroupContainer
+                            Variant: AutoLayout
+                            Properties:
+                              FillPortions: =0
+                              Height: =If(Self.Width < 336, 112, 56)
+                              LayoutAlignItems: =LayoutAlignItems.Stretch
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =8
+                              LayoutMinHeight: =If(Self.Width < 336, 112, 56)
+                              LayoutMinWidth: =320
+                              LayoutWrap: =true
+                              Visible: =!IsBlank(varSelectedRequest) && (Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認" || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "公開済み")
+                            Children:
+                              - btnQueueMarkPublished:
+                                  Control: Classic/Button
+                                  Properties:
+                                    BorderColor: =RGBA(20, 21, 18, 1)
+                                    Color: =RGBA(20, 21, 18, 1)
+                                    DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") <> "承認", DisplayMode.Disabled, DisplayMode.Edit)
+                                    Fill: =RGBA(193, 255, 68, 1)
+                                    FillPortions: =1
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =48
+                                    HoverFill: =ColorFade(RGBA(193, 255, 68, 1), -10%)
+                                    LayoutMinHeight: =48
+                                    LayoutMinWidth: =156
+                                    OnSelect: |-
+                                      =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "公開済みにできません。対象が見つかりません。"), varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の担当者が更新しました。公開済みにせず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "承認", Set(varNotice, "公開済みにできません。最新状態が承認ではありません。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewStatus: {Value: "公開済み"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("公開済みにしました", NotificationType.Success), Set(varNotice, "公開済みへの変更に失敗しました。接続を確認してください。"))); Set(varSaving, false)
+                                    Text: ="公開済みにする"
+                                    Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認"
+                              - btnQueueWithdraw:
+                                  Control: Classic/Button
+                                  Properties:
+                                    BorderColor: =RGBA(255, 96, 66, 1)
+                                    Color: =RGBA(255, 96, 66, 1)
+                                    DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") <> "公開済み" || IsBlank(Trim(txtQueueReviewNotesField.Text)), DisplayMode.Disabled, DisplayMode.Edit)
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    FillPortions: =1
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =48
+                                    HoverFill: =RGBA(255, 96, 66, 0.12)
+                                    LayoutMinHeight: =48
+                                    LayoutMinWidth: =156
+                                    OnSelect: |-
+                                      =If(IsBlank(Trim(txtQueueReviewNotesField.Text)), Set(varNotice, "取り下げ理由を審査メモへ入力してください。"), Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "取り下げできません。対象が見つかりません。"), varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の担当者が更新しました。取り下げず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "公開済み", Set(varNotice, "取り下げできません。最新状態が公開済みではありません。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "取り下げ"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("取り下げとして保存しました", NotificationType.Success), Set(varNotice, "取り下げ処理に失敗しました。接続を確認してください。"))); Set(varSaving, false))
+                                    Text: ="取り下げ"
+                                    Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "公開済み"

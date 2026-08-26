@@ -1,4 +1,4 @@
-name: Import approved submission
+name: Sync catalog lifecycle
 
 on:
   schedule:
@@ -42,7 +42,7 @@ jobs:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           allow-no-subscriptions: true
-      - name: Read approved SharePoint item and prepare files
+      - name: Read SharePoint lifecycle state and prepare files
         env:
           PLUG_SHAREPOINT_SITE_ID: ${{ vars.PLUG_SHAREPOINT_SITE_ID }}
           PLUG_SUBMISSIONS_LIST_ID: ${{ vars.PLUG_SUBMISSIONS_LIST_ID }}
@@ -55,21 +55,28 @@ jobs:
         id: result
         run: |
           status="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).status")"
+          operation="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).operation || ''")"
           slug="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).slug || ''")"
           thumbnail_status="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).thumbnailStatus || ''")"
           echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "operation=$operation" >> "$GITHUB_OUTPUT"
           echo "slug=$slug" >> "$GITHUB_OUTPUT"
           echo "thumbnail_status=$thumbnail_status" >> "$GITHUB_OUTPUT"
       - name: Stop when no item is ready
         if: steps.result.outputs.status == 'none'
-        run: echo "No approved submission is ready."
+        run: echo "No catalog lifecycle change is ready."
       - name: Check for an existing automation branch
         if: steps.result.outputs.status == 'prepared'
         id: branch
         env:
+          OPERATION: ${{ steps.result.outputs.operation }}
           SLUG: ${{ steps.result.outputs.slug }}
         run: |
-          branch="automation/catalog-$SLUG"
+          if test "$OPERATION" = "remove"; then
+            branch="automation/remove-$SLUG"
+          else
+            branch="automation/catalog-$SLUG"
+          fi
           if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
             echo "Existing automation branch found; leaving it unchanged."
@@ -84,32 +91,47 @@ jobs:
         if: steps.result.outputs.status == 'prepared' && steps.branch.outputs.exists == 'false'
         env:
           BRANCH: ${{ steps.branch.outputs.name }}
+          OPERATION: ${{ steps.result.outputs.operation }}
           SLUG: ${{ steps.result.outputs.slug }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
-          git add -- "catalog/solutions/$SLUG.json"
-          if test -f "public/images/solutions/$SLUG.webp"; then
-            git add -- "public/images/solutions/$SLUG.webp"
+          if test "$OPERATION" = "remove"; then
+            git add -A -- "catalog/solutions/$SLUG.json" "public/images/solutions/$SLUG.webp"
+            git commit -m "catalog: remove $SLUG"
+          else
+            git add -- "catalog/solutions/$SLUG.json"
+            if test -f "public/images/solutions/$SLUG.webp"; then
+              git add -- "public/images/solutions/$SLUG.webp"
+            fi
+            git commit -m "catalog: add $SLUG"
           fi
-          git commit -m "catalog: add $SLUG"
           git push --set-upstream origin "$BRANCH"
       - name: Create pull request
         if: steps.result.outputs.status == 'prepared' && steps.branch.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           BRANCH: ${{ steps.branch.outputs.name }}
+          OPERATION: ${{ steps.result.outputs.operation }}
           SLUG: ${{ steps.result.outputs.slug }}
           THUMBNAIL_STATUS: ${{ steps.result.outputs.thumbnail_status }}
         run: |
+          if test "$OPERATION" = "remove"; then
+            title="catalog: remove $SLUG"
+            summary="Power Appsで取り下げ済みの作品を公開カタログから外す変更を自動準備しました。"
+          else
+            title="catalog: add $SLUG"
+            summary="Power Appsで承認済みの申請を自動準備しました。"
+          fi
           gh pr create \
             --base main \
             --head "$BRANCH" \
-            --title "catalog: add $SLUG" \
-            --body "Power Appsで承認済みの申請を自動準備しました。
+            --title "$title" \
+            --body "$summary
 
+          - operation: \`$OPERATION\`
           - slug: \`$SLUG\`
           - thumbnail: \`$THUMBNAIL_STATUS\`
 
-          作品情報、リンク、ライセンス、画像内容、CI結果を確認してから承認してください。候補画像URLや審査用の非公開情報はこのPRに含めていません。"
+          対象ファイル、画像、CI結果を確認してから承認してください。候補画像URLや審査用の非公開情報はこのPRに含めていません。"

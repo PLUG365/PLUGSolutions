@@ -14,7 +14,7 @@
     "prepare:approved": "node scripts/prepare-approved-submission.mjs",
     "import:solution": "node scripts/import-approved-solution.mjs",
     "validate:catalog": "node scripts/validate-catalog.mjs",
-    "test": "node --test tests/approved-submission.test.mjs tests/catalog.test.mjs tests/import-approved-solution.test.mjs tests/public-image-url.test.mjs tests/thumbnail.test.mjs tests/workflows.test.mjs",
+    "test": "node --test tests/approved-submission.test.mjs tests/canvas-review-lifecycle.test.mjs tests/catalog.test.mjs tests/import-approved-solution.test.mjs tests/public-image-url.test.mjs tests/thumbnail.test.mjs tests/workflows.test.mjs",
     "test:rendered": "node --test tests/rendered-html.test.mjs",
     "check": "npm run lint && npm run validate:catalog && npm test && npm run build && npm run test:rendered",
     "lint": "eslint ."
