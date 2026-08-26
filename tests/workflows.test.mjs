@@ -52,6 +52,10 @@ test("production deploy is a manual, main-only, approval-gated release", async (
     /Azure\/static-web-apps-deploy@[a-f0-9]{40}/,
   );
   assert.match(workflow, /^\s+skip_app_build: true\s*$/m);
+  assert.match(workflow, /NEXT_PUBLIC_SUBMISSION_FORM_URL: \$\{\{ vars\.NEXT_PUBLIC_SUBMISSION_FORM_URL \}\}/);
+  assert.match(workflow, /NEXT_PUBLIC_LOUNGE_MODE: \$\{\{ vars\.NEXT_PUBLIC_LOUNGE_MODE \}\}/);
+  assert.match(workflow, /NEXT_PUBLIC_LOUNGE_ROOM: \$\{\{ vars\.NEXT_PUBLIC_LOUNGE_ROOM \}\}/);
+  assert.doesNotMatch(workflow, /secrets\.NEXT_PUBLIC_/);
   assert.doesNotMatch(workflow, /^\s+skip_api_build:/m);
   assert.doesNotMatch(workflow, /^\s*workflow_run:\s*$/m);
   assert.doesNotMatch(workflow, /^\s*push:\s*$/m);

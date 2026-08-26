@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import plugLogo from "../assets/完成品(縁あり).png";
 import CatalogExplorer from "./CatalogExplorer";
 import { getAllSolutions, getReactionCounts } from "../lib/catalog";
@@ -22,6 +23,7 @@ export default async function Home() {
           <a href="#catalog">見つける</a>
           <a href="#plug">PLUGの考え方</a>
           <a href="#about">参加の流れ</a>
+          <Link href="/guide/">掲載ガイド</Link>
         </nav>
         <a className="header-cta" href="#submit">作品を持ち寄る <span aria-hidden="true">↗</span></a>
       </header>
@@ -156,7 +158,7 @@ export default async function Home() {
       <footer className="site-footer">
         <a className="brand footer-brand" href="#top"><Image className="brand-logo" src={plugLogo} alt="" /><span>PLUG<br />SOLUTIONS</span></a>
         <p>つなぐ × 電源を入れる × ギャップを埋める</p>
-        <div><a href="#catalog">探す</a><a href="#plug">PLUGについて</a><a href="#submit">掲載する</a><a href={plugGuideUrl} target="_blank" rel="noreferrer">ガイド ↗</a><a href={plugConnpassUrl} target="_blank" rel="noreferrer">connpass ↗</a></div>
+        <div><a href="#catalog">探す</a><a href="#plug">PLUGについて</a><a href="#submit">掲載する</a><Link href="/guide/">掲載ガイド</Link><a href={plugGuideUrl} target="_blank" rel="noreferrer">PLUGガイド ↗</a><a href={plugConnpassUrl} target="_blank" rel="noreferrer">connpass ↗</a></div>
         <small>minoru365による個人運営 · MICROSOFT非公式 · 2026</small>
       </footer>
     </main>

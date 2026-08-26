@@ -22,6 +22,14 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_SUBMISSION_FORM_URL: ${{ vars.NEXT_PUBLIC_SUBMISSION_FORM_URL }}
+      NEXT_PUBLIC_REACTION_FORM_URL: ${{ vars.NEXT_PUBLIC_REACTION_FORM_URL }}
+      NEXT_PUBLIC_REPORT_FORM_URL: ${{ vars.NEXT_PUBLIC_REPORT_FORM_URL }}
+      NEXT_PUBLIC_LOUNGE_MODE: ${{ vars.NEXT_PUBLIC_LOUNGE_MODE }}
+      NEXT_PUBLIC_LOUNGE_ROOM: ${{ vars.NEXT_PUBLIC_LOUNGE_ROOM }}
+      NEXT_PUBLIC_LOUNGE_START_AT: ${{ vars.NEXT_PUBLIC_LOUNGE_START_AT }}
+      NEXT_PUBLIC_LOUNGE_END_AT: ${{ vars.NEXT_PUBLIC_LOUNGE_END_AT }}
     environment:
       name: production
       url: https://kind-stone-076361900.7.azurestaticapps.net
