@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "slug": "plug-solutions-image-e2e",
+  "title": "PLUG Solutions 画像付き掲載テスト",
+  "maker": {
+    "displayName": "PLUG Solutions 運営テスト",
+    "xHandle": "@plug_e2e_test",
+    "xUrl": "https://x.com/plug_e2e_test"
+  },
+  "description": "PLUG Solutionsの画像取得・サイズ調整・メタデータ除去・掲載PR・本番公開までを確認するためのテスト作品です。確認後は取り下げ動線の検証に使用します。",
+  "type": "web",
+  "categories": [
+    "開発者ツール",
+    "Webアプリ"
+  ],
+  "tags": [
+    "E2E",
+    "画像処理",
+    "PLUG"
+  ],
+  "distributionUrl": "https://github.com/PLUG365/PLUGSolutions",
+  "sourceUrl": "https://github.com/PLUG365/PLUGSolutions",
+  "instructionsUrl": "https://plug365.github.io/PLUGGuide/",
+  "license": "MIT",
+  "cost": "無料",
+  "premiumRequired": false,
+  "setupTime": "5分",
+  "prerequisites": [
+    "公開カタログ確認用"
+  ],
+  "thumbnail": "/images/solutions/plug-solutions-image-e2e.webp",
+  "publishedAt": "2026-08-26",
+  "updatedAt": "2026-08-26"
+}

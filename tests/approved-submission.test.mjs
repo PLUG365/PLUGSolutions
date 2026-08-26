@@ -77,6 +77,31 @@ test("public solution is allowlisted and excludes review fields", () => {
   }
 });
 
+test("SharePoint timestamps are converted to their Asia/Tokyo calendar date", () => {
+  const result = buildPublicSolution(
+    approvedFields({
+      CatalogPublishedDate: "2026-08-25T15:00:00Z",
+      CatalogUpdatedDate: "2026-08-25T15:00:00.000Z",
+    }),
+  );
+  assert.equal(result.publishedAt, "2026-08-26");
+  assert.equal(result.updatedAt, "2026-08-26");
+
+  assert.equal(
+    buildPublicSolution(
+      approvedFields({
+        CatalogPublishedDate: "2026-08-26",
+        CatalogUpdatedDate: "2026-08-26",
+      }),
+    ).publishedAt,
+    "2026-08-26",
+  );
+  assert.throws(
+    () => buildPublicSolution(approvedFields({ CatalogPublishedDate: "2026-08-26Tinvalid" })),
+    /ISO timestamp/,
+  );
+});
+
 test("invalid required public fields are rejected before writing", () => {
   assert.throws(
     () => buildPublicSolution(approvedFields({ CatalogCategories: "" })),
