@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "slug": "plug-solutions-e2e-test",
+  "title": "PLUG Solutions 動作確認用テスト",
+  "maker": {
+    "displayName": "PLUG Solutions 運営テスト",
+    "xHandle": "@plug_e2e_test",
+    "xUrl": "https://x.com/plug_e2e_test"
+  },
+  "description": "Power Automate 取込フローの動作確認用テスト申請です。公開カタログには掲載しません。",
+  "type": "web",
+  "categories": [
+    "開発者ツール"
+  ],
+  "tags": [
+    "test"
+  ],
+  "distributionUrl": "https://example.com/plug-solutions-test",
+  "sourceUrl": "https://example.com/plug-solutions-e2e/source",
+  "instructionsUrl": "https://example.com/plug-solutions-e2e/setup",
+  "license": "MIT",
+  "cost": "無料",
+  "premiumRequired": false,
+  "setupTime": "10分",
+  "prerequisites": [
+    "テスト環境"
+  ],
+  "thumbnail": null,
+  "publishedAt": "2026-08-24",
+  "updatedAt": "2026-08-24"
+}
