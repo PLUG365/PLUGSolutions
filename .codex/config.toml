@@ -1,0 +1,6 @@
+[mcp_servers.pac-cli]
+command = "dnx"
+args = ["Microsoft.PowerApps.CLI.Tool", "--yes", "copilot", "mcp", "--run"]
+
+[mcp_servers.microsoft-learn]
+url = "https://learn.microsoft.com/api/mcp"

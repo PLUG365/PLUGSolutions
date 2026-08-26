@@ -1,0 +1,735 @@
+Screens:
+  ReviewQueue:
+    Properties:
+      Fill: =RGBA(244, 240, 230, 1)
+      LoadingSpinnerColor: =RGBA(255, 96, 66, 1)
+      OnVisible: =Refresh(掲載申請)
+    Children:
+      - conQueueRoot:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(244, 240, 230, 1)
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =If(App.Width < 768, 12, 16)
+            PaddingBottom: =If(App.Width < 768, 12, 24)
+            PaddingLeft: =If(App.Width < 768, 12, 24)
+            PaddingRight: =If(App.Width < 768, 12, 24)
+            PaddingTop: =If(App.Width < 768, 12, 24)
+            Width: =Parent.Width
+          Children:
+            - conQueueHeader:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(20, 21, 18, 1)
+                  FillPortions: =0
+                  Height: =72
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                  LayoutMinHeight: =72
+                  PaddingBottom: =12
+                  PaddingLeft: =16
+                  PaddingRight: =16
+                  PaddingTop: =12
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                Children:
+                  - lblQueueTitle:
+                      Control: Label
+                      Properties:
+                        AlignInContainer: =AlignInContainer.Stretch
+                        Color: =RGBA(244, 240, 230, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =48
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =180
+                        Role: =TextRole.Heading1
+                        Size: =If(App.Width < 768, 20, 24)
+                        Text: ="PLUG Solutions 審査"
+                        Wrap: =false
+                  - btnQueueRefresh:
+                      Control: Classic/Button
+                      Properties:
+                        BorderColor: =RGBA(193, 255, 68, 1)
+                        BorderThickness: =1
+                        Color: =RGBA(20, 21, 18, 1)
+                        Fill: =RGBA(193, 255, 68, 1)
+                        Height: =48
+                        HoverFill: =ColorFade(RGBA(193, 255, 68, 1), -10%)
+                        LayoutMinHeight: =48
+                        LayoutMinWidth: =If(App.Width < 768, 88, 112)
+                        OnSelect: =Refresh(掲載申請); Notify("一覧を更新しました", NotificationType.Success)
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        Size: =14
+                        Text: ="更新"
+                        Width: =If(App.Width < 768, 88, 112)
+            - conQueueBody:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(244, 240, 230, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =16
+                  LayoutMinHeight: =240
+                  LayoutMinWidth: =240
+                Children:
+                  - conQueuePane:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(20, 21, 18, 0.2)
+                        BorderThickness: =1
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =If(App.Width < 768, 1, 0)
+                        LayoutAlignItems: =LayoutAlignItems.Stretch
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        LayoutMaxWidth: =If(App.Width < 768, 10000, 420)
+                        LayoutMinHeight: =240
+                        LayoutMinWidth: =If(App.Width < 768, 240, 360)
+                        PaddingBottom: =12
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =12
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        Width: =If(App.Width < 768, Parent.Width, Min(420, Max(360, Parent.Width * 0.34)))
+                      Children:
+                        - txtQueueSearch:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="タイトル、作者、スラッグを検索"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Clear: =true
+                              DelayOutput: =true
+                              FocusedBorderColor: =RGBA(255, 96, 66, 1)
+                              Height: =48
+                              HintText: ="タイトル・作者・slugを検索"
+                              LayoutMinHeight: =48
+                              LayoutMinWidth: =200
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Size: =14
+                        - drpQueueStatus:
+                            Control: Classic/DropDown
+                            Properties:
+                              AccessibleLabel: ="審査状態で絞り込み"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              ChevronBackground: =RGBA(20, 21, 18, 1)
+                              ChevronFill: =RGBA(244, 240, 230, 1)
+                              Default: ="すべて"
+                              Height: =48
+                              Items: =["すべて", "未審査", "要確認", "承認", "却下", "公開済み", "取り下げ"]
+                              Items.Value: =Value
+                              LayoutMinHeight: =48
+                              LayoutMinWidth: =200
+                              SelectionColor: =RGBA(20, 21, 18, 1)
+                              SelectionFill: =RGBA(193, 255, 68, 1)
+                              Size: =14
+                        - galReviewQueue:
+                            Control: Gallery
+                            Variant: Vertical
+                            Properties:
+                              AccessibleLabel: ="掲載申請の審査一覧"
+                              BorderColor: =RGBA(20, 21, 18, 0.15)
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FocusedBorderColor: =RGBA(255, 96, 66, 1)
+                              FocusedBorderThickness: =2
+                              Items: =Sort(Filter(掲載申請, (drpQueueStatus.Selected.Value = "すべて" || ReviewStatus.Value = drpQueueStatus.Selected.Value) && (IsBlank(txtQueueSearch.Text) || StartsWith(Title, txtQueueSearch.Text) || StartsWith(MakerDisplayName, txtQueueSearch.Text) || StartsWith(Slug, txtQueueSearch.Text))), Modified, SortOrder.Descending)
+                              LayoutMinHeight: =200
+                              LayoutMinWidth: =200
+                              LoadingSpinnerColor: =RGBA(255, 96, 66, 1)
+                              TabIndex: =0
+                              TemplatePadding: =6
+                              TemplateSize: =116
+                            Children:
+                              - btnQueueSelectRow:
+                                  Control: Classic/Button
+                                  Properties:
+                                    BorderColor: =If(ThisItem.IsSelected, RGBA(255, 96, 66, 1), RGBA(20, 21, 18, 0.15))
+                                    BorderThickness: =If(ThisItem.IsSelected, 2, 1)
+                                    Color: =RGBA(20, 21, 18, 1)
+                                    Fill: =If(ThisItem.IsSelected, RGBA(255, 96, 66, 0.12), RGBA(255, 255, 255, 1))
+                                    Height: =104
+                                    HoverFill: =RGBA(193, 255, 68, 0.22)
+                                    OnSelect: =Set(varSelectedRequest, ThisItem); Set(varNotice, ""); If(App.Width < 768, Navigate(ReviewDetail, ScreenTransition.Cover))
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                    Text: =""
+                                    Width: =Parent.TemplateWidth - 12
+                                    X: =6
+                              - lblQueueItemTitle:
+                                  Control: Label
+                                  Properties:
+                                    Color: =RGBA(20, 21, 18, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =32
+                                    OnSelect: =Select(btnQueueSelectRow)
+                                    PaddingLeft: =14
+                                    Size: =15
+                                    Text: =Coalesce(ThisItem.Title, "名称未設定")
+                                    Tooltip: =Coalesce(ThisItem.Title, "名称未設定")
+                                    Width: =Parent.TemplateWidth - 28
+                                    Wrap: =false
+                                    X: =8
+                                    Y: =8
+                              - lblQueueItemMaker:
+                                  Control: Label
+                                  Properties:
+                                    Color: =RGBA(61, 95, 89, 1)
+                                    Height: =28
+                                    OnSelect: =Select(btnQueueSelectRow)
+                                    PaddingLeft: =14
+                                    Size: =12
+                                    Text: =Coalesce(ThisItem.MakerDisplayName, "作者未設定")
+                                    Width: =Parent.TemplateWidth - 28
+                                    Wrap: =false
+                                    X: =8
+                                    Y: =40
+                              - lblQueueItemStatus:
+                                  Control: Label
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =RGBA(20, 21, 18, 1)
+                                    Fill: =Switch(ThisItem.ReviewStatus.Value, "承認", RGBA(193, 255, 68, 1), "却下", RGBA(255, 96, 66, 0.25), "要確認", RGBA(255, 96, 66, 0.15), RGBA(244, 240, 230, 1))
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =32
+                                    OnSelect: =Select(btnQueueSelectRow)
+                                    Size: =11
+                                    Text: =Coalesce(ThisItem.ReviewStatus.Value, "未設定")
+                                    Width: =108
+                                    X: =20
+                                    Y: =72
+                              - lblQueueItemModified:
+                                  Control: Label
+                                  Properties:
+                                    Align: =Align.Right
+                                    Color: =RGBA(61, 95, 89, 1)
+                                    Height: =32
+                                    OnSelect: =Select(btnQueueSelectRow)
+                                    Size: =10
+                                    Text: =Text(ThisItem.Modified, "yyyy/mm/dd HH:mm")
+                                    Width: =Parent.TemplateWidth - 148
+                                    X: =132
+                                    Y: =72
+                  - conQueueDetail:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(20, 21, 18, 0.2)
+                        BorderThickness: =1
+                        Fill: =RGBA(255, 255, 255, 1)
+                        LayoutAlignItems: =LayoutAlignItems.Stretch
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        LayoutMinHeight: =240
+                        LayoutMinWidth: =360
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        Visible: =App.Width >= 768
+                      Children:
+                        - lblQueueEmpty:
+                            Control: Label
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(61, 95, 89, 1)
+                              Height: =96
+                              LayoutMinHeight: =96
+                              Role: =TextRole.Heading3
+                              Size: =17
+                              Text: ="左の一覧から審査する作品を選択してください"
+                              Visible: =IsBlank(varSelectedRequest)
+                        - lblQueueDetailHeading:
+                            Control: Label
+                            Properties:
+                              Color: =RGBA(20, 21, 18, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Role: =TextRole.Heading2
+                              Size: =22
+                              Text: ="掲載内容を確認・編集"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueStaleHint:
+                            Control: Label
+                            Properties:
+                              AutoHeight: =true
+                              Color: =RGBA(61, 95, 89, 1)
+                              Live: =Live.Polite
+                              PaddingBottom: =6
+                              Size: =12
+                              Text: ="保存・承認・却下の直前に最新版を確認します。他の担当者が更新した場合は処理を中止します。"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueStatusValue:
+                            Control: Label
+                            Properties:
+                              Color: =RGBA(20, 21, 18, 1)
+                              Fill: =RGBA(244, 240, 230, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =44
+                              LayoutMinHeight: =44
+                              PaddingLeft: =12
+                              Text: |-
+                                ="状態: " & Coalesce(varSelectedRequest.ReviewStatus.Value, "未設定") & "   更新: " & Text(varSelectedRequest.Modified, "yyyy/mm/dd HH:mm")
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - imgQueueThumbnail:
+                            Control: Image
+                            Properties:
+                              AccessibleLabel: ="処理済みサムネイル画像"
+                              BorderColor: =RGBA(20, 21, 18, 0.2)
+                              BorderThickness: =1
+                              Height: =220
+                              Image: =varSelectedRequest.ThumbnailPath
+                              LayoutMinHeight: =220
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Visible: =!IsBlank(varSelectedRequest) && !IsBlank(varSelectedRequest.ThumbnailPath)
+                        - lblQueueThumbnailFallback:
+                            Control: Label
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(20, 21, 18, 1)
+                              Fill: =RGBA(193, 255, 68, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =160
+                              LayoutMinHeight: =160
+                              Role: =TextRole.Heading1
+                              Size: =48
+                              Text: =Upper(Left(Coalesce(varSelectedRequest.Title, "?"), 1))
+                              Visible: =!IsBlank(varSelectedRequest) && IsBlank(varSelectedRequest.ThumbnailPath)
+                        - btnQueueCandidateImage:
+                            Control: Classic/Button
+                            Properties:
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Color: =RGBA(20, 21, 18, 1)
+                              Fill: =RGBA(255, 255, 255, 1)
+                              Height: =48
+                              LayoutMinHeight: =48
+                              OnSelect: =Launch(varSelectedRequest.ThumbnailCandidateUrl)
+                              Text: ="申請画像URLを確認 ↗"
+                              Visible: =!IsBlank(varSelectedRequest) && !IsBlank(varSelectedRequest.ThumbnailCandidateUrl)
+                        - lblQueueTitleField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              LayoutMinHeight: =28
+                              Text: ="作品名 *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueTitleField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="作品名"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.Title
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Reset: =varSelectedRequest.ID <> galReviewQueue.Selected.ID
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueMakerField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="作者表示名 *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueMakerField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="作者表示名"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.MakerDisplayName
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueXField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="Xアカウント（@から）*"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueXField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="Xアカウント"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.XHandle
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueDescriptionField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="説明 *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueDescriptionField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="作品の説明"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.Description
+                              Height: =120
+                              LayoutMinHeight: =120
+                              Mode: =TextMode.MultiLine
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueDistributionField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="配布URL（https://）*"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueDistributionField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="配布URL"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.DistributionUrl
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueSlugField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="slug（英小文字・数字・単一ハイフン）*"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueSlugField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="公開用slug"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.Slug
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueCatalogTypeField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="種別 *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueCatalogTypeField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="カタログ種別"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.CatalogType
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueCategoriesField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="カテゴリ *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueCategoriesField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="カテゴリ"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.CatalogCategories
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueTagsField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="タグ *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueTagsField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="タグ"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.CatalogTags
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueLicenseField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="ライセンス *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueLicenseField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="ライセンス"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.CatalogLicense
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueCostField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="費用 *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueCostField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="費用"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.CatalogCost
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueuePremiumField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="Premium要否 *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - drpQueuePremiumField:
+                            Control: Classic/DropDown
+                            Properties:
+                              AccessibleLabel: ="Premium要否"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.PremiumRequired.Value
+                              Height: =48
+                              Items: =Choices(掲載申請.PremiumRequired)
+                              Items.Value: =Value
+                              LayoutMinHeight: =48
+                              SelectionColor: =RGBA(20, 21, 18, 1)
+                              SelectionFill: =RGBA(193, 255, 68, 1)
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueSetupField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="導入時間 *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueSetupField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="導入時間"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.SetupTime
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueSourceField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="ソースURL"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueSourceField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="ソースURL"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.SourceUrl
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueInstructionsField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="手順URL"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueInstructionsField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="手順URL"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.InstructionsUrl
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueuePrerequisitesField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="前提条件"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueuePrerequisitesField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="前提条件"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.CatalogPrerequisites
+                              Height: =96
+                              LayoutMinHeight: =96
+                              Mode: =TextMode.MultiLine
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueThumbnailPathField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="処理済みサムネイルパス"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueThumbnailPathField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="処理済みサムネイルパス"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.ThumbnailPath
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueuePublishedDateField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="公開日 *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - dpQueuePublishedDateField:
+                            Control: Classic/DatePicker
+                            Properties:
+                              AccessibleLabel: ="公開日"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              DefaultDate: =varSelectedRequest.CatalogPublishedDate
+                              Height: =48
+                              IsEditable: =true
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueUpdatedDateField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="更新日 *"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - dpQueueUpdatedDateField:
+                            Control: Classic/DatePicker
+                            Properties:
+                              AccessibleLabel: ="更新日"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              DefaultDate: =varSelectedRequest.CatalogUpdatedDate
+                              Height: =48
+                              IsEditable: =true
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueReviewNotesField:
+                            Control: Label
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              Text: ="審査メモ（却下時は必須）"
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - txtQueueReviewNotesField:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="審査メモ"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.ReviewNotes
+                              Height: =96
+                              LayoutMinHeight: =96
+                              Mode: =TextMode.MultiLine
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueNotice:
+                            Control: Label
+                            Properties:
+                              AutoHeight: =true
+                              Color: =RGBA(255, 96, 66, 1)
+                              Live: =Live.Assertive
+                              Text: =varNotice
+                              Visible: =!IsBlank(varNotice)
+                        - conQueueActions:
+                            Control: GroupContainer
+                            Variant: AutoLayout
+                            Properties:
+                              FillPortions: =0
+                              Height: =64
+                              LayoutAlignItems: =LayoutAlignItems.Stretch
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutMinHeight: =64
+                              LayoutMinWidth: =320
+                              LayoutWrap: =true
+                              Visible: =!IsBlank(varSelectedRequest)
+                            Children:
+                              - btnQueueSave:
+                                  Control: Classic/Button
+                                  Properties:
+                                    BorderColor: =RGBA(20, 21, 18, 1)
+                                    Color: =RGBA(20, 21, 18, 1)
+                                    DisplayMode: =If(varSaving, DisplayMode.Disabled, DisplayMode.Edit)
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    FillPortions: =1
+                                    Height: =48
+                                    LayoutMinHeight: =48
+                                    LayoutMinWidth: =120
+                                    OnSelect: |-
+                                      =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "対象が見つかりません。再読み込みしてください。"), varLatestRequest.Modified <> varSelectedRequest.Modified || varLatestRequest.ReviewStatus.Value <> varSelectedRequest.ReviewStatus.Value, Set(varNotice, "他の担当者が更新しました。保存せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {Title: Trim(txtQueueTitleField.Text), MakerDisplayName: Trim(txtQueueMakerField.Text), XHandle: Trim(txtQueueXField.Text), Description: Trim(txtQueueDescriptionField.Text), DistributionUrl: Trim(txtQueueDistributionField.Text), Slug: Lower(Trim(txtQueueSlugField.Text)), CatalogType: Trim(txtQueueCatalogTypeField.Text), CatalogCategories: Trim(txtQueueCategoriesField.Text), CatalogTags: Trim(txtQueueTagsField.Text), CatalogLicense: Trim(txtQueueLicenseField.Text), CatalogCost: Trim(txtQueueCostField.Text), PremiumRequired: drpQueuePremiumField.Selected, SetupTime: Trim(txtQueueSetupField.Text), SourceUrl: Trim(txtQueueSourceField.Text), InstructionsUrl: Trim(txtQueueInstructionsField.Text), CatalogPrerequisites: Trim(txtQueuePrerequisitesField.Text), ThumbnailPath: Trim(txtQueueThumbnailPathField.Text), CatalogPublishedDate: dpQueuePublishedDateField.SelectedDate, CatalogUpdatedDate: dpQueueUpdatedDateField.SelectedDate, ReviewNotes: Trim(txtQueueReviewNotesField.Text)})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("保存しました", NotificationType.Success), Set(varNotice, "保存に失敗しました。入力内容と接続を確認してください。"))); Set(varSaving, false)
+                                    Text: ="保存"
+                              - btnQueueReject:
+                                  Control: Classic/Button
+                                  Properties:
+                                    BorderColor: =RGBA(255, 96, 66, 1)
+                                    Color: =RGBA(20, 21, 18, 1)
+                                    DisplayMode: =If(varSaving, DisplayMode.Disabled, DisplayMode.Edit)
+                                    Fill: =RGBA(255, 96, 66, 0.2)
+                                    FillPortions: =1
+                                    Height: =48
+                                    LayoutMinHeight: =48
+                                    LayoutMinWidth: =120
+                                    OnSelect: |-
+                                      =If(IsBlank(Trim(txtQueueReviewNotesField.Text)), Set(varNotice, "却下理由を審査メモへ入力してください。"), Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "対象が見つかりません。再読み込みしてください。"), varLatestRequest.Modified <> varSelectedRequest.Modified || varLatestRequest.ReviewStatus.Value <> varSelectedRequest.ReviewStatus.Value, Set(varNotice, "他の担当者が更新しました。却下せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "却下"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("却下として保存しました", NotificationType.Success), Set(varNotice, "却下処理に失敗しました。接続を確認してください。"))); Set(varSaving, false))
+                                    Text: ="却下"
+                              - btnQueueApprove:
+                                  Control: Classic/Button
+                                  Properties:
+                                    BorderColor: =RGBA(255, 96, 66, 1)
+                                    Color: =RGBA(20, 21, 18, 1)
+                                    DisplayMode: =If(varSaving, DisplayMode.Disabled, DisplayMode.Edit)
+                                    Fill: =RGBA(255, 96, 66, 1)
+                                    FillPortions: =1
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =48
+                                    HoverFill: =ColorFade(RGBA(255, 96, 66, 1), -10%)
+                                    LayoutMinHeight: =48
+                                    LayoutMinWidth: =120
+                                    OnSelect: |-
+                                      =If(IsBlank(Trim(txtQueueTitleField.Text)) || IsBlank(Trim(txtQueueMakerField.Text)) || !StartsWith(Trim(txtQueueXField.Text), "@") || IsBlank(Trim(txtQueueDescriptionField.Text)) || !StartsWith(Lower(Trim(txtQueueDistributionField.Text)), "https://") || !IsMatch(Lower(Trim(txtQueueSlugField.Text)), "^[a-z0-9]+(-[a-z0-9]+)*$") || IsBlank(Trim(txtQueueCatalogTypeField.Text)) || IsBlank(Trim(txtQueueCategoriesField.Text)) || IsBlank(Trim(txtQueueTagsField.Text)) || IsBlank(Trim(txtQueueLicenseField.Text)) || IsBlank(Trim(txtQueueCostField.Text)) || IsBlank(drpQueuePremiumField.Selected.Value) || IsBlank(Trim(txtQueueSetupField.Text)) || IsBlank(dpQueuePublishedDateField.SelectedDate) || IsBlank(dpQueueUpdatedDateField.SelectedDate), Set(varNotice, "承認できません。必須項目、@から始まるXアカウント、https://の配布URL、slug形式を確認してください。"), Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "対象が見つかりません。再読み込みしてください。"), varLatestRequest.Modified <> varSelectedRequest.Modified || varLatestRequest.ReviewStatus.Value <> varSelectedRequest.ReviewStatus.Value, Set(varNotice, "他の担当者が更新しました。承認せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {Title: Trim(txtQueueTitleField.Text), MakerDisplayName: Trim(txtQueueMakerField.Text), XHandle: Trim(txtQueueXField.Text), Description: Trim(txtQueueDescriptionField.Text), DistributionUrl: Trim(txtQueueDistributionField.Text), Slug: Lower(Trim(txtQueueSlugField.Text)), CatalogType: Trim(txtQueueCatalogTypeField.Text), CatalogCategories: Trim(txtQueueCategoriesField.Text), CatalogTags: Trim(txtQueueTagsField.Text), CatalogLicense: Trim(txtQueueLicenseField.Text), CatalogCost: Trim(txtQueueCostField.Text), PremiumRequired: drpQueuePremiumField.Selected, SetupTime: Trim(txtQueueSetupField.Text), SourceUrl: Trim(txtQueueSourceField.Text), InstructionsUrl: Trim(txtQueueInstructionsField.Text), CatalogPrerequisites: Trim(txtQueuePrerequisitesField.Text), ThumbnailPath: Trim(txtQueueThumbnailPathField.Text), CatalogPublishedDate: dpQueuePublishedDateField.SelectedDate, CatalogUpdatedDate: dpQueueUpdatedDateField.SelectedDate, ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "承認"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("承認しました", NotificationType.Success), Set(varNotice, "承認処理に失敗しました。入力内容と接続を確認してください。"))); Set(varSaving, false))
+                                    Text: ="承認"

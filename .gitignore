@@ -40,3 +40,10 @@ yarn-error.log*
 /.wrangler/
 /outputs/
 /work/
+/.automation/
+
+# local Power Automate tooling state and backups
+/.flowagent/
+
+# local unpacked Power Platform Solution (contains tenant-specific bindings)
+/solutions/PLUGSolutions/

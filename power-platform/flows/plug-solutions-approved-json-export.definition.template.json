@@ -1,0 +1,120 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    },
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  },
+  "triggers": {
+    "When_a_review_item_is_created_or_modified": {
+      "recurrence": {
+        "frequency": "Minute",
+        "interval": 1
+      },
+      "splitOn": "@triggerOutputs()?['body/value']",
+      "type": "OpenApiConnection",
+      "inputs": {
+        "parameters": {
+          "dataset": "__SHAREPOINT_SITE_URL__",
+          "table": "__SHAREPOINT_REVIEW_LIST_ID__"
+        },
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetOnUpdatedItems"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    }
+  },
+  "actions": {
+    "Export_only_approved_complete_items": {
+      "runAfter": {},
+      "type": "If",
+      "expression": {
+        "and": [
+          { "equals": ["@triggerBody()?['ReviewStatus/Value']", "承認"] },
+          { "equals": ["@empty(triggerBody()?['Slug'])", false] },
+          { "equals": ["@empty(triggerBody()?['Title'])", false] },
+          { "equals": ["@empty(triggerBody()?['MakerDisplayName'])", false] },
+          { "equals": ["@startsWith(triggerBody()?['XHandle'], '@')", true] },
+          { "equals": ["@empty(triggerBody()?['Description'])", false] },
+          { "equals": ["@empty(triggerBody()?['CatalogType'])", false] },
+          { "equals": ["@empty(triggerBody()?['CatalogCategories'])", false] },
+          { "equals": ["@startsWith(toLower(triggerBody()?['DistributionUrl']), 'https://')", true] },
+          { "equals": ["@empty(triggerBody()?['CatalogLicense'])", false] },
+          { "equals": ["@empty(triggerBody()?['CatalogCost'])", false] },
+          { "equals": ["@empty(triggerBody()?['SetupTime'])", false] },
+          { "equals": ["@empty(triggerBody()?['CatalogPublishedDate'])", false] },
+          { "equals": ["@empty(triggerBody()?['CatalogUpdatedDate'])", false] }
+        ]
+      },
+      "actions": {
+        "Compose_public_catalog_item": {
+          "runAfter": {},
+          "type": "Compose",
+          "inputs": {
+            "schemaVersion": 1,
+            "slug": "@triggerBody()?['Slug']",
+            "title": "@triggerBody()?['Title']",
+            "maker": {
+              "displayName": "@triggerBody()?['MakerDisplayName']",
+              "xHandle": "@triggerBody()?['XHandle']",
+              "xUrl": "@concat('https://x.com/', substring(triggerBody()?['XHandle'], 1))"
+            },
+            "description": "@triggerBody()?['Description']",
+            "type": "@triggerBody()?['CatalogType']",
+            "categories": "@split(replace(triggerBody()?['CatalogCategories'], decodeUriComponent('%0D'), ''), decodeUriComponent('%0A'))",
+            "tags": "@if(empty(triggerBody()?['CatalogTags']), json('[]'), split(replace(triggerBody()?['CatalogTags'], decodeUriComponent('%0D'), ''), decodeUriComponent('%0A')))",
+            "distributionUrl": "@triggerBody()?['DistributionUrl']",
+            "sourceUrl": "@if(empty(triggerBody()?['SourceUrl']), json('null'), triggerBody()?['SourceUrl'])",
+            "instructionsUrl": "@if(empty(triggerBody()?['InstructionsUrl']), json('null'), triggerBody()?['InstructionsUrl'])",
+            "license": "@triggerBody()?['CatalogLicense']",
+            "cost": "@triggerBody()?['CatalogCost']",
+            "premiumRequired": "@if(equals(triggerBody()?['PremiumRequired/Value'], '必要'), true, if(equals(triggerBody()?['PremiumRequired/Value'], '不要'), false, json('null')))",
+            "setupTime": "@triggerBody()?['SetupTime']",
+            "prerequisites": "@if(empty(triggerBody()?['CatalogPrerequisites']), json('[]'), split(replace(triggerBody()?['CatalogPrerequisites'], decodeUriComponent('%0D'), ''), decodeUriComponent('%0A')))",
+            "thumbnail": "@if(empty(triggerBody()?['ThumbnailPath']), json('null'), triggerBody()?['ThumbnailPath'])",
+            "publishedAt": "@formatDateTime(triggerBody()?['CatalogPublishedDate'], 'yyyy-MM-dd')",
+            "updatedAt": "@formatDateTime(triggerBody()?['CatalogUpdatedDate'], 'yyyy-MM-dd')"
+          }
+        },
+        "Create_or_replace_private_JSON": {
+          "runAfter": {
+            "Compose_public_catalog_item": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "dataset": "__SHAREPOINT_SITE_URL__",
+              "parameters/method": "POST",
+              "parameters/uri": "_api/web/GetFolderByServerRelativeUrl('/sites/PLUGSolutions/Exports')/Files/add(url='@{encodeUriComponent(triggerBody()?['Slug'])}.json',overwrite=true)",
+              "parameters/headers": {
+                "Accept": "application/json;odata=nometadata",
+                "Content-Type": "application/json"
+              },
+              "parameters/body": "@string(outputs('Compose_public_catalog_item'))"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "HttpRequest"
+            }
+          }
+        }
+      },
+      "else": {
+        "actions": {}
+      }
+    }
+  },
+  "outputs": {}
+}

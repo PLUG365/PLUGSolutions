@@ -1,0 +1,4 @@
+App:
+  Properties:
+    OnStart: =Set(varSelectedRequest, Blank()); Set(varSaving, false); Set(varNotice, "")
+    Theme: =PowerAppsTheme
