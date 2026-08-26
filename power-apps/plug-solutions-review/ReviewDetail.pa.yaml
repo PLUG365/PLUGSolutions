@@ -86,6 +86,7 @@ Screens:
                         LayoutMinHeight: =64
                         Text: ="審査する申請を一覧から選択してください。"
                         Visible: =IsBlank(varSelectedRequest)
+                        Width: =Parent.Width-Self.X-20
                   - lblCurrentStatus:
                       Control: Label
                       Properties:
@@ -96,6 +97,7 @@ Screens:
                         Text: |-
                           ="現在の状態: " & Coalesce(varSelectedRequest.ReviewStatus.Value, "未設定")
                         Visible: =!IsBlank(varSelectedRequest)
+                        Width: =Parent.Width-Self.X-20
                   - conThumbnail:
                       Control: GroupContainer
                       Variant: AutoLayout
@@ -144,6 +146,7 @@ Screens:
                         LayoutMinHeight: =32
                         Text: ="画像候補（非公開・確認用）"
                         Visible: =!IsBlank(varSelectedRequest)
+                        Width: =Parent.Width-Self.X-20
                   - lnkThumbnailCandidate:
                       Control: Label
                       Properties:
@@ -154,7 +157,7 @@ Screens:
                         Text: =If(IsBlank(varSelectedRequest.ThumbnailCandidateUrl), "画像候補URLなし", varSelectedRequest.ThumbnailCandidateUrl)
                         Underline: =!IsBlank(varSelectedRequest.ThumbnailCandidateUrl)
                         Visible: =!IsBlank(varSelectedRequest)
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblTitle:
                       Control: Label
                       Properties:
@@ -162,6 +165,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="作品名 *"
+                        Width: =Parent.Width-Self.X-20
                   - txtTitle:
                       Control: Classic/TextInput
                       Properties:
@@ -169,7 +173,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblMakerDisplayName:
                       Control: Label
                       Properties:
@@ -184,7 +188,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblXHandle:
                       Control: Label
                       Properties:
@@ -192,6 +196,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="Xアカウント（@から） *"
+                        Width: =Parent.Width-Self.X-20
                   - txtXHandle:
                       Control: Classic/TextInput
                       Properties:
@@ -200,7 +205,7 @@ Screens:
                         HintText: ="@example"
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblDescription:
                       Control: Label
                       Properties:
@@ -208,6 +213,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="作品概要 *"
+                        Width: =Parent.Width-Self.X-20
                   - txtDescription:
                       Control: Classic/TextInput
                       Properties:
@@ -216,7 +222,7 @@ Screens:
                         LayoutMinHeight: =120
                         LayoutMinWidth: =0
                         Mode: =TextMode.MultiLine
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblDistributionUrl:
                       Control: Label
                       Properties:
@@ -224,6 +230,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="配布先URL（https://） *"
+                        Width: =Parent.Width-Self.X-20
                   - txtDistributionUrl:
                       Control: Classic/TextInput
                       Properties:
@@ -231,7 +238,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblSlug:
                       Control: Label
                       Properties:
@@ -239,6 +246,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="Slug（英小文字・数字・ハイフン） *"
+                        Width: =Parent.Width-Self.X-20
                   - txtSlug:
                       Control: Classic/TextInput
                       Properties:
@@ -247,7 +255,7 @@ Screens:
                         HintText: ="my-solution"
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblCatalogType:
                       Control: Label
                       Properties:
@@ -255,6 +263,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="種類 *"
+                        Width: =Parent.Width-Self.X-20
                   - txtCatalogType:
                       Control: Classic/TextInput
                       Properties:
@@ -262,7 +271,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblCatalogCategories:
                       Control: Label
                       Properties:
@@ -270,6 +279,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="カテゴリ（1行に1件） *"
+                        Width: =Parent.Width-Self.X-20
                   - txtCatalogCategories:
                       Control: Classic/TextInput
                       Properties:
@@ -278,7 +288,7 @@ Screens:
                         LayoutMinHeight: =96
                         LayoutMinWidth: =0
                         Mode: =TextMode.MultiLine
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblCatalogTags:
                       Control: Label
                       Properties:
@@ -286,6 +296,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="タグ（1行に1件） *"
+                        Width: =Parent.Width-Self.X-20
                   - txtCatalogTags:
                       Control: Classic/TextInput
                       Properties:
@@ -294,7 +305,7 @@ Screens:
                         LayoutMinHeight: =96
                         LayoutMinWidth: =0
                         Mode: =TextMode.MultiLine
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblSourceUrl:
                       Control: Label
                       Properties:
@@ -302,6 +313,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="ソースURL"
+                        Width: =Parent.Width-Self.X-20
                   - txtSourceUrl:
                       Control: Classic/TextInput
                       Properties:
@@ -309,7 +321,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblInstructionsUrl:
                       Control: Label
                       Properties:
@@ -317,6 +329,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="導入手順URL"
+                        Width: =Parent.Width-Self.X-20
                   - txtInstructionsUrl:
                       Control: Classic/TextInput
                       Properties:
@@ -324,7 +337,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblCatalogLicense:
                       Control: Label
                       Properties:
@@ -332,6 +345,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="ライセンス *"
+                        Width: =Parent.Width-Self.X-20
                   - txtCatalogLicense:
                       Control: Classic/TextInput
                       Properties:
@@ -339,7 +353,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblCatalogCost:
                       Control: Label
                       Properties:
@@ -347,6 +361,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="費用 *"
+                        Width: =Parent.Width-Self.X-20
                   - txtCatalogCost:
                       Control: Classic/TextInput
                       Properties:
@@ -354,7 +369,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblPremiumRequired:
                       Control: Label
                       Properties:
@@ -362,6 +377,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="Premium要否 *"
+                        Width: =Parent.Width-Self.X-20
                   - cmbPremiumRequired:
                       Control: Classic/ComboBox
                       Properties:
@@ -374,7 +390,7 @@ Screens:
                         LayoutMinWidth: =0
                         SearchFields: =["Value"]
                         SelectMultiple: =false
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblSetupTime:
                       Control: Label
                       Properties:
@@ -382,6 +398,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="導入時間 *"
+                        Width: =Parent.Width-Self.X-20
                   - txtSetupTime:
                       Control: Classic/TextInput
                       Properties:
@@ -389,7 +406,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblCatalogPrerequisites:
                       Control: Label
                       Properties:
@@ -397,6 +414,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="導入条件（1行に1件）"
+                        Width: =Parent.Width-Self.X-20
                   - txtCatalogPrerequisites:
                       Control: Classic/TextInput
                       Properties:
@@ -405,7 +423,7 @@ Screens:
                         LayoutMinHeight: =96
                         LayoutMinWidth: =0
                         Mode: =TextMode.MultiLine
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblThumbnailPath:
                       Control: Label
                       Properties:
@@ -413,6 +431,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="処理済みサムネイルパス"
+                        Width: =Parent.Width-Self.X-20
                   - txtThumbnailPath:
                       Control: Classic/TextInput
                       Properties:
@@ -420,7 +439,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblCatalogPublishedDate:
                       Control: Label
                       Properties:
@@ -428,6 +447,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="初回公開日 *"
+                        Width: =Parent.Width-Self.X-20
                   - dpCatalogPublishedDate:
                       Control: Classic/DatePicker
                       Properties:
@@ -435,7 +455,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblCatalogUpdatedDate:
                       Control: Label
                       Properties:
@@ -443,6 +463,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="更新日 *"
+                        Width: =Parent.Width-Self.X-20
                   - dpCatalogUpdatedDate:
                       Control: Classic/DatePicker
                       Properties:
@@ -450,7 +471,7 @@ Screens:
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblReviewNotes:
                       Control: Label
                       Properties:
@@ -459,6 +480,7 @@ Screens:
                         Height: =32
                         LayoutMinHeight: =32
                         Text: ="審査メモ（非公開・却下時必須）"
+                        Width: =Parent.Width-Self.X-20
                   - txtReviewNotes:
                       Control: Classic/TextInput
                       Properties:
@@ -467,7 +489,7 @@ Screens:
                         LayoutMinHeight: =112
                         LayoutMinWidth: =0
                         Mode: =TextMode.MultiLine
-                        Width: =Parent.Width
+                        Width: =Parent.Width-Self.X-20
                   - lblDetailNotice:
                       Control: Label
                       Properties:
@@ -594,7 +616,6 @@ Screens:
                               DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") <> "公開済み" || IsBlank(Trim(txtReviewNotes.Text)), DisplayMode.Disabled, DisplayMode.Edit)
                               Fill: =RGBA(255, 255, 255, 1)
                               FillPortions: =1
-                              FontWeight: =FontWeight.Semibold
                               Height: =48
                               LayoutMinHeight: =48
                               LayoutMinWidth: =156

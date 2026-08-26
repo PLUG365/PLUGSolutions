@@ -116,6 +116,7 @@ Screens:
                               AccessibleLabel: ="タイトル、作者、スラッグを検索"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Clear: =true
+                              Default: =
                               DelayOutput: =true
                               FocusedBorderColor: =RGBA(255, 96, 66, 1)
                               Height: =48
@@ -794,7 +795,6 @@ Screens:
                                     DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") <> "公開済み" || IsBlank(Trim(txtQueueReviewNotesField.Text)), DisplayMode.Disabled, DisplayMode.Edit)
                                     Fill: =RGBA(255, 255, 255, 1)
                                     FillPortions: =1
-                                    FontWeight: =FontWeight.Semibold
                                     Height: =48
                                     HoverFill: =RGBA(255, 96, 66, 0.12)
                                     LayoutMinHeight: =48
