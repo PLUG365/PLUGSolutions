@@ -4,8 +4,26 @@ import test from "node:test";
 
 const root = new URL("../", import.meta.url);
 
+function assertWorkflowTopLevelIsIndented(workflow) {
+  const allowedTopLevel = /^(?:name|run-name|on|permissions|env|defaults|concurrency|jobs):/;
+
+  for (const [index, line] of workflow.split(/\r?\n/).entries()) {
+    if (line === "" || line.startsWith("#") || /^\s/.test(line)) {
+      continue;
+    }
+
+    assert.match(
+      line,
+      allowedTopLevel,
+      `unexpected unindented workflow content at line ${index + 1}`,
+    );
+  }
+}
+
 test("pull requests run CI without access to production secrets", async () => {
   const workflow = await readFile(new URL(".github/workflows/ci.yml", root), "utf8");
+
+  assertWorkflowTopLevelIsIndented(workflow);
 
   assert.match(workflow, /^\s*pull_request:\s*$/m);
   assert.match(workflow, /^\s+push:\s*\n\s+branches:\s*\n\s+- main$/m);
@@ -18,6 +36,8 @@ test("production deploy is a manual, main-only, approval-gated release", async (
     new URL(".github/workflows/deploy-production.yml", root),
     "utf8",
   );
+
+  assertWorkflowTopLevelIsIndented(workflow);
 
   assert.match(workflow, /^\s*workflow_dispatch:\s*$/m);
   assert.match(workflow, /^\s+reason:\s*$/m);
@@ -43,6 +63,8 @@ test("approved submission automation uses OIDC and creates reviewable PRs only",
     new URL(".github/workflows/import-approved-submission.yml", root),
     "utf8",
   );
+
+  assertWorkflowTopLevelIsIndented(workflow);
 
   assert.match(workflow, /^\s+schedule:\s*$/m);
   assert.match(workflow, /^\s+workflow_dispatch:\s*$/m);

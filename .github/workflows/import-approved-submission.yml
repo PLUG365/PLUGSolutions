@@ -109,7 +109,7 @@ jobs:
             --title "catalog: add $SLUG" \
             --body "Power Appsで承認済みの申請を自動準備しました。
 
-- slug: \`$SLUG\`
-- thumbnail: \`$THUMBNAIL_STATUS\`
+          - slug: \`$SLUG\`
+          - thumbnail: \`$THUMBNAIL_STATUS\`
 
-作品情報、リンク、ライセンス、画像内容、CI結果を確認してから承認してください。候補画像URLや審査用の非公開情報はこのPRに含めていません。"
+          作品情報、リンク、ライセンス、画像内容、CI結果を確認してから承認してください。候補画像URLや審査用の非公開情報はこのPRに含めていません。"
