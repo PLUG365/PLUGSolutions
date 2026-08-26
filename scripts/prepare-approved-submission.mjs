@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  createSourceRevision,
   normalizeGraphItems,
   prepareApprovedSubmission,
   prepareWithdrawnSubmission,
@@ -64,6 +65,8 @@ export async function run({ repositoryRoot = process.cwd() } = {}) {
     : approvedFields
       ? { ...(await prepareApprovedSubmission({ fields: approvedFields, repositoryRoot })), operation: "add" }
       : { status: "none", operation: null, slug: null, thumbnailStatus: null };
+  const selectedFields = withdrawnFields ?? approvedFields;
+  const sourceRevision = selectedFields ? createSourceRevision(selectedFields) : null;
 
   const resultDirectory = path.join(repositoryRoot, ".automation");
   await mkdir(resultDirectory, { recursive: true });
@@ -74,6 +77,7 @@ export async function run({ repositoryRoot = process.cwd() } = {}) {
       operation: result.operation,
       slug: result.slug,
       thumbnailStatus: result.thumbnailStatus,
+      sourceRevision,
     })}\n`,
   );
   console.log(

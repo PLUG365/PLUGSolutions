@@ -351,6 +351,7 @@ Screens:
                               AccessibleLabel: ="作品名"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.Title
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Reset: =varSelectedRequest.ID <> galReviewQueue.Selected.ID
@@ -368,6 +369,7 @@ Screens:
                               AccessibleLabel: ="作者表示名"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.MakerDisplayName
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -384,6 +386,7 @@ Screens:
                               AccessibleLabel: ="Xアカウント"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.XHandle
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -400,6 +403,7 @@ Screens:
                               AccessibleLabel: ="作品の説明"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.Description
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =120
                               LayoutMinHeight: =120
                               Mode: =TextMode.MultiLine
@@ -417,6 +421,7 @@ Screens:
                               AccessibleLabel: ="配布URL"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.DistributionUrl
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -433,6 +438,7 @@ Screens:
                               AccessibleLabel: ="公開用slug"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.Slug
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -449,6 +455,7 @@ Screens:
                               AccessibleLabel: ="カタログ種別"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.CatalogType
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -465,6 +472,7 @@ Screens:
                               AccessibleLabel: ="カテゴリ"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.CatalogCategories
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -481,6 +489,7 @@ Screens:
                               AccessibleLabel: ="タグ"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.CatalogTags
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -497,6 +506,7 @@ Screens:
                               AccessibleLabel: ="ライセンス"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.CatalogLicense
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -513,6 +523,7 @@ Screens:
                               AccessibleLabel: ="費用"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.CatalogCost
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -529,6 +540,7 @@ Screens:
                               AccessibleLabel: ="Premium要否"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.PremiumRequired.Value
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               Items: =Choices(掲載申請.PremiumRequired)
                               Items.Value: =Value
@@ -549,6 +561,7 @@ Screens:
                               AccessibleLabel: ="導入時間"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.SetupTime
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -565,6 +578,7 @@ Screens:
                               AccessibleLabel: ="ソースURL"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.SourceUrl
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -581,6 +595,7 @@ Screens:
                               AccessibleLabel: ="手順URL"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.InstructionsUrl
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -597,6 +612,7 @@ Screens:
                               AccessibleLabel: ="前提条件"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.CatalogPrerequisites
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =96
                               LayoutMinHeight: =96
                               Mode: =TextMode.MultiLine
@@ -614,6 +630,7 @@ Screens:
                               AccessibleLabel: ="処理済みサムネイルパス"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.ThumbnailPath
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
@@ -630,6 +647,7 @@ Screens:
                               AccessibleLabel: ="公開日"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               DefaultDate: =varSelectedRequest.CatalogPublishedDate
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               IsEditable: =true
                               LayoutMinHeight: =48
@@ -647,6 +665,7 @@ Screens:
                               AccessibleLabel: ="更新日"
                               BorderColor: =RGBA(61, 95, 89, 1)
                               DefaultDate: =varSelectedRequest.CatalogUpdatedDate
+                              DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                               Height: =48
                               IsEditable: =true
                               LayoutMinHeight: =48
@@ -695,7 +714,7 @@ Screens:
                                   Properties:
                                     BorderColor: =RGBA(20, 21, 18, 1)
                                     Color: =RGBA(20, 21, 18, 1)
-                                    DisplayMode: =If(varSaving, DisplayMode.Disabled, DisplayMode.Edit)
+                                    DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.Disabled, DisplayMode.Edit)
                                     Fill: =RGBA(255, 255, 255, 1)
                                     FillPortions: =1
                                     Height: =48
@@ -709,7 +728,7 @@ Screens:
                                   Properties:
                                     BorderColor: =RGBA(255, 96, 66, 1)
                                     Color: =RGBA(20, 21, 18, 1)
-                                    DisplayMode: =If(varSaving, DisplayMode.Disabled, DisplayMode.Edit)
+                                    DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.Disabled, DisplayMode.Edit)
                                     Fill: =RGBA(255, 96, 66, 0.2)
                                     FillPortions: =1
                                     Height: =48
@@ -723,7 +742,7 @@ Screens:
                                   Properties:
                                     BorderColor: =RGBA(255, 96, 66, 1)
                                     Color: =RGBA(20, 21, 18, 1)
-                                    DisplayMode: =If(varSaving, DisplayMode.Disabled, DisplayMode.Edit)
+                                    DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.Disabled, DisplayMode.Edit)
                                     Fill: =RGBA(255, 96, 66, 1)
                                     FillPortions: =1
                                     FontWeight: =FontWeight.Bold
@@ -756,16 +775,27 @@ Screens:
                               Size: =12
                               Text: ="取り下げは公開カタログから外すための状態です。申請内容と審査履歴は削除しません。GitHub 側の反映は別途確認してください。"
                               Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "公開済み"
+                        - lblQueueReturnToReviewHint:
+                            Control: Label
+                            Properties:
+                              AutoHeight: =true
+                              Color: =RGBA(61, 95, 89, 1)
+                              Live: =Live.Polite
+                              PaddingBottom: =4
+                              PaddingTop: =4
+                              Size: =12
+                              Text: ="承認後に掲載内容を直す場合は「審査に戻す」を実行してください。公開用項目は承認中は編集できません。"
+                              Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認"
                         - conQueueLifecycleActions:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               FillPortions: =0
-                              Height: =If(Self.Width < 336, 112, 56)
+                              Height: =If(Self.Width < 484, 112, 56)
                               LayoutAlignItems: =LayoutAlignItems.Stretch
                               LayoutDirection: =LayoutDirection.Horizontal
                               LayoutGap: =8
-                              LayoutMinHeight: =If(Self.Width < 336, 112, 56)
+                              LayoutMinHeight: =If(Self.Width < 484, 112, 56)
                               LayoutMinWidth: =320
                               LayoutWrap: =true
                               Visible: =!IsBlank(varSelectedRequest) && (Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認" || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "公開済み")
@@ -803,3 +833,19 @@ Screens:
                                       =If(IsBlank(Trim(txtQueueReviewNotesField.Text)), Set(varNotice, "取り下げ理由を審査メモへ入力してください。"), Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "取り下げできません。対象が見つかりません。"), varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の担当者が更新しました。取り下げず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "公開済み", Set(varNotice, "取り下げできません。最新状態が公開済みではありません。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "取り下げ"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("取り下げとして保存しました", NotificationType.Success), Set(varNotice, "取り下げ処理に失敗しました。接続を確認してください。"))); Set(varSaving, false))
                                     Text: ="取り下げ"
                                     Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "公開済み"
+                              - btnQueueReturnToReview:
+                                  Control: Classic/Button
+                                  Properties:
+                                    BorderColor: =RGBA(61, 95, 89, 1)
+                                    Color: =RGBA(61, 95, 89, 1)
+                                    DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") <> "承認", DisplayMode.Disabled, DisplayMode.Edit)
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    FillPortions: =1
+                                    Height: =48
+                                    HoverFill: =RGBA(61, 95, 89, 0.12)
+                                    LayoutMinHeight: =48
+                                    LayoutMinWidth: =156
+                                    OnSelect: |-
+                                      =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "審査に戻せません。対象が見つかりません。"), varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の担当者が更新しました。審査に戻さず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "承認", Set(varNotice, "審査に戻せません。最新状態が承認ではありません。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewStatus: {Value: "要確認"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("審査に戻しました", NotificationType.Success), Set(varNotice, "審査へ戻す処理に失敗しました。接続を確認してください。"))); Set(varSaving, false)
+                                    Text: ="審査に戻す"
+                                    Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認"

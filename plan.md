@@ -15,6 +15,7 @@
 - 完了：承認済みJSON候補を検証し、明示操作時だけ `catalog/solutions/<slug>.json` へ取り込むローカルコマンド。既存slug、非公開項目、未処理画像を安全側で拒否する。
 - 完了：Default環境のCanvas App `PLUG Solutions Review` をSharePoint審査リストへ接続し、PC・タブレットの一覧＋詳細とスマホ用1列詳細を生成。保存・承認・却下の必須値／競合ガードを含めCanvas Authoringコンパイル済み。PC二ペイン表示、600px幅の一覧、iPhone 390×844での一覧→詳細遷移と縦スクロールを実画面確認済み（データ更新操作は未実施）。
 - 完了：承認済みSharePoint行を読取専用で取得し、公開許可項目だけのJSON、SSRF対策付き画像取得、1200×675 WebP処理、専用branchと掲載PRを準備するGitHub Actionsとテスト。画像なし・通常の画像失敗は文字サムネイルへフォールバックし、危険なURLは処理を拒否する。
+- ローカル実装・公開前確認中：承認中のCanvas公開項目を読取専用にし、競合確認付きの`承認 → 要確認`で再編集へ戻す。GitHub Actionsは初回読取のitem ID・状態・slug・eTag・更新日時をcommit直前にGETで再確認し、不一致ならbranch・push・PRを作らない。
 - 実装完了・実環境確認待ち：`公開済み → 取り下げ` をPower Appsで理由必須・競合ガード付きで記録し、SharePoint履歴を残したまま同一slugの公開JSONとWebPだけを削除PRへ送る動線。PLUG所有ロゴは公開URLからの取得、1200×675 WebP化、メタデータ除去まで実経路で確認済み。掲載PRへの追加と取り下げPRでの削除を実環境で確認する。
 - 確認済み：Microsoft 365 Business BasicのForms／SharePoint／Power Automate Standardコネクタ利用権で現行構成を実行でき、匿名回答者のPower Automateライセンスは不要。
 - 完了：専用Entraアプリ `PLUG Solutions GitHub Intake`、Graph `Lists.SelectedOperations.Selected` の管理者同意、`PLUG365/PLUGSolutions` のimmutable `main` 限定OIDC、掲載申請リストの `read` 権限、GitHub Repository variables 4件を設定。Azure Subscription RBACと長期クライアントシークレットは使用しない。実環境から権限を再読取確認済み。
@@ -180,6 +181,7 @@
 | Forms 回答 | なし → 未審査／要確認 | Power Automate |
 | 同一回答の再処理 | 既存 → 変更なし | Power Automate |
 | 内容審査 | 未審査／要確認 → 承認／却下 | 人 |
+| 承認後の再編集 | 承認 → 要確認 | 人（Power Apps、競合確認付き） |
 | JSON 生成 | 承認 → 承認 | Power Automate |
 | GitHub 取込 | 承認 → 承認 | 人 |
 | Pull Request | 変更 → CI 合格／不合格 | GitHub Actions（Azure Secret なし） |
@@ -201,6 +203,7 @@
 - フロー再試行でも同じ内部回答 ID が二重計上されないことを確認する。
 - 公開用リアクション JSON に個別回答、回答日時、内部回答 ID、その他の非公開フィールドが含まれないことを確認する。
 - GitHub 公開前に、MIT 表示、秘密情報不在、Sites 固有 ID 不在を確認する。
+- 掲載・取り下げPRのmerge前に、PR記載のSharePoint item ID・受理した更新日時・現在状態を審査行と照合する。commit直前の自動再確認後に起きた変更は同じrunでは検出できず、PRも自動失効しないためである。
 - Azure 作成前にサブスクリプションと専用リソースグループを再確認する。
 - GitHub Organization への Azure 連携権限、リポジトリ公開、`production` Environment、デプロイトークン登録、本番初回公開は人が確認する。
 - Azure 標準 URL での実サイト確認後に SharePoint 状態を「公開済み」へ更新する。

@@ -12,6 +12,7 @@
     "start": "next dev",
     "thumbnail": "node scripts/process-thumbnail.mjs",
     "prepare:approved": "node scripts/prepare-approved-submission.mjs",
+    "verify:approved": "node scripts/verify-approved-submission.mjs",
     "import:solution": "node scripts/import-approved-solution.mjs",
     "validate:catalog": "node scripts/validate-catalog.mjs",
     "test": "node --test tests/approved-submission.test.mjs tests/canvas-review-lifecycle.test.mjs tests/catalog.test.mjs tests/import-approved-solution.test.mjs tests/public-image-url.test.mjs tests/thumbnail.test.mjs tests/workflows.test.mjs",

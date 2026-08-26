@@ -170,6 +170,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.Title
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -185,6 +186,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.MakerDisplayName
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -201,6 +203,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.XHandle
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         HintText: ="@example"
                         LayoutMinHeight: =48
@@ -218,6 +221,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.Description
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =120
                         LayoutMinHeight: =120
                         LayoutMinWidth: =0
@@ -235,6 +239,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.DistributionUrl
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -251,6 +256,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.Slug
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         HintText: ="my-solution"
                         LayoutMinHeight: =48
@@ -268,6 +274,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogType
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -284,6 +291,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogCategories
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =96
                         LayoutMinHeight: =96
                         LayoutMinWidth: =0
@@ -301,6 +309,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogTags
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =96
                         LayoutMinHeight: =96
                         LayoutMinWidth: =0
@@ -318,6 +327,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.SourceUrl
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -334,6 +344,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.InstructionsUrl
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -350,6 +361,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogLicense
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -366,6 +378,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogCost
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -383,6 +396,7 @@ Screens:
                       Properties:
                         DefaultSelectedItems: =If(IsBlank(varSelectedRequest.PremiumRequired), Blank(), [varSelectedRequest.PremiumRequired])
                         DisplayFields: =["Value"]
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         InputTextPlaceholder: ="必要／不要／不明"
                         Items: =Choices(掲載申請.PremiumRequired)
@@ -403,6 +417,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.SetupTime
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -419,6 +434,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogPrerequisites
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =96
                         LayoutMinHeight: =96
                         LayoutMinWidth: =0
@@ -436,6 +452,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.ThumbnailPath
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -452,6 +469,7 @@ Screens:
                       Control: Classic/DatePicker
                       Properties:
                         DefaultDate: =varSelectedRequest.CatalogPublishedDate
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -468,6 +486,7 @@ Screens:
                       Control: Classic/DatePicker
                       Properties:
                         DefaultDate: =varSelectedRequest.CatalogUpdatedDate
+                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -520,6 +539,7 @@ Screens:
                             Properties:
                               BorderColor: =RGBA(20, 21, 18, 1)
                               Color: =RGBA(20, 21, 18, 1)
+                              DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.Disabled, DisplayMode.Edit)
                               Fill: =RGBA(255, 255, 255, 1)
                               FillPortions: =1
                               Height: =48
@@ -533,6 +553,7 @@ Screens:
                             Properties:
                               BorderColor: =RGBA(170, 45, 30, 1)
                               Color: =RGBA(170, 45, 30, 1)
+                              DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.Disabled, DisplayMode.Edit)
                               Fill: =RGBA(255, 255, 255, 1)
                               FillPortions: =1
                               Height: =48
@@ -546,6 +567,7 @@ Screens:
                             Properties:
                               BorderColor: =RGBA(255, 96, 66, 1)
                               Color: =RGBA(20, 21, 18, 1)
+                              DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.Disabled, DisplayMode.Edit)
                               Fill: =RGBA(255, 96, 66, 1)
                               FillPortions: =1
                               FontWeight: =FontWeight.Bold
@@ -623,3 +645,27 @@ Screens:
                                 =If(IsBlank(Trim(txtReviewNotes.Text)), Set(varNotice, "取り下げ理由を審査メモへ入力してください。"), Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varCurrentRequest), Set(varNotice, "取り下げできません。対象が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の担当者が更新しました。取り下げず最新内容を表示しました。"); Set(varSelectedRequest, varCurrentRequest), Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> "公開済み", Set(varNotice, "取り下げできません。最新状態が公開済みではありません。"); Set(varSelectedRequest, varCurrentRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varCurrentRequest, {ReviewNotes: Trim(txtReviewNotes.Text), ReviewStatus: {Value: "取り下げ"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Set(varNotice, "完了: 取り下げとして保存しました。"), Set(varNotice, "取り下げ処理に失敗しました。接続を確認してください。"))); Set(varSaving, false))
                               Text: ="取り下げ"
                               Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "公開済み"
+                        - btnDetailReturnToReview:
+                            Control: Classic/Button
+                            Properties:
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Color: =RGBA(61, 95, 89, 1)
+                              DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") <> "承認", DisplayMode.Disabled, DisplayMode.Edit)
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FillPortions: =1
+                              Height: =48
+                              LayoutMinHeight: =48
+                              LayoutMinWidth: =156
+                              OnSelect: |-
+                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varCurrentRequest), Set(varNotice, "審査に戻せません。対象が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の担当者が更新しました。審査に戻さず最新内容を表示しました。"); Set(varSelectedRequest, varCurrentRequest), Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> "承認", Set(varNotice, "審査に戻せません。最新状態が承認ではありません。"); Set(varSelectedRequest, varCurrentRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varCurrentRequest, {ReviewStatus: {Value: "要確認"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Set(varNotice, "完了: 審査に戻しました。"), Set(varNotice, "審査へ戻す処理に失敗しました。接続を確認してください。"))); Set(varSaving, false)
+                              Text: ="審査に戻す"
+                              Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認"
+                  - lblDetailReturnToReviewHint:
+                      Control: Label
+                      Properties:
+                        AutoHeight: =true
+                        Color: =RGBA(61, 95, 89, 1)
+                        LayoutMinHeight: =48
+                        Text: ="承認後に掲載内容を直す場合は「審査に戻す」を実行してください。公開用項目は承認中は編集できません。"
+                        Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認"
+                        Width: =Parent.Width

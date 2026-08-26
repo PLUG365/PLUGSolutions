@@ -58,10 +58,14 @@ jobs:
           operation="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).operation || ''")"
           slug="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).slug || ''")"
           thumbnail_status="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).thumbnailStatus || ''")"
+          source_item_id="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).sourceRevision?.itemId || ''")"
+          source_revision="$(node -p "JSON.parse(require('fs').readFileSync('.automation/approved-result.json','utf8')).sourceRevision?.lastModifiedDateTime || ''")"
           echo "status=$status" >> "$GITHUB_OUTPUT"
           echo "operation=$operation" >> "$GITHUB_OUTPUT"
           echo "slug=$slug" >> "$GITHUB_OUTPUT"
           echo "thumbnail_status=$thumbnail_status" >> "$GITHUB_OUTPUT"
+          echo "source_item_id=$source_item_id" >> "$GITHUB_OUTPUT"
+          echo "source_revision=$source_revision" >> "$GITHUB_OUTPUT"
       - name: Stop when no item is ready
         if: steps.result.outputs.status == 'none'
         run: echo "No catalog lifecycle change is ready."
@@ -87,6 +91,15 @@ jobs:
       - name: Validate prepared catalog change
         if: steps.result.outputs.status == 'prepared' && steps.branch.outputs.exists == 'false'
         run: npm run check
+      - name: Revalidate SharePoint revision
+        if: steps.result.outputs.status == 'prepared' && steps.branch.outputs.exists == 'false'
+        env:
+          PLUG_SHAREPOINT_SITE_ID: ${{ vars.PLUG_SHAREPOINT_SITE_ID }}
+          PLUG_SUBMISSIONS_LIST_ID: ${{ vars.PLUG_SUBMISSIONS_LIST_ID }}
+        run: |
+          graph_token="$(az account get-access-token --resource-type ms-graph --query accessToken -o tsv)"
+          echo "::add-mask::$graph_token"
+          GRAPH_TOKEN="$graph_token" npm run verify:approved
       - name: Commit and push automation branch
         if: steps.result.outputs.status == 'prepared' && steps.branch.outputs.exists == 'false'
         env:
@@ -116,6 +129,8 @@ jobs:
           OPERATION: ${{ steps.result.outputs.operation }}
           SLUG: ${{ steps.result.outputs.slug }}
           THUMBNAIL_STATUS: ${{ steps.result.outputs.thumbnail_status }}
+          SOURCE_ITEM_ID: ${{ steps.result.outputs.source_item_id }}
+          SOURCE_REVISION: ${{ steps.result.outputs.source_revision }}
         run: |
           if test "$OPERATION" = "remove"; then
             title="catalog: remove $SLUG"
@@ -133,5 +148,7 @@ jobs:
           - operation: \`$OPERATION\`
           - slug: \`$SLUG\`
           - thumbnail: \`$THUMBNAIL_STATUS\`
+          - SharePoint item: \`$SOURCE_ITEM_ID\`
+          - accepted revision: \`$SOURCE_REVISION\`
 
           対象ファイル、画像、CI結果を確認してから承認してください。候補画像URLや審査用の非公開情報はこのPRに含めていません。"

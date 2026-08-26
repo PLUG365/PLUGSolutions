@@ -81,6 +81,15 @@ test("approved submission automation uses OIDC and creates reviewable PRs only",
   assert.match(workflow, /git add -A -- "catalog\/solutions\/\$SLUG\.json"/);
   assert.match(workflow, /steps\.result\.outputs\.operation/);
   assert.match(workflow, /npm run check/);
+  assert.match(workflow, /npm run verify:approved/);
+  assert.match(workflow, /sourceRevision\?\.lastModifiedDateTime/);
+  assert.doesNotMatch(workflow, /sourceRevision\?\.eTag/);
+  const validationIndex = workflow.indexOf("- name: Validate prepared catalog change");
+  const revisionIndex = workflow.indexOf("- name: Revalidate SharePoint revision");
+  const commitIndex = workflow.indexOf("- name: Commit and push automation branch");
+  assert.ok(validationIndex !== -1 && revisionIndex > validationIndex);
+  assert.ok(commitIndex > revisionIndex);
+  assert.doesNotMatch(workflow, /(?:PATCH|POST|PUT|DELETE)\s+https:\/\/graph\.microsoft\.com/i);
   assert.doesNotMatch(
     workflow,
     /client-secret|AZURE_STATIC_WEB_APPS_API_TOKEN|AZURE_SUBSCRIPTION_ID|subscription-id:/,

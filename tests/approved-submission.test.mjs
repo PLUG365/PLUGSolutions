@@ -11,8 +11,12 @@ import {
   isWithdrawnSubmission,
 } from "../lib/approved-submission.mjs";
 import {
+  assertSourceRevision,
+  createSourceRevision,
+  fetchSharePointItem,
   prepareApprovedSubmission,
   prepareWithdrawnSubmission,
+  normalizeGraphItems,
   selectApprovedSubmission,
   selectWithdrawnSubmission,
 } from "../lib/prepare-approved-submission.mjs";
@@ -49,6 +53,78 @@ function approvedFields(overrides = {}) {
     ...overrides,
   };
 }
+
+function graphItem(overrides = {}) {
+  return {
+    id: "42",
+    eTag: '"7"',
+    lastModifiedDateTime: "2026-08-26T01:00:00Z",
+    fields: approvedFields(),
+    ...overrides,
+  };
+}
+
+test("Graph normalization retains an internal read-only source revision", () => {
+  const [fields] = normalizeGraphItems([graphItem()]);
+  assert.deepEqual(fields.__sourceRevision, {
+    itemId: "42",
+    eTag: '"7"',
+    lastModifiedDateTime: "2026-08-26T01:00:00Z",
+    reviewStatus: "承認",
+    slug: "field-tool",
+  });
+  assert.doesNotMatch(JSON.stringify(buildPublicSolution(fields)), /__sourceRevision|"7"/);
+
+  const [unreviewed] = normalizeGraphItems([
+    graphItem({ fields: approvedFields({ ReviewStatus: "未審査", Slug: "" }) }),
+  ]);
+  assert.equal(unreviewed.__sourceRevision.slug, "");
+});
+
+test("source revision verification accepts only the same item, state, slug, and version", () => {
+  const expected = createSourceRevision(normalizeGraphItems([graphItem()])[0]);
+  assert.doesNotThrow(() => assertSourceRevision(expected, graphItem()));
+
+  for (const [label, current] of [
+    ["item", graphItem({ id: "43" })],
+    ["etag", graphItem({ eTag: '"8"' })],
+    ["modified", graphItem({ lastModifiedDateTime: "2026-08-26T01:00:01Z" })],
+    ["status", graphItem({ fields: approvedFields({ ReviewStatus: "要確認" }) })],
+    ["slug", graphItem({ fields: approvedFields({ Slug: "changed-tool" }) })],
+  ]) {
+    assert.throws(() => assertSourceRevision(expected, current), new RegExp(label, "i"));
+  }
+});
+
+test("single-item Graph read is GET-only and fails closed", async () => {
+  const calls = [];
+  const item = await fetchSharePointItem({
+    token: "masked-token",
+    siteId: "site-id",
+    listId: "list-id",
+    itemId: "42",
+    fetchImpl: async (url, options) => {
+      calls.push({ url: String(url), options });
+      return { ok: true, status: 200, json: async () => graphItem() };
+    },
+  });
+  assert.equal(item.id, "42");
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].options.method, "GET");
+  assert.match(calls[0].url, /\/items\/42/);
+  assert.doesNotMatch(JSON.stringify(calls), /PATCH|POST|PUT|DELETE/);
+
+  await assert.rejects(
+    fetchSharePointItem({
+      token: "masked-token",
+      siteId: "site-id",
+      listId: "list-id",
+      itemId: "42",
+      fetchImpl: async () => ({ ok: false, status: 404 }),
+    }),
+    /HTTP 404/,
+  );
+});
 
 test("only approved SharePoint rows are eligible", () => {
   assert.equal(isApprovedSubmission(approvedFields()), true);
