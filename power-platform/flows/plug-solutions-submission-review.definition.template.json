@@ -77,7 +77,7 @@
         ]
       },
       "type": "Compose",
-      "inputs": "@if(and(startsWith(toLower(trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])), 'https://github.com/'), contains(trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])), '/blob/')), replace(replace(first(split(first(split(trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])), '?')), '#')), 'https://github.com/', 'https://raw.githubusercontent.com/'), '/blob/', '/'), trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])))"
+      "inputs": "@if(and(startsWith(toLower(trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26']))), 'https://github.com/'), contains(trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])), '/blob/')), replace(replace(first(split(first(split(trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])), '?')), '#')), 'https://github.com/', 'https://raw.githubusercontent.com/'), '/blob/', '/'), trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])))"
     },
     "Create_only_when_not_registered": {
       "runAfter": {
