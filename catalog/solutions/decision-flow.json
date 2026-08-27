@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "slug": "decision-flow",
+  "title": "DecisionFlow",
+  "maker": {
+    "displayName": "みのる",
+    "xHandle": "@meccha__eeyan",
+    "xUrl": "https://x.com/meccha__eeyan"
+  },
+  "description": "DecisionFlow は、申請者が判断者へ意思決定を依頼し、会話・関連資料・判断結果・AI 判断を一元管理するプラットフォームです。\n\n主な機能:\n- 申請の作成・提出・判断キュー管理\n- スレッド型会話とメンション通知\n- AI による申請概要・推奨判断・判断コメントドラフト生成\n- カテゴリ別レギュレーションを使った提出前AI確認と判断者向けAI判断支援\n- 関係者への自動通知・停滞リマインド\n- Copilot Studio エージェントによる Teams / Microsoft 365 Copilot からの対話型照会",
+  "type": "Power Platform",
+  "categories": [
+    "Power Platform"
+  ],
+  "tags": [
+    "Code Apps"
+  ],
+  "distributionUrl": "https://github.com/PLUG365/DecisionFlow",
+  "sourceUrl": null,
+  "instructionsUrl": null,
+  "license": "MIT",
+  "cost": "無料",
+  "premiumRequired": true,
+  "setupTime": "5分",
+  "prerequisites": [],
+  "thumbnail": null,
+  "publishedAt": "2026-08-27",
+  "updatedAt": "2026-08-27"
+}
