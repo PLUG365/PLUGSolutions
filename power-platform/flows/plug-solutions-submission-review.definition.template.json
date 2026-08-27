@@ -51,7 +51,7 @@
     },
     "Get_existing_application": {
       "runAfter": {
-        "Get_response_details": [
+        "Normalize_thumbnail_candidate": [
           "Succeeded"
         ]
       },
@@ -69,6 +69,15 @@
           "operationId": "GetItems"
         }
       }
+    },
+    "Normalize_thumbnail_candidate": {
+      "runAfter": {
+        "Get_response_details": [
+          "Succeeded"
+        ]
+      },
+      "type": "Compose",
+      "inputs": "@if(and(startsWith(toLower(trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])), 'https://github.com/'), contains(trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])), '/blob/')), replace(replace(first(split(first(split(trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])), '?')), '#')), 'https://github.com/', 'https://raw.githubusercontent.com/'), '/blob/', '/'), trim(string(outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26'])))"
     },
     "Create_only_when_not_registered": {
       "runAfter": {
@@ -96,18 +105,19 @@
               "dataset": "__SHAREPOINT_SITE_URL__",
               "table": "__SHAREPOINT_LIST_ID__",
               "item/Title": "@outputs('Get_response_details')?['body/re4bf5e2759bf4682a64aa2e94a34f4d4']",
+              "item/Slug": "@concat('solution-', replace(guid(), '-', ''))",
               "item/ResponseId": "@string(triggerOutputs()?['body/resourceData/responseId'])",
-              "item/ReviewStatus/Value": "@if(and(equals(outputs('Get_response_details')?['body/re0610526e6bd4c00ab50c83d7b6d0a81'], 'すべて確認しました'), not(empty(outputs('Get_response_details')?['body/re4bf5e2759bf4682a64aa2e94a34f4d4'])), not(empty(outputs('Get_response_details')?['body/rd8b201c292414016935968dc0d065ea7'])), startsWith(outputs('Get_response_details')?['body/r0d54407bb4b5423d9e6d9680234f109b'], '@'), not(empty(outputs('Get_response_details')?['body/r211cdffe38a648f4adc0693e5df52500'])), not(empty(outputs('Get_response_details')?['body/re0b920768a5042eba29f219415450f69'])), startsWith(toLower(outputs('Get_response_details')?['body/r7f783902033c47cd85ccd52b0e5a65f1']), 'https://')), '未審査', '要確認')",
+              "item/ReviewStatus/Value": "@if(and(equals(outputs('Get_response_details')?['body/re0610526e6bd4c00ab50c83d7b6d0a81'], 'すべて確認しました'), not(empty(outputs('Get_response_details')?['body/re4bf5e2759bf4682a64aa2e94a34f4d4'])), not(empty(outputs('Get_response_details')?['body/rd8b201c292414016935968dc0d065ea7'])), not(empty(trim(string(outputs('Get_response_details')?['body/r0d54407bb4b5423d9e6d9680234f109b'])))), not(empty(outputs('Get_response_details')?['body/r211cdffe38a648f4adc0693e5df52500'])), not(empty(outputs('Get_response_details')?['body/re0b920768a5042eba29f219415450f69'])), startsWith(toLower(outputs('Get_response_details')?['body/r7f783902033c47cd85ccd52b0e5a65f1']), 'https://')), '未審査', '要確認')",
               "item/SubmittedAt": "@outputs('Get_response_details')?['body/submitDate']",
               "item/ConsentAnswer": "@outputs('Get_response_details')?['body/re0610526e6bd4c00ab50c83d7b6d0a81']",
               "item/MakerDisplayName": "@outputs('Get_response_details')?['body/rd8b201c292414016935968dc0d065ea7']",
-              "item/XHandle": "@outputs('Get_response_details')?['body/r0d54407bb4b5423d9e6d9680234f109b']",
+              "item/XHandle": "@if(startsWith(trim(string(outputs('Get_response_details')?['body/r0d54407bb4b5423d9e6d9680234f109b'])), '@'), trim(string(outputs('Get_response_details')?['body/r0d54407bb4b5423d9e6d9680234f109b'])), concat('@', trim(string(outputs('Get_response_details')?['body/r0d54407bb4b5423d9e6d9680234f109b']))))",
               "item/Description": "@outputs('Get_response_details')?['body/r211cdffe38a648f4adc0693e5df52500']",
               "item/TypesAndUses": "@outputs('Get_response_details')?['body/re0b920768a5042eba29f219415450f69']",
               "item/DistributionUrl": "@outputs('Get_response_details')?['body/r7f783902033c47cd85ccd52b0e5a65f1']",
               "item/RelatedUrls": "@outputs('Get_response_details')?['body/r9c3780f13f0443e5bef2fc57be25c42f']",
-              "item/Requirements": "@outputs('Get_response_details')?['body/re1ad12c23a964676b54486d8258dd275']",
-              "item/ThumbnailCandidateUrl": "@outputs('Get_response_details')?['body/r9e8a01ac47f14242bded2dd70d761c26']"
+              "item/Requirements": "",
+              "item/ThumbnailCandidateUrl": "@outputs('Normalize_thumbnail_candidate')"
             },
             "host": {
               "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",

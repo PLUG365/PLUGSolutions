@@ -34,8 +34,19 @@
     }
   },
   "actions": {
-    "Export_only_approved_complete_items": {
+    "Normalize_raw_submission_values": {
       "runAfter": {},
+      "type": "Compose",
+      "inputs": {
+        "xHandle": "@if(startsWith(trim(string(triggerBody()?['XHandle'])), '@'), trim(string(triggerBody()?['XHandle'])), concat('@', trim(string(triggerBody()?['XHandle']))))",
+        "typesAndUses": "@triggerBody()?['TypesAndUses']",
+        "relatedUrls": "@triggerBody()?['RelatedUrls']",
+        "thumbnailCandidateUrl": "@triggerBody()?['ThumbnailCandidateUrl']",
+        "note": "Node後段でQ6/Q8/画像候補を正規化し、未知・不正は要確認として公開不可。XはこのComposeで@を1個補完。Thumbnailはレビュー済みprocessed値のみ出力。"
+      }
+    },
+    "Export_only_approved_complete_items": {
+      "runAfter": { "Normalize_raw_submission_values": ["Succeeded"] },
       "type": "If",
       "expression": {
         "and": [
@@ -43,16 +54,10 @@
           { "equals": ["@empty(triggerBody()?['Slug'])", false] },
           { "equals": ["@empty(triggerBody()?['Title'])", false] },
           { "equals": ["@empty(triggerBody()?['MakerDisplayName'])", false] },
-          { "equals": ["@startsWith(triggerBody()?['XHandle'], '@')", true] },
+          { "equals": ["@startsWith(outputs('Normalize_raw_submission_values')?['xHandle'], '@')", true] },
           { "equals": ["@empty(triggerBody()?['Description'])", false] },
-          { "equals": ["@empty(triggerBody()?['CatalogType'])", false] },
-          { "equals": ["@empty(triggerBody()?['CatalogCategories'])", false] },
-          { "equals": ["@startsWith(toLower(triggerBody()?['DistributionUrl']), 'https://')", true] },
-          { "equals": ["@empty(triggerBody()?['CatalogLicense'])", false] },
-          { "equals": ["@empty(triggerBody()?['CatalogCost'])", false] },
-          { "equals": ["@empty(triggerBody()?['SetupTime'])", false] },
-          { "equals": ["@empty(triggerBody()?['CatalogPublishedDate'])", false] },
-          { "equals": ["@empty(triggerBody()?['CatalogUpdatedDate'])", false] }
+          { "equals": ["@empty(triggerBody()?['TypesAndUses'])", false] },
+          { "equals": ["@startsWith(toLower(triggerBody()?['DistributionUrl']), 'https://')", true] }
         ]
       },
       "actions": {
@@ -65,24 +70,24 @@
             "title": "@triggerBody()?['Title']",
             "maker": {
               "displayName": "@triggerBody()?['MakerDisplayName']",
-              "xHandle": "@triggerBody()?['XHandle']",
-              "xUrl": "@concat('https://x.com/', substring(triggerBody()?['XHandle'], 1))"
+              "xHandle": "@outputs('Normalize_raw_submission_values')?['xHandle']",
+              "xUrl": "@concat('https://x.com/', substring(outputs('Normalize_raw_submission_values')?['xHandle'], 1))"
             },
             "description": "@triggerBody()?['Description']",
-            "type": "@triggerBody()?['CatalogType']",
-            "categories": "@split(replace(triggerBody()?['CatalogCategories'], decodeUriComponent('%0D'), ''), decodeUriComponent('%0A'))",
+            "type": "@if(empty(triggerBody()?['CatalogType']), first(split(replace(triggerBody()?['TypesAndUses'], decodeUriComponent('%0D'), ''), decodeUriComponent('%0A'))), triggerBody()?['CatalogType'])",
+            "categories": "@if(empty(triggerBody()?['CatalogCategories']), json('[\"その他\"]'), split(replace(triggerBody()?['CatalogCategories'], decodeUriComponent('%0D'), ''), decodeUriComponent('%0A'))) ",
             "tags": "@if(empty(triggerBody()?['CatalogTags']), json('[]'), split(replace(triggerBody()?['CatalogTags'], decodeUriComponent('%0D'), ''), decodeUriComponent('%0A')))",
             "distributionUrl": "@triggerBody()?['DistributionUrl']",
             "sourceUrl": "@if(empty(triggerBody()?['SourceUrl']), json('null'), triggerBody()?['SourceUrl'])",
             "instructionsUrl": "@if(empty(triggerBody()?['InstructionsUrl']), json('null'), triggerBody()?['InstructionsUrl'])",
-            "license": "@triggerBody()?['CatalogLicense']",
-            "cost": "@triggerBody()?['CatalogCost']",
+            "license": "@if(empty(triggerBody()?['CatalogLicense']), '配布先を確認', triggerBody()?['CatalogLicense'])",
+            "cost": "@if(empty(triggerBody()?['CatalogCost']), '配布先を確認', triggerBody()?['CatalogCost'])",
             "premiumRequired": "@if(equals(triggerBody()?['PremiumRequired/Value'], '必要'), true, if(equals(triggerBody()?['PremiumRequired/Value'], '不要'), false, json('null')))",
-            "setupTime": "@triggerBody()?['SetupTime']",
+            "setupTime": "@if(empty(triggerBody()?['SetupTime']), '未記載', triggerBody()?['SetupTime'])",
             "prerequisites": "@if(empty(triggerBody()?['CatalogPrerequisites']), json('[]'), split(replace(triggerBody()?['CatalogPrerequisites'], decodeUriComponent('%0D'), ''), decodeUriComponent('%0A')))",
             "thumbnail": "@if(empty(triggerBody()?['ThumbnailPath']), json('null'), triggerBody()?['ThumbnailPath'])",
-            "publishedAt": "@formatDateTime(triggerBody()?['CatalogPublishedDate'], 'yyyy-MM-dd')",
-            "updatedAt": "@formatDateTime(triggerBody()?['CatalogUpdatedDate'], 'yyyy-MM-dd')"
+            "publishedAt": "@formatDateTime(if(empty(triggerBody()?['CatalogPublishedDate']), coalesce(triggerBody()?['ReviewedAt'], utcNow()), triggerBody()?['CatalogPublishedDate']), 'yyyy-MM-dd')",
+            "updatedAt": "@formatDateTime(if(empty(triggerBody()?['CatalogUpdatedDate']), coalesce(triggerBody()?['ReviewedAt'], utcNow()), triggerBody()?['CatalogUpdatedDate']), 'yyyy-MM-dd')"
           }
         },
         "Create_or_replace_private_JSON": {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllSolutions, getReactionCounts, getSolution } from "../../../lib/catalog";
+import SiteFooter from "../../SiteFooter";
 
 export const dynamicParams = false;
 
@@ -97,7 +98,7 @@ export default async function SolutionPage({ params }: PageProps) {
       <section className="reaction-panel" aria-labelledby="reaction-heading">
         <div>
           <p className="section-index">REACTIONS</p>
-          <h2 id="reaction-heading">持ち帰った先の実感を返す</h2>
+          <h2 id="reaction-heading">作品へのフィードバック</h2>
           <p>コメントは公開しません。匿名フォームから、作品を試した段階だけを伝えられます。</p>
         </div>
         <dl className="reaction-counts">
@@ -112,10 +113,7 @@ export default async function SolutionPage({ params }: PageProps) {
         )}
       </section>
 
-      <footer className="detail-footer">
-        <Link href="/">PLUG Solutions</Link>
-        {reportUrl ? <a href={reportUrl} target="_blank" rel="noreferrer">掲載内容を報告する ↗</a> : <span>報告フォーム準備中</span>}
-      </footer>
+      <SiteFooter reportUrl={reportUrl} />
     </main>
   );
 }

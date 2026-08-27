@@ -101,3 +101,60 @@ test("approved submission automation uses OIDC and creates reviewable PRs only",
   assert.doesNotMatch(workflow, /^\s*push:\s*$/m);
   assert.doesNotMatch(workflow, /git push[^\n]*\bmain\b/);
 });
+
+test("intake template normalizes public handles and assigns a non-PII slug", async () => {
+  const workflow = JSON.parse(
+    await readFile(
+      new URL("power-platform/flows/plug-solutions-submission-review.definition.template.json", root),
+      "utf8",
+    ),
+  );
+  const create = workflow.actions.Create_only_when_not_registered.actions.Create_review_item;
+  const parameters = create.inputs.parameters;
+  assert.match(parameters["item/Slug"], /solution-/);
+  assert.match(parameters["item/Slug"], /guid\(\)/);
+  assert.ok(parameters["item/XHandle"].includes("startsWith(trim(string"));
+  assert.equal(
+    workflow.actions.Normalize_thumbnail_candidate.type,
+    "Compose",
+  );
+  assert.match(
+    workflow.actions.Normalize_thumbnail_candidate.inputs,
+    /raw\.githubusercontent\.com/,
+  );
+  assert.equal(
+    parameters["item/ThumbnailCandidateUrl"],
+    "@outputs('Normalize_thumbnail_candidate')",
+  );
+  assert.equal(parameters["item/Requirements"], "");
+});
+
+test("approved export keeps raw Forms values behind a normalization gate", async () => {
+  const workflow = JSON.parse(
+    await readFile(
+      new URL("power-platform/flows/plug-solutions-approved-json-export.definition.template.json", root),
+      "utf8",
+    ),
+  );
+  const normalize = workflow.actions.Normalize_raw_submission_values;
+  assert.equal(normalize.type, "Compose");
+  assert.ok(normalize.inputs.note.includes("Q6/Q8/画像候補を正規化"));
+  assert.match(
+    workflow.actions.Export_only_approved_complete_items.runAfter.Normalize_raw_submission_values[0],
+    /Succeeded/,
+  );
+  assert.match(
+    workflow.actions.Export_only_approved_complete_items.actions.Compose_public_catalog_item.inputs.maker.xHandle,
+    /Normalize_raw_submission_values/,
+  );
+  const gate = workflow.actions.Export_only_approved_complete_items.expression.and
+    .map((condition) => JSON.stringify(condition))
+    .join("\n");
+  assert.match(gate, /TypesAndUses/);
+  assert.doesNotMatch(gate, /CatalogType|CatalogCategories|CatalogTags|CatalogLicense|CatalogCost|SetupTime|CatalogPublishedDate|CatalogUpdatedDate/);
+  const item = workflow.actions.Export_only_approved_complete_items.actions.Compose_public_catalog_item.inputs;
+  assert.match(item.license, /配布先を確認/);
+  assert.match(item.cost, /配布先を確認/);
+  assert.match(item.setupTime, /未記載/);
+  assert.match(item.publishedAt, /ReviewedAt|utcNow/);
+});

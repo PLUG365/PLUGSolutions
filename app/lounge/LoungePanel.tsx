@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useReducer, useState } from "react";
-import { buildLoungeEmbedUrl, isLoungeOpen } from "../../lib/lounge-config.mjs";
+import { buildLoungeEmbedUrl, getLoungeTimerDelay, getLoungeViewState } from "../../lib/lounge-config.mjs";
 
 type LoungeConfig =
   | { mode: "closed"; reason: string }
@@ -33,12 +33,39 @@ export default function LoungePanel({ config }: Props) {
     () => (config.mode === "pilot" ? buildLoungeEmbedUrl(config) : null),
     [config],
   );
+  const viewState = getLoungeViewState(config, now, consented);
+  const pilotEndTime = config.mode === "pilot" ? config.endTime : null;
 
   useEffect(() => {
     tick();
     const timer = window.setInterval(tick, 30_000);
     return () => window.clearInterval(timer);
   }, []);
+
+  // Polling keeps the schedule current, but do not leave an open iframe around
+  // for the remainder of the poll interval when the event ends. The timeout
+  // is recreated/cleaned up with the config so React Strict Mode cannot leave
+  // duplicate timers behind; a late callback after sleep still re-evaluates
+  // the view state through the normal render path.
+  useEffect(() => {
+    if (pilotEndTime === null) return undefined;
+    let timer: number | undefined;
+    let cancelled = false;
+    const schedule = () => {
+      if (cancelled) return;
+      const remaining = pilotEndTime - Date.now();
+      if (remaining <= 0) {
+        tick();
+        return;
+      }
+      timer = window.setTimeout(schedule, getLoungeTimerDelay(pilotEndTime));
+    };
+    schedule();
+    return () => {
+      cancelled = true;
+      if (timer !== undefined) window.clearTimeout(timer);
+    };
+  }, [pilotEndTime]);
 
   if (config.mode === "closed") {
     return (
@@ -51,8 +78,7 @@ export default function LoungePanel({ config }: Props) {
     );
   }
 
-  const open = now !== null && isLoungeOpen(config, now);
-  if (!open) {
+  if (viewState === "scheduled") {
     return (
       <section className="lounge-status" aria-labelledby="lounge-status-heading">
         <p className="section-index">ROOM STATUS — SCHEDULED</p>
@@ -63,7 +89,7 @@ export default function LoungePanel({ config }: Props) {
     );
   }
 
-  if (!consented) {
+  if (viewState === "consent") {
     return (
       <section className="lounge-consent" aria-labelledby="lounge-consent-heading">
         <p className="section-index">BEFORE CONNECTING</p>
@@ -72,12 +98,9 @@ export default function LoungePanel({ config }: Props) {
         <ul>
           <li>個人情報、顧客情報、機密情報を書き込まない</li>
           <li>PLUGの行動規範を守り、相手を尊重する</li>
-          <li>この試行では映像、音声、画面共有を使用しない</li>
-          <li>「private」は部屋一覧から隠す設定であり、認証ではない</li>
         </ul>
         <div className="lounge-links">
           <a href="https://chatexe.net/" target="_blank" rel="noreferrer">chat.exe公式情報 ↗</a>
-          <a href="https://plug365.github.io/PLUGGuide/" target="_blank" rel="noreferrer">PLUGの行動規範 ↗</a>
         </div>
         <button className="primary-button" type="button" onClick={() => setConsented(true)}>
           内容を理解して接続する <span aria-hidden="true">→</span>
@@ -95,7 +118,6 @@ export default function LoungePanel({ config }: Props) {
         </div>
         <button className="outline-button" type="button" onClick={() => setConsented(false)}>退室する</button>
       </div>
-      <p className="lounge-note">テキスト専用pilotです。困ったときは退室し、イベント運営者へお知らせください。</p>
       <iframe
         className="lounge-frame"
         src={embedUrl ?? undefined}

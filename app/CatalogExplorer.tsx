@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- cards expose an internally scrollable description. */
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -67,7 +68,7 @@ export default function CatalogExplorer({ solutions, reactions }: Props) {
             const counts = reactions[solution.slug];
             const reactionTotal = counts ? counts.interested + counts.tried + counts.adopted : 0;
             return (
-              <article className="solution-card" key={solution.slug}>
+              <article className="solution-card" key={solution.slug} tabIndex={0}>
                 <div
                   className={`card-art ${fallbackColor(solution.slug)}${solution.thumbnail ? " has-thumbnail" : ""}`}
                   style={solution.thumbnail ? { backgroundImage: `url(${solution.thumbnail})` } : undefined}
@@ -81,7 +82,12 @@ export default function CatalogExplorer({ solutions, reactions }: Props) {
                 <div className="card-body">
                   <div className="card-topline"><span>{solution.type}</span><span>更新 {formatDate(solution.updatedAt)}</span></div>
                   <h3>{solution.title}</h3>
-                  <p className="maker">by {solution.maker.displayName} · {solution.maker.xHandle}</p>
+                  <p className="maker">
+                    by {solution.maker.displayName} ·{" "}
+                    <a href={solution.maker.xUrl} target="_blank" rel="noreferrer" aria-label={`${solution.maker.xHandle} のXプロフィールを開く`}>
+                      {solution.maker.xHandle} ↗
+                    </a>
+                  </p>
                   <p className="card-description">{solution.description}</p>
                   <div className="tag-list">{solution.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
                   <dl className="card-facts">

@@ -158,6 +158,24 @@ Screens:
                         Underline: =!IsBlank(varSelectedRequest.ThumbnailCandidateUrl)
                         Visible: =!IsBlank(varSelectedRequest)
                         Width: =Parent.Width-Self.X-20
+                  - lblTypesAndUsesRaw:
+                      Control: Label
+                      Properties:
+                        Height: =48
+                        Text: ="Q6 原文（種類・主な用途）" & Coalesce(varSelectedRequest.TypesAndUses, "未入力")
+                        Visible: =!IsBlank(varSelectedRequest)
+                  - lblRelatedUrlsRaw:
+                      Control: Label
+                      Properties:
+                        Height: =48
+                        Text: ="Q8 原文（関連URL）" & Coalesce(varSelectedRequest.RelatedUrls, "未入力")
+                        Visible: =!IsBlank(varSelectedRequest)
+                  - lblThumbnailCandidateRaw:
+                      Control: Label
+                      Properties:
+                        Height: =48
+                        Text: ="Q9 原文（画像候補）" & Coalesce(varSelectedRequest.ThumbnailCandidateUrl, "未入力")
+                        Visible: =!IsBlank(varSelectedRequest)
                   - lblTitle:
                       Control: Label
                       Properties:
@@ -170,7 +188,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.Title
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -186,7 +204,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.MakerDisplayName
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -203,7 +221,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.XHandle
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         HintText: ="@example"
                         LayoutMinHeight: =48
@@ -221,7 +239,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.Description
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =120
                         LayoutMinHeight: =120
                         LayoutMinWidth: =0
@@ -239,7 +257,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.DistributionUrl
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -256,7 +274,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.Slug
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         HintText: ="my-solution"
                         LayoutMinHeight: =48
@@ -274,7 +292,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogType
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -291,7 +309,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogCategories
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =96
                         LayoutMinHeight: =96
                         LayoutMinWidth: =0
@@ -309,7 +327,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogTags
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =96
                         LayoutMinHeight: =96
                         LayoutMinWidth: =0
@@ -327,7 +345,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.SourceUrl
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -344,7 +362,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.InstructionsUrl
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -361,7 +379,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogLicense
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -378,7 +396,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogCost
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -396,7 +414,7 @@ Screens:
                       Properties:
                         DefaultSelectedItems: =If(IsBlank(varSelectedRequest.PremiumRequired), Blank(), [varSelectedRequest.PremiumRequired])
                         DisplayFields: =["Value"]
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         InputTextPlaceholder: ="必要／不要／不明"
                         Items: =Choices(掲載申請.PremiumRequired)
@@ -417,7 +435,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.SetupTime
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -434,7 +452,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.CatalogPrerequisites
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =96
                         LayoutMinHeight: =96
                         LayoutMinWidth: =0
@@ -452,7 +470,7 @@ Screens:
                       Control: Classic/TextInput
                       Properties:
                         Default: =varSelectedRequest.ThumbnailPath
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -469,7 +487,7 @@ Screens:
                       Control: Classic/DatePicker
                       Properties:
                         DefaultDate: =varSelectedRequest.CatalogPublishedDate
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -486,7 +504,7 @@ Screens:
                       Control: Classic/DatePicker
                       Properties:
                         DefaultDate: =varSelectedRequest.CatalogUpdatedDate
-                        DisplayMode: =If(varSaving || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.View, DisplayMode.Edit)
+                        DisplayMode: =DisplayMode.View
                         Height: =48
                         LayoutMinHeight: =48
                         LayoutMinWidth: =0
@@ -539,14 +557,14 @@ Screens:
                             Properties:
                               BorderColor: =RGBA(20, 21, 18, 1)
                               Color: =RGBA(20, 21, 18, 1)
-                              DisplayMode: =If(varSaving || IsBlank(varSelectedRequest) || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認", DisplayMode.Disabled, DisplayMode.Edit)
+                              DisplayMode: =DisplayMode.Disabled
                               Fill: =RGBA(255, 255, 255, 1)
                               FillPortions: =1
                               Height: =48
                               LayoutMinHeight: =48
                               LayoutMinWidth: =128
                               OnSelect: |-
-                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varCurrentRequest), Set(varNotice, "保存できません。申請が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の更新を検出しました。一覧へ戻って再読込してください。"), Set(varSelectedRequest, Patch(掲載申請, varCurrentRequest, {Title: Trim(txtTitle.Text), MakerDisplayName: Trim(txtMakerDisplayName.Text), XHandle: Trim(txtXHandle.Text), Description: Trim(txtDescription.Text), DistributionUrl: Trim(txtDistributionUrl.Text), Slug: Lower(Trim(txtSlug.Text)), CatalogType: Trim(txtCatalogType.Text), CatalogCategories: Trim(txtCatalogCategories.Text), CatalogTags: Trim(txtCatalogTags.Text), SourceUrl: Trim(txtSourceUrl.Text), InstructionsUrl: Trim(txtInstructionsUrl.Text), CatalogLicense: Trim(txtCatalogLicense.Text), CatalogCost: Trim(txtCatalogCost.Text), PremiumRequired: cmbPremiumRequired.Selected, SetupTime: Trim(txtSetupTime.Text), CatalogPrerequisites: Trim(txtCatalogPrerequisites.Text), ThumbnailPath: Trim(txtThumbnailPath.Text), CatalogPublishedDate: dpCatalogPublishedDate.SelectedDate, CatalogUpdatedDate: dpCatalogUpdatedDate.SelectedDate, ReviewNotes: Trim(txtReviewNotes.Text)})); Set(varNotice, "完了: 下書きを保存しました。")); Set(varSaving, false)
+                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varCurrentRequest), Set(varNotice, "保存できません。申請が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の更新を検出しました。一覧へ戻って再読込してください。"), Set(varSelectedRequest, Patch(掲載申請, varCurrentRequest, {ReviewNotes: Trim(txtReviewNotes.Text)}); Set(varNotice, "完了: 下書きを保存しました。")); Set(varSaving, false)
                               Text: ="保存"
                         - btnReject:
                             Control: Classic/Button
@@ -560,7 +578,7 @@ Screens:
                               LayoutMinHeight: =48
                               LayoutMinWidth: =128
                               OnSelect: |-
-                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(Trim(txtReviewNotes.Text)), Set(varNotice, "却下理由を審査メモへ入力してください。"), IsBlank(varCurrentRequest), Set(varNotice, "却下できません。申請が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の更新を検出しました。一覧へ戻って再読込してください。"), Set(varSelectedRequest, Patch(掲載申請, varCurrentRequest, {Title: Trim(txtTitle.Text), MakerDisplayName: Trim(txtMakerDisplayName.Text), XHandle: Trim(txtXHandle.Text), Description: Trim(txtDescription.Text), DistributionUrl: Trim(txtDistributionUrl.Text), Slug: Lower(Trim(txtSlug.Text)), CatalogType: Trim(txtCatalogType.Text), CatalogCategories: Trim(txtCatalogCategories.Text), CatalogTags: Trim(txtCatalogTags.Text), SourceUrl: Trim(txtSourceUrl.Text), InstructionsUrl: Trim(txtInstructionsUrl.Text), CatalogLicense: Trim(txtCatalogLicense.Text), CatalogCost: Trim(txtCatalogCost.Text), PremiumRequired: cmbPremiumRequired.Selected, SetupTime: Trim(txtSetupTime.Text), CatalogPrerequisites: Trim(txtCatalogPrerequisites.Text), ThumbnailPath: Trim(txtThumbnailPath.Text), CatalogPublishedDate: dpCatalogPublishedDate.SelectedDate, CatalogUpdatedDate: dpCatalogUpdatedDate.SelectedDate, ReviewNotes: Trim(txtReviewNotes.Text), ReviewStatus: {Value: "却下"}, ReviewedAt: Now()})); Set(varNotice, "完了: 申請を却下しました。")); Set(varSaving, false)
+                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(Trim(txtReviewNotes.Text)), Set(varNotice, "却下理由を審査メモへ入力してください。"), IsBlank(varCurrentRequest), Set(varNotice, "却下できません。申請が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の更新を検出しました。一覧へ戻って再読込してください。"), Set(varSelectedRequest, Patch(掲載申請, varCurrentRequest, {ReviewNotes: Trim(txtReviewNotes.Text), ReviewStatus: {Value: "却下"}, ReviewedAt: Now()}); Set(varNotice, "完了: 申請を却下しました。")); Set(varSaving, false)
                               Text: ="却下"
                         - btnApprove:
                             Control: Classic/Button
@@ -576,7 +594,7 @@ Screens:
                               LayoutMinHeight: =48
                               LayoutMinWidth: =128
                               OnSelect: |-
-                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(Trim(txtTitle.Text)) || IsBlank(Trim(txtMakerDisplayName.Text)) || !StartsWith(Trim(txtXHandle.Text), "@") || IsBlank(Trim(txtDescription.Text)) || !StartsWith(Lower(Trim(txtDistributionUrl.Text)), "https://") || !IsMatch(Trim(txtSlug.Text), "^[a-z0-9]+(-[a-z0-9]+)*$") || IsBlank(Trim(txtCatalogType.Text)) || IsBlank(Trim(txtCatalogCategories.Text)) || IsBlank(Trim(txtCatalogTags.Text)) || IsBlank(Trim(txtCatalogLicense.Text)) || IsBlank(Trim(txtCatalogCost.Text)) || IsBlank(cmbPremiumRequired.Selected.Value) || IsBlank(Trim(txtSetupTime.Text)) || IsBlank(dpCatalogPublishedDate.SelectedDate) || IsBlank(dpCatalogUpdatedDate.SelectedDate), Set(varNotice, "承認できません。必須項目と入力形式を確認してください。"), IsBlank(varCurrentRequest), Set(varNotice, "承認できません。申請が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の更新を検出しました。一覧へ戻って再読込してください。"), Set(varSelectedRequest, Patch(掲載申請, varCurrentRequest, {Title: Trim(txtTitle.Text), MakerDisplayName: Trim(txtMakerDisplayName.Text), XHandle: Trim(txtXHandle.Text), Description: Trim(txtDescription.Text), DistributionUrl: Trim(txtDistributionUrl.Text), Slug: Lower(Trim(txtSlug.Text)), CatalogType: Trim(txtCatalogType.Text), CatalogCategories: Trim(txtCatalogCategories.Text), CatalogTags: Trim(txtCatalogTags.Text), SourceUrl: Trim(txtSourceUrl.Text), InstructionsUrl: Trim(txtInstructionsUrl.Text), CatalogLicense: Trim(txtCatalogLicense.Text), CatalogCost: Trim(txtCatalogCost.Text), PremiumRequired: cmbPremiumRequired.Selected, SetupTime: Trim(txtSetupTime.Text), CatalogPrerequisites: Trim(txtCatalogPrerequisites.Text), ThumbnailPath: Trim(txtThumbnailPath.Text), CatalogPublishedDate: dpCatalogPublishedDate.SelectedDate, CatalogUpdatedDate: dpCatalogUpdatedDate.SelectedDate, ReviewNotes: Trim(txtReviewNotes.Text), ReviewStatus: {Value: "承認"}, ReviewedAt: Now()})); Set(varNotice, "完了: 申請を承認しました。")); Set(varSaving, false)
+                                =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varCurrentRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(Trim(txtTitle.Text)) || IsBlank(Trim(txtMakerDisplayName.Text)) || !StartsWith(Trim(txtXHandle.Text), "@") || IsBlank(Trim(txtDescription.Text)) || !StartsWith(Lower(Trim(txtDistributionUrl.Text)), "https://") || !IsMatch(Trim(txtSlug.Text), "^[a-z0-9]+(-[a-z0-9]+)*$") || IsBlank(Trim(Coalesce(varSelectedRequest.TypesAndUses, ""))), Set(varNotice, "承認できません。申請内容と入力形式を確認してください。"), IsBlank(varCurrentRequest), Set(varNotice, "承認できません。申請が見つかりません。"), varCurrentRequest.Modified <> varSelectedRequest.Modified || Coalesce(varCurrentRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の更新を検出しました。一覧へ戻って再読込してください。"), Set(varSelectedRequest, Patch(掲載申請, varCurrentRequest, {ReviewNotes: Trim(txtReviewNotes.Text), ReviewStatus: {Value: "承認"}, ReviewedAt: Now()}); Set(varNotice, "完了: 申請を承認しました。")); Set(varSaving, false)
                               PressedFill: =RGBA(193, 255, 68, 1)
                               Text: ="承認"
                   - lblDetailPublishHint:

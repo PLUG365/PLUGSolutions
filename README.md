@@ -53,7 +53,6 @@ The production environment must define `NEXT_PUBLIC_SUBMISSION_FORM_URL` before 
 
 ## Project links
 
-- [PLUG Guide](https://plug365.github.io/PLUGGuide/)
 - [PLUG on connpass](https://plug.connpass.com/)
 
 PLUG Solutions is operated personally by minoru365 and is not an official Microsoft service.

@@ -12,7 +12,7 @@ Business BasicのPower Automate Premium HTTPアクションや、長期クライ
 | --- | --- | --- | --- |
 | SharePoint読取 | `ReviewStatus=承認` | 公開候補の検証へ進む | 未審査、要確認、却下、公開済み、取り下げは処理しない |
 | 取り下げ読取 | `ReviewStatus=取り下げ` かつmainに同じslugが存在 | JSONと同一slugのWebPだけを削除候補にする | 履歴、SharePoint行、他slugのファイルは削除しない |
-| 公開項目検証 | 公開必須項目と形式が妥当 | 公開許可項目だけでJSONを構築 | 回答ID、同意、審査メモ、画像候補URLをJSONやログへ出さない |
+| 公開項目検証 | Forms原文を正規化し、必須値・形式が妥当 | 公開許可項目だけでJSONを構築 | 回答ID、同意、審査メモ、画像候補URLをJSONやログへ出さない |
 | 承認後の再編集 | `ReviewStatus=承認` かつSharePointの`Modified`と状態が選択時から不変 | 公開項目を変更せず`要確認`へ戻す | 承認中の公開項目は読取専用。審査メモは保持する |
 | 画像取得 | HTTPS、資格情報なし、公開IP、10MB以下、PNG/JPEG/WebP | 一時領域へ取得 | localhost、プライベート／リンクローカルIP、危険なリダイレクト、過大・不正形式を拒否 |
 | 画像処理 | Sharpで読取可能、25MP以下 | 1200×675 WebPへ再エンコードし、メタデータを除去 | 生画像はリポジトリへ保存しない。失敗時は文字サムネイルへフォールバックする |
@@ -42,7 +42,7 @@ Repository variablesとして次を設定する。IDは認証秘密ではない�
 
 `azure/login` は `allow-no-subscriptions: true` でテナントレベル認証だけを行う。EntraアプリへAzure Subscription RBACを付与しない。
 
-GitHubリポジトリ設定では、ActionsによるPull Request作成を許可する。`main`のbranch protectionとCODEOWNERSによる人の承認は維持する。
+GitHubリポジトリ設定では、ActionsによるPull Request作成を許可する。`main`のbranch protectionとCODEOWNERSによる人の承認は維持する。`GITHUB_TOKEN`が作成・更新したPRの`pull_request` WorkflowはGitHubの再帰実行防止により`action_required`となるため、変更内容を確認した運営者がPRの **Approve workflows to run** でCIを開始する。CIの自動開始だけを目的にPATや長期シークレットへ置き換えない。
 
 ## 構成記録（2026-08-26）
 
@@ -64,6 +64,7 @@ GitHubリポジトリ設定では、ActionsによるPull Request作成を許可�
 - 画像だけが未入力または処理失敗の場合は `thumbnail: null` とし、PR本文へフォールバックを明示する。候補URLやレスポンス本文は記載しない。
 - 一度に処理する新規slugは最大1件とし、次回の定期実行で残りを処理する。
 - 自動化branchが既に存在する場合は変更せず終了し、人が既存PRを解決する。
+- 掲載・取り下げPRのCIが`action_required`の場合は異常終了ではない。PR差分にWorkflow変更や非公開情報がないことを確認してから、書込権限を持つ運営者がCI実行を許可する。
 - commit直前の再読取が成功した後からbranch作成、push、PR作成までにSharePoint行が変わる競合窓は残る。この間の変更は同じrunでは検出できず、作成済みPRも自動失効しないため、merge前にPR記載のSharePoint itemと受理した更新日時を現在行と人が照合する。将来はmerge-timeの読取専用再検証を追加候補とする。
 
 ## 機械ゲート

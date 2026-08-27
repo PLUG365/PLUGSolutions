@@ -93,9 +93,11 @@ for (const screenName of ["ReviewQueue", "ReviewDetail"]) {
         ?? (screenName === "ReviewQueue" ? "txtQueueReviewNotesField" : "txtReviewNotes");
       const block = controlBlock(screen, publicControls[index], next);
       assert.match(block, /DisplayMode:/, `${publicControls[index]} lacks DisplayMode`);
-      assert.match(block, /ReviewStatus\.Value/, `${publicControls[index]} lacks status guard`);
-      assert.match(block, /"承認"/, `${publicControls[index]} is editable while approved`);
-      assert.match(block, /DisplayMode\.View/, `${publicControls[index]} is not view-only`);
+      assert.equal(
+        (block.match(/DisplayMode: =DisplayMode\.View/g) ?? []).length,
+        1,
+        `${publicControls[index]} is not view-only`,
+      );
     }
 
     const actionNames = screenName === "ReviewQueue"
@@ -104,9 +106,29 @@ for (const screenName of ["ReviewQueue", "ReviewDetail"]) {
     for (const actionName of actionNames) {
       const block = controlBlock(screen, actionName);
       assert.match(block, /DisplayMode:/);
-      assert.match(block, /ReviewStatus\.Value/);
-      assert.match(block, /"承認"/);
       assert.match(block, /DisplayMode\.Disabled/);
+      if (!actionName.toLowerCase().includes("save")) {
+        assert.match(block, /ReviewStatus\.Value/);
+        assert.match(block, /"承認"/);
+      }
+    }
+
+    assert.match(screen, /TypesAndUses/);
+    assert.match(screen, /RelatedUrls/);
+    assert.match(screen, /ThumbnailCandidateUrl/);
+    const approve = controlBlock(
+      screen,
+      screenName === "ReviewQueue" ? "btnQueueApprove" : "btnApprove",
+    );
+    assert.doesNotMatch(approve, /txt(?:Queue)?Catalog(?:Type|Categories|Tags|License|Cost)/);
+    assert.doesNotMatch(approve, /(?:PremiumRequired|SetupTime|Catalog(?:Published|Updated)Date)/);
+
+    const lifecycleRegion = screen.slice(screen.indexOf("Children:"));
+    for (const patch of lifecycleRegion.matchAll(/Patch\(掲載申請,[\s\S]*?\{([^}]*)\}/g)) {
+      const fields = [...patch[1].matchAll(/(?:^|, )([A-Za-z][A-Za-z0-9_]*):/g)].map(([, key]) => key);
+      for (const key of fields) {
+        assert.ok(["ReviewStatus", "ReviewedAt", "ReviewNotes"].includes(key), `${screenName} patches non-review field ${key}`);
+      }
     }
   });
 }

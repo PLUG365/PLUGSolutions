@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import plugLogo from "../assets/完成品(縁あり).png";
 import CatalogExplorer from "./CatalogExplorer";
+import SiteFooter from "./SiteFooter";
 import { getAllSolutions, getReactionCounts } from "../lib/catalog";
 
-const plugGuideUrl = "https://plug365.github.io/PLUGGuide/";
 const plugConnpassUrl = "https://plug.connpass.com/";
 
 export default async function Home() {
@@ -22,8 +22,8 @@ export default async function Home() {
         <nav aria-label="メインナビゲーション">
           <a href="#catalog">見つける</a>
           <a href="#plug">PLUGの考え方</a>
-          <a href="#about">参加の流れ</a>
           <Link href="/guide/">掲載ガイド</Link>
+          <Link href="/lounge/">PLUG Lounge</Link>
         </nav>
         <a className="header-cta" href="#submit">作品を持ち寄る <span aria-hidden="true">↗</span></a>
       </header>
@@ -33,12 +33,15 @@ export default async function Home() {
           <p className="eyebrow"><span /> A PLUG PROJECT — FIELD-FIRST CATALOG</p>
           <h1><span>解決策をつなぎ、</span><em>現場を起動する。</em></h1>
           <p className="hero-lead">
-            Power Platformを起点に、Web、モバイル、AI、OSSまで。<br />
-            現場で動いた工夫を、次の誰かが見つけ、持ち帰り、自分の環境で育てるカタログ。
+            Power Platformだけでなく、Web、モバイル、AI、OSSまで。<br />
+            現場で動いた工夫を、次の誰かが見つけ、持ち帰り、育てるカタログ。<br />
+            PLUG（Power Platform Local User Group）が運営しています。
           </p>
           <div className="hero-actions">
             <a className="primary-button" href="#catalog">解決策を探す <span aria-hidden="true">↓</span></a>
             <a className="text-button" href="#plug">PLUGを知る <span aria-hidden="true">→</span></a>
+            <Link className="text-button" href="/guide/">掲載ガイド <span aria-hidden="true">→</span></Link>
+            <Link className="text-button" href="/lounge/">PLUG Lounge <span aria-hidden="true">→</span></Link>
           </div>
           <div className="trust-row" aria-label="カタログの特徴">
             <span>✓ 現場起点</span>
@@ -81,10 +84,9 @@ export default async function Home() {
       <section className="catalog" id="catalog">
         <div className="section-heading">
           <div>
-            <p className="section-index">01 — EXPLORE</p>
-            <h2>あなたの次の<br />「使える」を探す</h2>
+            <p className="section-index">EXPLORE</p>
+            <h2>ソリューションを探す</h2>
           </div>
-          <p>人気より、使える条件で選ぶ。<br />ライセンスも前提環境も、ひと目で。</p>
         </div>
         <CatalogExplorer solutions={solutions} reactions={reactions} />
       </section>
@@ -92,7 +94,7 @@ export default async function Home() {
       <section className="activity" id="plug">
         <div className="section-heading light">
           <div>
-            <p className="section-index">02 — THE PLUG CONCEPT</p>
+            <p className="section-index">THE PLUG CONCEPT</p>
             <h2>つなぐ。起動する。<br />ギャップを埋める。</h2>
           </div>
           <p>PLUGは、人や組織、ローカルとグローバルをつなぎ、変革・DXを起動し、理想と現実の距離を縮めます。</p>
@@ -103,40 +105,22 @@ export default async function Home() {
           <p>Power Platformを共通言語として、一人で抱え込まず、越境し、学び、実践できる環境をつくる。PLUG Solutionsはその実践知を、技術の境界を越えて循環させます。</p>
         </div>
         <div className="activity-grid plug-grid">
-          <article className="activity-card accent-card">
-            <p className="activity-label">CONNECT</p>
+          <article className="activity-card">
             <h3>つなぐ</h3>
             <p>つくった人と使いたい人、組織と地域、ローカルな工夫と次の現場をつなぎます。</p>
           </article>
           <article className="activity-card">
-            <p className="activity-label question">POWER ON</p>
             <h3>起動する</h3>
             <p>完璧さを待つより、まず動かす。試した事実と小さな実装を、次の変革の電源にします。</p>
           </article>
           <article className="activity-card">
-            <p className="activity-label remix">BRIDGE THE GAP</p>
             <h3>ギャップを埋める</h3>
             <p>流行や理論だけでなく、現場の課題、制約、文脈から理想までの現実的な道筋を共有します。</p>
           </article>
         </div>
         <div className="plug-links">
-          <a className="plug-guide-link" href={plugGuideUrl} target="_blank" rel="noreferrer">Mission・Vision・Valuesを読む <span aria-hidden="true">↗</span></a>
           <a className="plug-guide-link" href={plugConnpassUrl} target="_blank" rel="noreferrer">PLUGのイベント・活動を見る <span aria-hidden="true">↗</span></a>
         </div>
-      </section>
-
-      <section className="about" id="about">
-        <p className="section-index">03 — HOW IT WORKS</p>
-        <div className="about-title">
-          <h2>現場から始め、<br />越境して育てる。</h2>
-          <p>PLUGの価値観を、作品を見つけて持ち帰る4つの行動に落とし込みます。</p>
-        </div>
-        <ol className="steps">
-          <li><span>01 · FIELD-FIRST</span><h3>現場から探す</h3><p>流行より、解決したい課題、利用環境、費用から自分に合う作品を探す。</p></li>
-          <li><span>02 · BIAS TO ACTION</span><h3>確かめて動かす</h3><p>必要ライセンス、導入時間、権限を確認し、まず小さく試してみる。</p></li>
-          <li><span>03 · CROSS BOUNDARIES</span><h3>越境して持ち帰る</h3><p>Power Platform、Web、モバイル、AI、OSSの境界を越えて工夫を生かす。</p></li>
-          <li><span>04 · LEARN TOGETHER</span><h3>学びを返す</h3><p>リアクションや導入報告を返し、次に挑戦する人ができるようになる力を渡す。</p></li>
-        </ol>
       </section>
 
       <section className="submit-section" id="submit">
@@ -151,16 +135,11 @@ export default async function Home() {
           ) : (
             <span className="submit-button disabled" aria-disabled="true">掲載フォーム準備中</span>
           )}
-          <small>作者本人からの申請のみ · サインイン不要 · 初期掲載無料 · 行動規範への同意が必要です</small>
+          <small>作者本人からの申請のみ · サインイン不要 · 行動規範への同意が必要です</small>
         </div>
       </section>
 
-      <footer className="site-footer">
-        <a className="brand footer-brand" href="#top"><Image className="brand-logo" src={plugLogo} alt="" /><span>PLUG<br />SOLUTIONS</span></a>
-        <p>つなぐ × 電源を入れる × ギャップを埋める</p>
-        <div><a href="#catalog">探す</a><a href="#plug">PLUGについて</a><a href="#submit">掲載する</a><Link href="/guide/">掲載ガイド</Link><a href={plugGuideUrl} target="_blank" rel="noreferrer">PLUGガイド ↗</a><a href={plugConnpassUrl} target="_blank" rel="noreferrer">connpass ↗</a></div>
-        <small>minoru365による個人運営 · MICROSOFT非公式 · 2026</small>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

@@ -9,6 +9,9 @@ import {
   buildPublicSolution,
   isApprovedSubmission,
   isWithdrawnSubmission,
+  normalizeTypesAndUses,
+  normalizeRelatedUrls,
+  normalizeThumbnailCandidateUrl,
 } from "../lib/approved-submission.mjs";
 import {
   assertSourceRevision,
@@ -153,6 +156,116 @@ test("public solution is allowlisted and excludes review fields", () => {
   }
 });
 
+test("only canonical GitHub blob thumbnails are converted to raw URLs", () => {
+  assert.equal(
+    normalizeThumbnailCandidateUrl("https://github.com/PLUG365/PLUGSolutions/blob/main/public/a.png?raw=1#x"),
+    "https://raw.githubusercontent.com/PLUG365/PLUGSolutions/main/public/a.png",
+  );
+  for (const value of [
+    "https://github.com/PLUG365/PLUGSolutions/tree/main/public/a.png",
+    "https://github.com.evil/PLUG365/PLUGSolutions/blob/main/a.png",
+    "http://github.com/PLUG365/PLUGSolutions/blob/main/a.png",
+    "https://github.com/PLUG 365/PLUGSolutions/blob/main/a.png",
+    "https://github.com/PLUG365/PLUGSolutions/blob/main/../a.png",
+  ]) assert.equal(normalizeThumbnailCandidateUrl(value), value);
+});
+
+test("Q6 accepts その他 deterministically but rejects unknown choices", () => {
+  const normalized = normalizeTypesAndUses(["その他", "Web", "その他", "学習"]);
+  assert.deepEqual(normalized, {
+    status: "ok",
+    type: "Web アプリ / その他",
+    tags: ["Web アプリ", "その他"],
+    categories: ["学習", "その他"],
+  });
+  assert.equal(normalizeTypesAndUses(["未知の選択肢"]).status, "要確認");
+  assert.deepEqual(normalizeTypesAndUses([]), {
+    status: "ok",
+    type: "その他",
+    tags: [],
+    categories: ["その他"],
+  });
+});
+
+test("normalizes Forms choices and labeled related URLs", () => {
+  assert.deepEqual(
+    normalizeTypesAndUses(["Web", "仕事効率化", "Web"]),
+    {
+      status: "ok",
+      type: "Web アプリ",
+      tags: ["Web アプリ"],
+      categories: ["仕事効率化"],
+    },
+  );
+  assert.equal(normalizeTypesAndUses(["未知の選択肢"]).status, "要確認");
+  assert.deepEqual(
+    normalizeRelatedUrls("ソース: https://github.com/PLUG365/PLUGSolutions\r\n手順: https://example.com/setup"),
+    {
+      status: "ok",
+      sourceUrl: "https://github.com/PLUG365/PLUGSolutions",
+      instructionsUrl: "https://example.com/setup",
+    },
+  );
+  assert.equal(normalizeRelatedUrls("ソース: http://example.com").status, "要確認");
+  assert.equal(normalizeRelatedUrls("ソース: https://a.example\nソース: https://b.example").status, "要確認");
+});
+
+test("raw Forms values take precedence over legacy normalized columns", () => {
+  const result = buildPublicSolution(
+    approvedFields({
+      TypesAndUses: ["Web アプリ", "仕事効率化", "学習"],
+      RelatedUrls: "ソース: https://github.com/PLUG365/PLUGSolutions\n手順: https://example.com/setup",
+      CatalogType: "legacy",
+      CatalogCategories: "legacy",
+      CatalogTags: "legacy",
+      SourceUrl: "https://legacy.example/source",
+      InstructionsUrl: "https://legacy.example/setup",
+    }),
+  );
+  assert.equal(result.type, "Web アプリ");
+  assert.deepEqual(result.categories, ["仕事効率化", "学習"]);
+  assert.deepEqual(result.tags, ["Web アプリ"]);
+  assert.equal(result.sourceUrl, "https://github.com/PLUG365/PLUGSolutions");
+  assert.equal(result.instructionsUrl, "https://example.com/setup");
+});
+
+test("completes a missing X prefix and applies post-P08 safe defaults", () => {
+  const result = buildPublicSolution(
+    approvedFields({
+      XHandle: "plug_maker",
+      CatalogLicense: "",
+      CatalogCost: "",
+      PremiumRequired: "",
+      SetupTime: "",
+      CatalogPrerequisites: "",
+    }),
+  );
+  assert.equal(result.maker.xHandle, "@plug_maker");
+  assert.equal(result.license, "配布先を確認");
+  assert.equal(result.cost, "配布先を確認");
+  assert.equal(result.premiumRequired, null);
+  assert.equal(result.setupTime, "未記載");
+  assert.deepEqual(result.prerequisites, []);
+});
+
+test("preparation supplies stable publication dates when legacy columns are blank", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "plug-date-default-test-"));
+  try {
+    const fields = approvedFields({
+      CatalogPublishedDate: "",
+      CatalogUpdatedDate: "",
+      ReviewedAt: "2026-08-26T01:00:00Z",
+      ThumbnailCandidateUrl: "",
+    });
+    const result = await prepareApprovedSubmission({ fields, repositoryRoot: root });
+    const json = JSON.parse(await readFile(result.catalogPath, "utf8"));
+    assert.equal(json.publishedAt, "2026-08-26");
+    assert.equal(json.updatedAt, "2026-08-26");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("SharePoint timestamps are converted to their Asia/Tokyo calendar date", () => {
   const result = buildPublicSolution(
     approvedFields({
@@ -207,6 +320,23 @@ test("approved submission writes sanitized JSON and processed WebP", async () =>
     assert.equal(json.thumbnail, "/images/solutions/field-tool.webp");
     assert.equal((await sharp(result.imagePath).metadata()).width, 1200);
     assert.doesNotMatch(JSON.stringify(json), /ThumbnailCandidateUrl|private-candidate/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("generates a stable-safe slug only for a direct empty-slug preparation", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "plug-empty-slug-test-"));
+  try {
+    const fields = approvedFields({ Slug: "", ThumbnailCandidateUrl: "" });
+    const first = await prepareApprovedSubmission({ fields, repositoryRoot: root });
+    const secondSlug = fields.Slug;
+    assert.match(first.slug, /^solution-[a-f0-9]{32}$/);
+    assert.equal(secondSlug, first.slug);
+    await assert.rejects(
+      prepareApprovedSubmission({ fields, repositoryRoot: root }),
+      /catalog slug already exists/,
+    );
   } finally {
     await rm(root, { recursive: true, force: true });
   }
