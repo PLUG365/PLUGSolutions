@@ -79,12 +79,17 @@ Screens:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
+                  DropShadow: =DropShadow.None
                   Fill: =RGBA(244, 240, 230, 1)
                   LayoutAlignItems: =LayoutAlignItems.Stretch
                   LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =16
                   LayoutMinHeight: =240
                   LayoutMinWidth: =240
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
                 Children:
                   - conQueuePane:
                       Control: GroupContainer
@@ -153,7 +158,7 @@ Screens:
                               Fill: =RGBA(255, 255, 255, 1)
                               FocusedBorderColor: =RGBA(255, 96, 66, 1)
                               FocusedBorderThickness: =2
-                              Items: =Sort(Filter(掲載申請, (drpQueueStatus.Selected.Value = "すべて" || ReviewStatus.Value = drpQueueStatus.Selected.Value) && (IsBlank(txtQueueSearch.Text) || StartsWith(Title, txtQueueSearch.Text) || StartsWith(MakerDisplayName, txtQueueSearch.Text) || StartsWith(Slug, txtQueueSearch.Text))), Modified, SortOrder.Descending)
+                              Items: =SortByColumns(Filter(掲載申請, (drpQueueStatus.Selected.Value = "すべて" || ReviewStatus.Value = drpQueueStatus.Selected.Value) && (IsBlank(txtQueueSearch.Text) || StartsWith(Title, txtQueueSearch.Text) || StartsWith(MakerDisplayName, txtQueueSearch.Text) || StartsWith(Slug, txtQueueSearch.Text))),"Modified",SortOrder.Descending)
                               LayoutMinHeight: =200
                               LayoutMinWidth: =200
                               LoadingSpinnerColor: =RGBA(255, 96, 66, 1)
@@ -170,7 +175,7 @@ Screens:
                                     Fill: =If(ThisItem.IsSelected, RGBA(255, 96, 66, 0.12), RGBA(255, 255, 255, 1))
                                     Height: =104
                                     HoverFill: =RGBA(193, 255, 68, 0.22)
-                                    OnSelect: =Set(varSelectedRequest, ThisItem); Set(varNotice, ""); If(App.Width < 768, Navigate(ReviewDetail, ScreenTransition.Cover))
+                                    OnSelect: =Set(varSelectedRequest, LookUp(掲載申請, ID = ThisItem.ID)); Set(varNotice, ""); If(App.Width < 768, Navigate(ReviewDetail, ScreenTransition.Cover))
                                     RadiusBottomLeft: =6
                                     RadiusBottomRight: =6
                                     RadiusTopLeft: =6
@@ -213,7 +218,7 @@ Screens:
                                     Color: =RGBA(20, 21, 18, 1)
                                     Fill: =Switch(ThisItem.ReviewStatus.Value, "承認", RGBA(193, 255, 68, 1), "却下", RGBA(255, 96, 66, 0.25), "要確認", RGBA(255, 96, 66, 0.15), RGBA(244, 240, 230, 1))
                                     FontWeight: =FontWeight.Semibold
-                                    Height: =32
+                                    Height: =28
                                     OnSelect: =Select(btnQueueSelectRow)
                                     Size: =11
                                     Text: =Coalesce(ThisItem.ReviewStatus.Value, "未設定")
@@ -255,17 +260,6 @@ Screens:
                         RadiusTopRight: =8
                         Visible: =App.Width >= 768
                       Children:
-                        - lblQueueEmpty:
-                            Control: Label
-                            Properties:
-                              Align: =Align.Center
-                              Color: =RGBA(61, 95, 89, 1)
-                              Height: =96
-                              LayoutMinHeight: =96
-                              Role: =TextRole.Heading3
-                              Size: =17
-                              Text: ="左の一覧から審査する作品を選択してください"
-                              Visible: =IsBlank(varSelectedRequest)
                         - lblQueueDetailHeading:
                             Control: Label
                             Properties:
@@ -326,6 +320,44 @@ Screens:
                               Size: =48
                               Text: =Upper(Left(Coalesce(varSelectedRequest.Title, "?"), 1))
                               Visible: =!IsBlank(varSelectedRequest) && IsBlank(varSelectedRequest.ThumbnailPath)
+                        - lblQueueEmpty:
+                            Control: Label
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(61, 95, 89, 1)
+                              Height: =96
+                              LayoutMinHeight: =96
+                              Role: =TextRole.Heading3
+                              Size: =17
+                              Text: ="左の一覧から審査する作品を選択してください"
+                              Visible: =IsBlank(varSelectedRequest)
+                        - txtQueueTypesAndUsesRaw:
+                            Control: Label
+                            Properties:
+                              Fill: =RGBA(230, 230, 230, 1)
+                              Height: =80
+                              Overflow: =Overflow.Scroll
+                              Text: ="Q6 原文（種類・主な用途）" & Coalesce(varSelectedRequest.TypesAndUses, "未入力")
+                              VerticalAlign: =VerticalAlign.Top
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueRelatedUrlsRaw:
+                            Control: Label
+                            Properties:
+                              Fill: =RGBA(230, 230, 230, 1)
+                              Height: =80
+                              Overflow: =Overflow.Scroll
+                              Text: ="Q8 原文（関連URL）" & Coalesce(varSelectedRequest.RelatedUrls, "未入力")
+                              VerticalAlign: =VerticalAlign.Top
+                              Visible: =!IsBlank(varSelectedRequest)
+                        - lblQueueThumbnailCandidateRaw:
+                            Control: Label
+                            Properties:
+                              Fill: =RGBA(230, 230, 230, 1)
+                              Height: =48
+                              Overflow: =Overflow.Scroll
+                              Text: ="Q9 原文（画像候補）" & Coalesce(varSelectedRequest.ThumbnailCandidateUrl, "未入力")
+                              VerticalAlign: =VerticalAlign.Top
+                              Visible: =!IsBlank(varSelectedRequest)
                         - btnQueueCandidateImage:
                             Control: Classic/Button
                             Properties:
@@ -337,24 +369,6 @@ Screens:
                               OnSelect: =Launch(varSelectedRequest.ThumbnailCandidateUrl)
                               Text: ="申請画像URLを確認 ↗"
                               Visible: =!IsBlank(varSelectedRequest) && !IsBlank(varSelectedRequest.ThumbnailCandidateUrl)
-                        - txtQueueTypesAndUsesRaw:
-                            Control: Label
-                            Properties:
-                              Height: =48
-                              Text: ="Q6 原文（種類・主な用途）" & Coalesce(varSelectedRequest.TypesAndUses, "未入力")
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueRelatedUrlsRaw:
-                            Control: Label
-                            Properties:
-                              Height: =48
-                              Text: ="Q8 原文（関連URL）" & Coalesce(varSelectedRequest.RelatedUrls, "未入力")
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueThumbnailCandidateRaw:
-                            Control: Label
-                            Properties:
-                              Height: =48
-                              Text: ="Q9 原文（画像候補）" & Coalesce(varSelectedRequest.ThumbnailCandidateUrl, "未入力")
-                              Visible: =!IsBlank(varSelectedRequest)
                         - lblQueueTitleField:
                             Control: Label
                             Properties:
@@ -408,6 +422,17 @@ Screens:
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
+                        - btnQueueCandidateImage_2:
+                            Control: Classic/Button
+                            Properties:
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Color: =RGBA(20, 21, 18, 1)
+                              Fill: =RGBA(255, 255, 255, 1)
+                              Height: =48
+                              LayoutMinHeight: =48
+                              OnSelect: =Launch("https://x.com/"&Substitute(varSelectedRequest.XHandle,"@",""))
+                              Text: ="Xアカウントを確認 ↗"
+                              Visible: =!IsBlank(varSelectedRequest) && !IsBlank(varSelectedRequest.ThumbnailCandidateUrl)
                         - lblQueueDescriptionField:
                             Control: Label
                             Properties:
@@ -422,6 +447,7 @@ Screens:
                               BorderColor: =RGBA(61, 95, 89, 1)
                               Default: =varSelectedRequest.Description
                               DisplayMode: =DisplayMode.View
+                              Fill: =RGBA(230, 230, 230, 1)
                               Height: =120
                               LayoutMinHeight: =120
                               Mode: =TextMode.MultiLine
@@ -443,6 +469,17 @@ Screens:
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
+                        - btnQueueCandidateImage_1:
+                            Control: Classic/Button
+                            Properties:
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Color: =RGBA(20, 21, 18, 1)
+                              Fill: =RGBA(255, 255, 255, 1)
+                              Height: =48
+                              LayoutMinHeight: =48
+                              OnSelect: =Launch(varSelectedRequest.DistributionUrl)
+                              Text: ="配布URLを確認 ↗"
+                              Visible: =!IsBlank(varSelectedRequest) && !IsBlank(varSelectedRequest.ThumbnailCandidateUrl)
                         - lblQueueSlugField:
                             Control: Label
                             Properties:
@@ -460,181 +497,6 @@ Screens:
                               Height: =48
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueCatalogTypeField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="種別 *"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - txtQueueCatalogTypeField:
-                            Control: Classic/TextInput
-                            Properties:
-                              AccessibleLabel: ="カタログ種別"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.CatalogType
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueCategoriesField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="カテゴリ *"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - txtQueueCategoriesField:
-                            Control: Classic/TextInput
-                            Properties:
-                              AccessibleLabel: ="カテゴリ"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.CatalogCategories
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueTagsField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="タグ *"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - txtQueueTagsField:
-                            Control: Classic/TextInput
-                            Properties:
-                              AccessibleLabel: ="タグ"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.CatalogTags
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueLicenseField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="ライセンス *"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - txtQueueLicenseField:
-                            Control: Classic/TextInput
-                            Properties:
-                              AccessibleLabel: ="ライセンス"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.CatalogLicense
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueCostField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="費用 *"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - txtQueueCostField:
-                            Control: Classic/TextInput
-                            Properties:
-                              AccessibleLabel: ="費用"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.CatalogCost
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueuePremiumField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="Premium要否 *"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - drpQueuePremiumField:
-                            Control: Classic/DropDown
-                            Properties:
-                              AccessibleLabel: ="Premium要否"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.PremiumRequired.Value
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              Items: =Choices(掲載申請.PremiumRequired)
-                              Items.Value: =Value
-                              LayoutMinHeight: =48
-                              SelectionColor: =RGBA(20, 21, 18, 1)
-                              SelectionFill: =RGBA(193, 255, 68, 1)
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueSetupField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="導入時間 *"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - txtQueueSetupField:
-                            Control: Classic/TextInput
-                            Properties:
-                              AccessibleLabel: ="導入時間"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.SetupTime
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueSourceField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="ソースURL"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - txtQueueSourceField:
-                            Control: Classic/TextInput
-                            Properties:
-                              AccessibleLabel: ="ソースURL"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.SourceUrl
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueInstructionsField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="手順URL"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - txtQueueInstructionsField:
-                            Control: Classic/TextInput
-                            Properties:
-                              AccessibleLabel: ="手順URL"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.InstructionsUrl
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueuePrerequisitesField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="前提条件"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - txtQueuePrerequisitesField:
-                            Control: Classic/TextInput
-                            Properties:
-                              AccessibleLabel: ="前提条件"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              Default: =varSelectedRequest.CatalogPrerequisites
-                              DisplayMode: =DisplayMode.View
-                              Height: =96
-                              LayoutMinHeight: =96
-                              Mode: =TextMode.MultiLine
-                              Visible: =!IsBlank(varSelectedRequest)
                         - lblQueueThumbnailPathField:
                             Control: Label
                             Properties:
@@ -650,42 +512,6 @@ Screens:
                               Default: =varSelectedRequest.ThumbnailPath
                               DisplayMode: =DisplayMode.View
                               Height: =48
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueuePublishedDateField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="公開日 *"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - dpQueuePublishedDateField:
-                            Control: Classic/DatePicker
-                            Properties:
-                              AccessibleLabel: ="公開日"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              DefaultDate: =varSelectedRequest.CatalogPublishedDate
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              IsEditable: =true
-                              LayoutMinHeight: =48
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - lblQueueUpdatedDateField:
-                            Control: Label
-                            Properties:
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              Text: ="更新日 *"
-                              Visible: =!IsBlank(varSelectedRequest)
-                        - dpQueueUpdatedDateField:
-                            Control: Classic/DatePicker
-                            Properties:
-                              AccessibleLabel: ="更新日"
-                              BorderColor: =RGBA(61, 95, 89, 1)
-                              DefaultDate: =varSelectedRequest.CatalogUpdatedDate
-                              DisplayMode: =DisplayMode.View
-                              Height: =48
-                              IsEditable: =true
                               LayoutMinHeight: =48
                               Visible: =!IsBlank(varSelectedRequest)
                         - lblQueueReviewNotesField:
@@ -717,6 +543,7 @@ Screens:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
+                              DropShadow: =DropShadow.None
                               FillPortions: =0
                               Height: =64
                               LayoutAlignItems: =LayoutAlignItems.Stretch
@@ -725,6 +552,10 @@ Screens:
                               LayoutMinHeight: =64
                               LayoutMinWidth: =320
                               LayoutWrap: =true
+                              PaddingBottom: =2
+                              PaddingLeft: =2
+                              PaddingRight: =2
+                              PaddingTop: =2
                               Visible: =!IsBlank(varSelectedRequest)
                             Children:
                               - btnQueueSave:
@@ -739,7 +570,23 @@ Screens:
                                     LayoutMinHeight: =48
                                     LayoutMinWidth: =120
                                     OnSelect: |-
-                                      =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "対象が見つかりません。再読み込みしてください。"), varLatestRequest.Modified <> varSelectedRequest.Modified || varLatestRequest.ReviewStatus.Value <> varSelectedRequest.ReviewStatus.Value, Set(varNotice, "他の担当者が更新しました。保存せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text)}); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("保存しました", NotificationType.Success), Set(varNotice, "保存に失敗しました。入力内容と接続を確認してください。"))); Set(varSaving, false))
+                                      =Set(varSaving, true);
+                                      Refresh(掲載申請);
+                                      Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                      If(
+                                        IsBlank(varLatestRequest),
+                                        Set(varNotice, "対象が見つかりません。再読み込みしてください。"),
+                                        varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""),
+                                        Set(varNotice, "他の担当者が更新しました。保存せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest),
+                                        IfError(
+                                          Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text)});
+                                          Refresh(掲載申請);
+                                          Set(varSelectedRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                          Notify("保存しました", NotificationType.Success),
+                                          Set(varNotice, "保存に失敗しました。入力内容と接続を確認してください。")
+                                        )
+                                      );
+                                      Set(varSaving, false)
                                     Text: ="保存"
                               - btnQueueReject:
                                   Control: Classic/Button
@@ -753,7 +600,27 @@ Screens:
                                     LayoutMinHeight: =48
                                     LayoutMinWidth: =120
                                     OnSelect: |-
-                                      =If(IsBlank(Trim(txtQueueReviewNotesField.Text)), Set(varNotice, "却下理由を審査メモへ入力してください。"), Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "対象が見つかりません。再読み込みしてください。"), varLatestRequest.Modified <> varSelectedRequest.Modified || varLatestRequest.ReviewStatus.Value <> varSelectedRequest.ReviewStatus.Value, Set(varNotice, "他の担当者が更新しました。却下せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "却下"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("却下として保存しました", NotificationType.Success), Set(varNotice, "却下処理に失敗しました。接続を確認してください。"))); Set(varSaving, false))
+                                      =Set(varSaving, true);
+                                      If(
+                                        IsBlank(Trim(txtQueueReviewNotesField.Text)),
+                                        Set(varNotice, "却下理由を審査メモへ入力してください。"),
+                                        Refresh(掲載申請);
+                                        Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                        If(
+                                          IsBlank(varLatestRequest),
+                                          Set(varNotice, "対象が見つかりません。再読み込みしてください。"),
+                                          varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""),
+                                          Set(varNotice, "他の担当者が更新しました。却下せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest),
+                                          IfError(
+                                            Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "却下"}, ReviewedAt: Now()});
+                                            Refresh(掲載申請);
+                                            Set(varSelectedRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                            Notify("却下として保存しました", NotificationType.Success),
+                                            Set(varNotice, "却下処理に失敗しました。接続を確認してください。")
+                                          )
+                                        )
+                                      );
+                                      Set(varSaving, false)
                                     Text: ="却下"
                               - btnQueueApprove:
                                   Control: Classic/Button
@@ -769,7 +636,27 @@ Screens:
                                     LayoutMinHeight: =48
                                     LayoutMinWidth: =120
                                     OnSelect: |-
-                                      =If(IsBlank(Trim(txtQueueTitleField.Text)) || IsBlank(Trim(txtQueueMakerField.Text)) || !StartsWith(Trim(txtQueueXField.Text), "@") || IsBlank(Trim(txtQueueDescriptionField.Text)) || !StartsWith(Lower(Trim(txtQueueDistributionField.Text)), "https://") || !IsMatch(Lower(Trim(txtQueueSlugField.Text)), "^[a-z0-9]+(-[a-z0-9]+)*$") || IsBlank(Trim(Coalesce(varSelectedRequest.TypesAndUses, ""))), Set(varNotice, "承認できません。Forms原文と必須項目を確認してください。"), Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "対象が見つかりません。再読み込みしてください。"), varLatestRequest.Modified <> varSelectedRequest.Modified || varLatestRequest.ReviewStatus.Value <> varSelectedRequest.ReviewStatus.Value, Set(varNotice, "他の更新を検出しました。承認せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "承認"}, ReviewedAt: Now()}); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("承認しました", NotificationType.Success), Set(varNotice, "承認処理に失敗しました。入力内容と接続を確認してください。"))); Set(varSaving, false)))
+                                      =Set(varSaving, true);
+                                      If(
+                                        IsBlank(Trim(txtQueueTitleField.Text)) || IsBlank(Trim(txtQueueMakerField.Text)) || !StartsWith(Trim(txtQueueXField.Text), "@") || IsBlank(Trim(txtQueueDescriptionField.Text)) || !StartsWith(Lower(Trim(txtQueueDistributionField.Text)), "https://") || !IsMatch(Lower(Trim(txtQueueSlugField.Text)), "^[a-z0-9]+(-[a-z0-9]+)*$") || IsBlank(Trim(Coalesce(varSelectedRequest.TypesAndUses, ""))),
+                                        Set(varNotice, "承認できません。Forms原文と必須項目を確認してください。"),
+                                        Refresh(掲載申請);
+                                        Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                        If(
+                                          IsBlank(varLatestRequest),
+                                          Set(varNotice, "対象が見つかりません。再読み込みしてください。"),
+                                          varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""),
+                                          Set(varNotice, "他の更新を検出しました。承認せず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest),
+                                          IfError(
+                                            Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "承認"}, ReviewedAt: Now()});
+                                            Refresh(掲載申請);
+                                            Set(varSelectedRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                            Notify("承認しました", NotificationType.Success),
+                                            Set(varNotice, "承認処理に失敗しました。入力内容と接続を確認してください。")
+                                          )
+                                        )
+                                      );
+                                      Set(varSaving, false)
                                     Text: ="承認"
                         - lblQueuePublishHint:
                             Control: Label
@@ -808,6 +695,7 @@ Screens:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
+                              DropShadow: =DropShadow.None
                               FillPortions: =0
                               Height: =If(Self.Width < 484, 112, 56)
                               LayoutAlignItems: =LayoutAlignItems.Stretch
@@ -816,6 +704,10 @@ Screens:
                               LayoutMinHeight: =If(Self.Width < 484, 112, 56)
                               LayoutMinWidth: =320
                               LayoutWrap: =true
+                              PaddingBottom: =2
+                              PaddingLeft: =2
+                              PaddingRight: =2
+                              PaddingTop: =2
                               Visible: =!IsBlank(varSelectedRequest) && (Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認" || Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "公開済み")
                             Children:
                               - btnQueueMarkPublished:
@@ -832,7 +724,25 @@ Screens:
                                     LayoutMinHeight: =48
                                     LayoutMinWidth: =156
                                     OnSelect: |-
-                                      =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "公開済みにできません。対象が見つかりません。"), varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の担当者が更新しました。公開済みにせず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "承認", Set(varNotice, "公開済みにできません。最新状態が承認ではありません。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewStatus: {Value: "公開済み"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("公開済みにしました", NotificationType.Success), Set(varNotice, "公開済みへの変更に失敗しました。接続を確認してください。"))); Set(varSaving, false)
+                                      =Set(varSaving, true);
+                                      Refresh(掲載申請);
+                                      Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                      If(
+                                        IsBlank(varLatestRequest),
+                                        Set(varNotice, "公開済みにできません。対象が見つかりません。"),
+                                        varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""),
+                                        Set(varNotice, "他の担当者が更新しました。公開済みにせず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest),
+                                        Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "承認",
+                                        Set(varNotice, "公開済みにできません。最新状態が承認ではありません。"); Set(varSelectedRequest, varLatestRequest),
+                                        IfError(
+                                          Patch(掲載申請, varLatestRequest, {ReviewStatus: {Value: "公開済み"}, ReviewedAt: Now()});
+                                          Refresh(掲載申請);
+                                          Set(varSelectedRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                          Notify("公開済みにしました", NotificationType.Success),
+                                          Set(varNotice, "公開済みへの変更に失敗しました。接続を確認してください。")
+                                        )
+                                      );
+                                      Set(varSaving, false)
                                     Text: ="公開済みにする"
                                     Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認"
                               - btnQueueWithdraw:
@@ -848,7 +758,29 @@ Screens:
                                     LayoutMinHeight: =48
                                     LayoutMinWidth: =156
                                     OnSelect: |-
-                                      =If(IsBlank(Trim(txtQueueReviewNotesField.Text)), Set(varNotice, "取り下げ理由を審査メモへ入力してください。"), Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "取り下げできません。対象が見つかりません。"), varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の担当者が更新しました。取り下げず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "公開済み", Set(varNotice, "取り下げできません。最新状態が公開済みではありません。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "取り下げ"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("取り下げとして保存しました", NotificationType.Success), Set(varNotice, "取り下げ処理に失敗しました。接続を確認してください。"))); Set(varSaving, false))
+                                      =Set(varSaving, true);
+                                      If(
+                                        IsBlank(Trim(txtQueueReviewNotesField.Text)),
+                                        Set(varNotice, "取り下げ理由を審査メモへ入力してください。"),
+                                        Refresh(掲載申請);
+                                        Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                        If(
+                                          IsBlank(varLatestRequest),
+                                          Set(varNotice, "取り下げできません。対象が見つかりません。"),
+                                          varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""),
+                                          Set(varNotice, "他の担当者が更新しました。取り下げず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest),
+                                          Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "公開済み",
+                                          Set(varNotice, "取り下げできません。最新状態が公開済みではありません。"); Set(varSelectedRequest, varLatestRequest),
+                                          IfError(
+                                            Patch(掲載申請, varLatestRequest, {ReviewNotes: Trim(txtQueueReviewNotesField.Text), ReviewStatus: {Value: "取り下げ"}, ReviewedAt: Now()});
+                                            Refresh(掲載申請);
+                                            Set(varSelectedRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                            Notify("取り下げとして保存しました", NotificationType.Success),
+                                            Set(varNotice, "取り下げ処理に失敗しました。接続を確認してください。")
+                                          )
+                                        )
+                                      );
+                                      Set(varSaving, false)
                                     Text: ="取り下げ"
                                     Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "公開済み"
                               - btnQueueReturnToReview:
@@ -864,6 +796,34 @@ Screens:
                                     LayoutMinHeight: =48
                                     LayoutMinWidth: =156
                                     OnSelect: |-
-                                      =Set(varSaving, true); Set(varNotice, ""); Refresh(掲載申請); Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID)); If(IsBlank(varLatestRequest), Set(varNotice, "審査に戻せません。対象が見つかりません。"), varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""), Set(varNotice, "他の担当者が更新しました。審査に戻さず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest), Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "承認", Set(varNotice, "審査に戻せません。最新状態が承認ではありません。"); Set(varSelectedRequest, varLatestRequest), IfError(Set(varSavedRequest, Patch(掲載申請, varLatestRequest, {ReviewStatus: {Value: "要確認"}, ReviewedAt: Now()})); Refresh(掲載申請); Set(varSelectedRequest, LookUp(掲載申請, ID = varSavedRequest.ID)); Notify("審査に戻しました", NotificationType.Success), Set(varNotice, "審査へ戻す処理に失敗しました。接続を確認してください。"))); Set(varSaving, false)
+                                      =Set(varSaving, true);
+                                      Refresh(掲載申請);
+                                      Set(varLatestRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                      If(
+                                        IsBlank(varLatestRequest),
+                                        Set(varNotice, "審査に戻せません。対象が見つかりません。"),
+                                        varLatestRequest.Modified <> varSelectedRequest.Modified || Coalesce(varLatestRequest.ReviewStatus.Value, "") <> Coalesce(varSelectedRequest.ReviewStatus.Value, ""),
+                                        Set(varNotice, "他の担当者が更新しました。審査に戻さず一覧を更新しました。"); Set(varSelectedRequest, varLatestRequest),
+                                        Coalesce(varLatestRequest.ReviewStatus.Value, "") <> "承認",
+                                        Set(varNotice, "審査に戻せません。最新状態が承認ではありません。"); Set(varSelectedRequest, varLatestRequest),
+                                        IfError(
+                                          Patch(掲載申請, varLatestRequest, {ReviewStatus: {Value: "要確認"}, ReviewedAt: Now()});
+                                          Refresh(掲載申請);
+                                          Set(varSelectedRequest, LookUp(掲載申請, ID = varSelectedRequest.ID));
+                                          Notify("審査に戻しました", NotificationType.Success),
+                                          Set(varNotice, "審査へ戻す処理に失敗しました。接続を確認してください。")
+                                        )
+                                      );
+                                      Set(varSaving, false)
                                     Text: ="審査に戻す"
                                     Visible: =!IsBlank(varSelectedRequest) && Coalesce(varSelectedRequest.ReviewStatus.Value, "") = "承認"
+                        - txtQueueSlugField_1:
+                            Control: Classic/TextInput
+                            Properties:
+                              AccessibleLabel: ="公開用slug"
+                              BorderColor: =RGBA(61, 95, 89, 1)
+                              Default: =varSelectedRequest.Slug
+                              DisplayMode: =DisplayMode.View
+                              Height: =48
+                              LayoutMinHeight: =48
+                              Visible: =!IsBlank(varSelectedRequest)

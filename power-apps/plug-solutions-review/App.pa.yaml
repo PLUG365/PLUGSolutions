@@ -1,4 +1,4 @@
 App:
   Properties:
-    OnStart: =Set(varSelectedRequest, Blank()); Set(varSaving, false); Set(varNotice, "")
+    OnStart: =Set(varSelectedRequest, LookUp(掲載申請, ID = -1)); Set(varSaving, false); Set(varNotice, "")
     Theme: =PowerAppsTheme

@@ -126,7 +126,6 @@ test("intake template normalizes public handles and assigns a non-PII slug", asy
     parameters["item/ThumbnailCandidateUrl"],
     "@outputs('Normalize_thumbnail_candidate')",
   );
-  assert.equal(parameters["item/Requirements"], "");
 });
 
 test("approved export keeps raw Forms values behind a normalization gate", async () => {
@@ -140,7 +139,7 @@ test("approved export keeps raw Forms values behind a normalization gate", async
   assert.equal(normalize.type, "Compose");
   assert.ok(normalize.inputs.note.includes("Q6/Q8/画像候補を正規化"));
   assert.match(
-    workflow.actions.Export_only_approved_complete_items.runAfter.Normalize_raw_submission_values[0],
+    workflow.actions.Export_only_approved_complete_items.runAfter.Extract_labeled_related_urls[0],
     /Succeeded/,
   );
   assert.match(
@@ -157,4 +156,7 @@ test("approved export keeps raw Forms values behind a normalization gate", async
   assert.match(item.cost, /配布先を確認/);
   assert.match(item.setupTime, /未記載/);
   assert.match(item.publishedAt, /ReviewedAt|utcNow/);
+  assert.match(item.sourceUrl, /Extract_labeled_related_urls/);
+  assert.match(item.instructionsUrl, /Extract_labeled_related_urls/);
+  assert.match(workflow.actions.Extract_labeled_related_urls.inputs.note, /HTTPS/);
 });

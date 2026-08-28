@@ -116,7 +116,6 @@
               "item/TypesAndUses": "@outputs('Get_response_details')?['body/re0b920768a5042eba29f219415450f69']",
               "item/DistributionUrl": "@outputs('Get_response_details')?['body/r7f783902033c47cd85ccd52b0e5a65f1']",
               "item/RelatedUrls": "@outputs('Get_response_details')?['body/r9c3780f13f0443e5bef2fc57be25c42f']",
-              "item/Requirements": "",
               "item/ThumbnailCandidateUrl": "@outputs('Normalize_thumbnail_candidate')"
             },
             "host": {

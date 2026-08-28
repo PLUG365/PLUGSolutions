@@ -36,12 +36,13 @@ Power Automateの責務は、承認後の非公開JSON候補生成までとす�
 | `TypesAndUses` | 複数行テキスト | 種類・主な用途 |
 | `DistributionUrl` | 1行テキスト | 配布先・利用先URL |
 | `RelatedUrls` | 複数行テキスト | ソース・導入手順など |
-| `Requirements` | 複数行テキスト（legacy） | 旧P08の保管用。新規受付・公開生成では参照しない。物理削除はバックアップ・参照0確認・明示承認後 |
 | `ThumbnailCandidateUrl` | 1行テキスト | 非公開の画像候補URL |
+| `ThumbnailPath` | 1行テキスト | 公開用に処理済みの画像パス |
 | `Slug` | 1行テキスト | 新規受付フローが`solution-`＋GUIDを生成。空欄のlegacy行は自動処理せず再申請 |
 | `ReviewNotes` | 複数行テキスト | 非公開の審査メモ |
 | `ReviewedAt` | 日時 | 審査日時 |
-| `PublishedAt` | 日時 | 公開確認日時 |
+
+2026-08-28に参照元・値・`All Items`ビューを確認したうえで、旧P08の`Requirements`、`PublishedAt`、および旧正規化列（`CatalogType`、`CatalogCategories`、`CatalogTags`、`SourceUrl`、`InstructionsUrl`、`CatalogLicense`、`CatalogCost`、`PremiumRequired`、`SetupTime`、`CatalogPrerequisites`、`CatalogPublishedDate`、`CatalogUpdatedDate`）を物理削除した。SharePoint標準列と、処理済み画像パスとしてFlow／Canvasが使う`ThumbnailPath`は保持する。旧列の値は公開生成へ引き継がず、必要な作品情報はForms原文から再処理する。
 
 `ResponseId`、同意回答、審査メモ、画像候補URL、審査日時は公開 JSON に含めない。
 
@@ -107,23 +108,18 @@ Power Automateの責務は、承認後の非公開JSON候補生成までとす�
 
 ### 自動生成される公開項目
 
-公開項目はForms原文からフロー／GitHub Actionsが生成します。Power Appsで公開値を編集・補完しません。既存行に正規化列が残っている場合は、raw値を優先し、空欄は安全側の既定値にします。
+公開項目はForms原文（`TypesAndUses`、`RelatedUrls`、`XHandle`、`Description`、`DistributionUrl`、`ReviewedAt`）からフロー／GitHub Actionsが生成します。Power Appsで公開値を編集・補完しません。削除済みの旧Catalog*／SourceUrl／InstructionsUrl等の正規化列は参照せず、処理済み画像の`ThumbnailPath`だけを出力へ保持します。
 
-| SharePoint列 | 種類 | 公開JSON |
+| Forms原文 | 公開JSON | 規則 |
 | --- | --- | --- |
-| `CatalogType` | 1行テキスト | `type` |
-| `CatalogCategories` | 複数行テキスト | `categories` |
-| `CatalogTags` | 複数行テキスト | `tags` |
-| `SourceUrl` | 1行テキスト | `sourceUrl` |
-| `InstructionsUrl` | 1行テキスト | `instructionsUrl` |
-| `CatalogLicense` | 1行テキスト | `license` |
-| `CatalogCost` | 1行テキスト | `cost` |
-| `PremiumRequired` | 選択肢 | `必要／不要／不明` を `true／false／null` へ変換 |
-| `SetupTime` | 1行テキスト | `setupTime` |
-| `CatalogPrerequisites` | 複数行テキスト | `prerequisites` |
-| `ThumbnailPath` | 1行テキスト | `thumbnail`。未入力は `null` |
-| `CatalogPublishedDate` | 日付 | `publishedAt` |
-| `CatalogUpdatedDate` | 日付 | `updatedAt` |
+| `TypesAndUses`（Q6） | `type`、`categories`、`tags` | 固定マッピング。その他は安全側へ、未知は要確認 |
+| `RelatedUrls`（Q8） | `sourceUrl`、`instructionsUrl` | ソース／手順各1件のHTTPS。重複・未知・不正は停止 |
+| `XHandle` | `maker.xHandle`、`maker.xUrl` | 先頭`@`を1個補完後に検証 |
+| `Description` | `description` | 改行を保持 |
+| `DistributionUrl` | `distributionUrl` | HTTPS必須 |
+| `ReviewedAt` | `publishedAt`、`updatedAt` | Asia/Tokyo の日付へ変換。未入力時は生成時の現在日を使う（旧Catalog日付列は参照しない） |
+| `ThumbnailPath`（処理済み） | `thumbnail` | 未入力は`null` |
+| 旧Catalog*等 | — | 2026-08-28に物理削除済み。公開生成では参照しない |
 
 JSONは公開許可リストで組み立て、`ResponseId`、`ConsentAnswer`、`ReviewNotes`、`ThumbnailCandidateUrl`、受付・審査日時、回答者メールを含めない。
 
@@ -147,4 +143,4 @@ npm run import:solution -- --input "<downloaded-json>"
 表示されたslugと保存先を確認した後、`--write` を付けて新規レコードを作成する。既存slugは既定で拒否し、人が既存レコードとの差分を確認した場合だけ `--write --replace` を使用する。公開禁止フィールド、不正なURL・日付・slug、未処理または存在しないサムネイルは取込前に拒否する。取込後もcommit・push・本番公開は自動実行しない。
 # 正規化と審査
 
-Forms原文は保持し、公開JSONはallowlistから生成します。Q6/Q8、X、画像URLの正規化に失敗した行は`要確認`とし、承認・公開しません。SharePoint列の物理削除はバックアップと参照0確認、明示承認後に1列ずつ行います。
+Forms原文は保持し、公開JSONはallowlistから生成します。Q6/Q8、X、画像URLの正規化に失敗した行は`要確認`とし、承認・公開しません。SharePoint列は現行のForms原文・審査状態・処理済み画像パスに限定し、旧正規化列は参照元とビューを確認したうえで物理削除済みです。

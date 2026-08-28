@@ -40,10 +40,12 @@ function approvedFields(overrides = {}) {
     MakerDisplayName: "PLUG Maker",
     XHandle: "@plug_maker",
     Description: "現場で使えるツールです。",
+    TypesAndUses: "Web アプリ\n仕事効率化",
     CatalogType: "web",
     CatalogCategories: "業務改善\n現場DX",
     CatalogTags: "Power Platform\nAI",
     DistributionUrl: "https://example.com/tool",
+    RelatedUrls: "ソース: https://github.com/example/tool\n手順: https://example.com/tool/setup",
     SourceUrl: "https://github.com/example/tool",
     InstructionsUrl: "https://example.com/tool/setup",
     CatalogLicense: "MIT",
@@ -146,9 +148,9 @@ test("only withdrawn SharePoint rows are eligible for catalog removal", () => {
 test("public solution is allowlisted and excludes review fields", () => {
   const result = buildPublicSolution(approvedFields(), { thumbnail: null });
   assert.equal(result.slug, "field-tool");
-  assert.deepEqual(result.categories, ["業務改善", "現場DX"]);
+  assert.deepEqual(result.categories, ["仕事効率化"]);
   assert.equal(result.maker.xUrl, "https://x.com/plug_maker");
-  assert.equal(result.premiumRequired, false);
+  assert.equal(result.premiumRequired, null);
   assert.doesNotThrow(() => assertNoPrivateFields(result));
   const serialized = JSON.stringify(result);
   for (const privateValue of ["private-response-id", "private-consent", "private-review-note", "private-candidate"]) {
@@ -266,9 +268,10 @@ test("preparation supplies stable publication dates when legacy columns are blan
   }
 });
 
-test("SharePoint timestamps are converted to their Asia/Tokyo calendar date", () => {
+test("publication dates use ReviewedAt and ignore legacy Catalog date columns", () => {
   const result = buildPublicSolution(
     approvedFields({
+      ReviewedAt: "2026-08-25T15:00:00Z",
       CatalogPublishedDate: "2026-08-25T15:00:00Z",
       CatalogUpdatedDate: "2026-08-25T15:00:00.000Z",
     }),
@@ -276,25 +279,16 @@ test("SharePoint timestamps are converted to their Asia/Tokyo calendar date", ()
   assert.equal(result.publishedAt, "2026-08-26");
   assert.equal(result.updatedAt, "2026-08-26");
 
-  assert.equal(
-    buildPublicSolution(
-      approvedFields({
-        CatalogPublishedDate: "2026-08-26",
-        CatalogUpdatedDate: "2026-08-26",
-      }),
-    ).publishedAt,
-    "2026-08-26",
-  );
-  assert.throws(
-    () => buildPublicSolution(approvedFields({ CatalogPublishedDate: "2026-08-26Tinvalid" })),
-    /ISO timestamp/,
-  );
+  assert.doesNotThrow(() => buildPublicSolution(approvedFields({
+    CatalogPublishedDate: "not-a-date",
+    CatalogUpdatedDate: "also-not-a-date",
+  })));
 });
 
 test("invalid required public fields are rejected before writing", () => {
   assert.throws(
-    () => buildPublicSolution(approvedFields({ CatalogCategories: "" })),
-    /CatalogCategories/,
+    () => buildPublicSolution(approvedFields({ TypesAndUses: "" })),
+    /TypesAndUses/,
   );
   assert.throws(
     () => buildPublicSolution(approvedFields({ DistributionUrl: "http://example.com" })),

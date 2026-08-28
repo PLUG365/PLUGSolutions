@@ -74,19 +74,11 @@ for (const screenName of ["ReviewQueue", "ReviewDetail"]) {
       ? [
           "txtQueueTitleField", "txtQueueMakerField", "txtQueueXField",
           "txtQueueDescriptionField", "txtQueueDistributionField", "txtQueueSlugField",
-          "txtQueueCatalogTypeField", "txtQueueCategoriesField", "txtQueueTagsField",
-          "txtQueueLicenseField", "txtQueueCostField", "drpQueuePremiumField",
-          "txtQueueSetupField", "txtQueueSourceField", "txtQueueInstructionsField",
-          "txtQueuePrerequisitesField", "txtQueueThumbnailPathField",
-          "dpQueuePublishedDateField", "dpQueueUpdatedDateField",
+          "txtQueueThumbnailPathField",
         ]
       : [
           "txtTitle", "txtMakerDisplayName", "txtXHandle", "txtDescription",
-          "txtDistributionUrl", "txtSlug", "txtCatalogType", "txtCatalogCategories",
-          "txtCatalogTags", "txtSourceUrl", "txtInstructionsUrl", "txtCatalogLicense",
-          "txtCatalogCost", "cmbPremiumRequired", "txtSetupTime",
-          "txtCatalogPrerequisites", "txtThumbnailPath",
-          "dpCatalogPublishedDate", "dpCatalogUpdatedDate",
+          "txtDistributionUrl", "txtSlug", "txtThumbnailPath",
         ];
     for (let index = 0; index < publicControls.length; index += 1) {
       const next = publicControls[index + 1]
@@ -98,6 +90,22 @@ for (const screenName of ["ReviewQueue", "ReviewDetail"]) {
         1,
         `${publicControls[index]} is not view-only`,
       );
+    }
+
+    const removedLegacyControls = screenName === "ReviewQueue"
+      ? [
+          "txtQueueCatalogTypeField", "txtQueueCategoriesField", "txtQueueTagsField",
+          "txtQueueLicenseField", "txtQueueCostField", "drpQueuePremiumField",
+          "txtQueueSetupField", "txtQueueSourceField", "txtQueueInstructionsField",
+          "txtQueuePrerequisitesField", "dpQueuePublishedDateField", "dpQueueUpdatedDateField",
+        ]
+      : [
+          "txtCatalogType", "txtCatalogCategories", "txtCatalogTags", "txtSourceUrl",
+          "txtInstructionsUrl", "txtCatalogLicense", "txtCatalogCost", "cmbPremiumRequired",
+          "txtSetupTime", "txtCatalogPrerequisites", "dpCatalogPublishedDate", "dpCatalogUpdatedDate",
+        ];
+    for (const controlName of removedLegacyControls) {
+      assert.equal(screen.includes(`- ${controlName}:`), false, `${controlName} should be removed`);
     }
 
     const actionNames = screenName === "ReviewQueue"
