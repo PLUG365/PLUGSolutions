@@ -67,7 +67,7 @@ test("exports a privacy policy with the actual data boundaries and shared footer
 
 test("exports solution details with the shared footer and clear feedback wording", async () => {
   const detail = await readFile(
-    new URL("out/solutions/plug-solutions-e2e-test/index.html", root),
+    new URL("out/solutions/decision-flow/index.html", root),
     "utf8",
   );
 
