@@ -83,6 +83,8 @@ test("approved submission automation uses OIDC and creates reviewable PRs only",
   assert.match(workflow, /automation\/remove-/);
   assert.match(workflow, /catalog: remove/);
   assert.match(workflow, /git add -A -- "catalog\/solutions\/\$SLUG\.json"/);
+  assert.match(workflow, /git ls-files --error-unmatch -- "public\/images\/solutions\/\$SLUG\.webp"/);
+  assert.match(workflow, /test -e "public\/images\/solutions\/\$SLUG\.webp"/);
   assert.match(workflow, /steps\.result\.outputs\.operation/);
   assert.match(workflow, /npm run check/);
   assert.match(workflow, /npm run verify:approved/);

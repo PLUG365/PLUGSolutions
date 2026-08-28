@@ -17,6 +17,7 @@ import {
   assertSourceRevision,
   createSourceRevision,
   fetchSharePointItem,
+  prepareNextApprovedSubmission,
   prepareApprovedSubmission,
   prepareWithdrawnSubmission,
   normalizeGraphItems,
@@ -366,6 +367,42 @@ test("ordinary image failure falls back, while unsafe URL rejection writes nothi
   } finally {
     await rm(fallbackRoot, { recursive: true, force: true });
     await rm(unsafeRoot, { recursive: true, force: true });
+  }
+});
+
+test("reconciles changed approved Forms data while leaving unchanged catalog files alone", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "plug-reconcile-test-"));
+  try {
+    const first = approvedFields({ ID: "1", Slug: "first-tool", ThumbnailCandidateUrl: "" });
+    const second = approvedFields({ ID: "2", Slug: "second-tool", ThumbnailCandidateUrl: "" });
+    await prepareApprovedSubmission({ fields: first, repositoryRoot: root });
+    await prepareApprovedSubmission({ fields: second, repositoryRoot: root });
+
+    const changedSecond = { ...second, Description: "SharePointのForms原文で更新された概要です。" };
+    const result = await prepareNextApprovedSubmission({
+      fieldsList: [first, changedSecond],
+      repositoryRoot: root,
+    });
+
+    assert.equal(result.status, "prepared");
+    assert.equal(result.operation, "update");
+    assert.equal(result.slug, "second-tool");
+    assert.equal(
+      JSON.parse(await readFile(path.join(root, "catalog", "solutions", "first-tool.json"))).description,
+      first.Description,
+    );
+    assert.equal(
+      JSON.parse(await readFile(path.join(root, "catalog", "solutions", "second-tool.json"))).description,
+      changedSecond.Description,
+    );
+
+    const unchanged = await prepareNextApprovedSubmission({
+      fieldsList: [first],
+      repositoryRoot: root,
+    });
+    assert.equal(unchanged.status, "none");
+  } finally {
+    await rm(root, { recursive: true, force: true });
   }
 });
 

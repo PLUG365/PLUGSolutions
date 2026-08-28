@@ -4,10 +4,9 @@ import { fileURLToPath } from "node:url";
 import {
   createSourceRevision,
   normalizeGraphItems,
-  prepareApprovedSubmission,
+  prepareNextApprovedSubmission,
   prepareWithdrawnSubmission,
   readFixtureItems,
-  selectApprovedSubmission,
   selectWithdrawnSubmission,
 } from "../lib/prepare-approved-submission.mjs";
 
@@ -57,15 +56,13 @@ export async function run({ repositoryRoot = process.cwd() } = {}) {
 
   const catalogDirectory = path.join(repositoryRoot, "catalog", "solutions");
   const withdrawnFields = await selectWithdrawnSubmission(fieldsList, { catalogDirectory, requestedSlug });
-  const approvedFields = withdrawnFields
+  const preparedApproved = withdrawnFields
     ? null
-    : await selectApprovedSubmission(fieldsList, { catalogDirectory, requestedSlug });
+    : await prepareNextApprovedSubmission({ fieldsList, repositoryRoot, requestedSlug });
   const result = withdrawnFields
-    ? await prepareWithdrawnSubmission({ fields: withdrawnFields, repositoryRoot })
-    : approvedFields
-      ? { ...(await prepareApprovedSubmission({ fields: approvedFields, repositoryRoot })), operation: "add" }
-      : { status: "none", operation: null, slug: null, thumbnailStatus: null };
-  const selectedFields = withdrawnFields ?? approvedFields;
+    ? { ...(await prepareWithdrawnSubmission({ fields: withdrawnFields, repositoryRoot })), operation: "remove" }
+    : preparedApproved;
+  const selectedFields = withdrawnFields ?? preparedApproved?.sourceFields;
   const sourceRevision = selectedFields ? createSourceRevision(selectedFields) : null;
 
   const resultDirectory = path.join(repositoryRoot, ".automation");

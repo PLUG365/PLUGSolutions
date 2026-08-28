@@ -16,7 +16,7 @@ Power Automateの責務は、承認後の非公開JSON候補生成までとす�
 | Forms 新規回答 | `ResponseId` が未登録 | 同意・必須値・Xハンドル・HTTPS配布URLが妥当なら `未審査`、それ以外は `要確認` で1件作成 | 回答詳細を取得できない場合だけ停止し、回答を失わないため入力不備は保存して人が確認する |
 | 同一回答の再処理 | 同じ `ResponseId` が登録済み | 既存行を変更せず正常終了 | 2件目を作成しない |
 | 人による審査 | `未審査` または `要確認` | `承認` または `却下` | 自動承認しない |
-| 公開準備 | `承認` | 取込フローがslugを生成し、Q6/Q8と安全側既定値を正規化。人はForms原文を読み取り専用で確認 | 正規化失敗、不正URL、必須原文欠落では公開しない |
+| 公開準備 | `承認` | 取込フローがslugを生成し、Q6/Q8と安全側既定値を正規化。人はForms原文を読み取り専用で確認。既存slugもForms原文との差分を検知して更新PRにする | 正規化失敗、不正URL、必須原文欠落では公開しない |
 | 取り下げ | `公開済み` | 本人確認後に `取り下げ` | 匿名の未確認依頼だけでは変更しない |
 
 ## SharePoint リスト
@@ -104,11 +104,13 @@ Power Automateの責務は、承認後の非公開JSON候補生成までとす�
 | JSON候補生成 | `ReviewStatus=承認` かつForms原文の必須値が入力済み | `Exports/<slug>.json` を作成または上書き。Q6/Q8と削除済み項目はフロー／Nodeが正規化・既定値補完 | `未審査／要確認／却下／公開済み／取り下げ`、未知値・不正URLは出力しない |
 | 再生成 | 同じslugの承認済み行 | 同じファイルだけを上書き | ファイルを増殖させない |
 | 入力不備 | 承認済みでも公開必須項目が欠落 | 既存ファイルを変更せず終了 | 不完全なJSONを作らない |
-| GitHub取込 | Power Appsで承認済み、公開項目が妥当 | GitHub Actionsが専用branchへ公開JSONと処理済み画像を追加しPRを作成 | フローからcommit・pushしない。`main`へ直接pushしない |
+| GitHub取込 | Power Appsで承認済み、公開項目が妥当 | GitHub Actionsが専用branchへ公開JSONと処理済み画像を追加・更新しPRを作成 | フローからcommit・pushしない。`main`へ直接pushしない |
 
 ### 自動生成される公開項目
 
 公開項目はForms原文（`TypesAndUses`、`RelatedUrls`、`XHandle`、`Description`、`DistributionUrl`、`ReviewedAt`）からフロー／GitHub Actionsが生成します。Power Appsで公開値を編集・補完しません。削除済みの旧Catalog*／SourceUrl／InstructionsUrl等の正規化列は参照せず、処理済み画像の`ThumbnailPath`だけを出力へ保持します。
+
+GitHub Actionsは30分ごとにSharePointリストを読み取り、承認済み行のForms原文から同じslugの公開JSONと処理済み画像を再生成して現在のリポジトリ内容と比較します。差分がある場合だけ`add`または`update`のPRを1件作成し、差分がなければファイルもPRも作成しません。PRの確認・merge後に本番デプロイを行うため、公開サイトの内容はSharePointの承認済みデータからのみ更新されます。
 
 | Forms原文 | 公開JSON | 規則 |
 | --- | --- | --- |

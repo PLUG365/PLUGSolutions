@@ -110,15 +110,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
+          git add -A -- "catalog/solutions/$SLUG.json"
+          if git ls-files --error-unmatch -- "public/images/solutions/$SLUG.webp" >/dev/null 2>&1 || test -e "public/images/solutions/$SLUG.webp"; then
+            git add -A -- "public/images/solutions/$SLUG.webp"
+          fi
           if test "$OPERATION" = "remove"; then
-            git add -A -- "catalog/solutions/$SLUG.json" "public/images/solutions/$SLUG.webp"
             git commit -m "catalog: remove $SLUG"
           else
-            git add -- "catalog/solutions/$SLUG.json"
-            if test -f "public/images/solutions/$SLUG.webp"; then
-              git add -- "public/images/solutions/$SLUG.webp"
-            fi
-            git commit -m "catalog: add $SLUG"
+            git commit -m "catalog: $OPERATION $SLUG"
           fi
           git push --set-upstream origin "$BRANCH"
       - name: Create pull request
@@ -136,7 +135,7 @@ jobs:
             title="catalog: remove $SLUG"
             summary="Power Appsで取り下げ済みの作品を公開カタログから外す変更を自動準備しました。"
           else
-            title="catalog: add $SLUG"
+            title="catalog: $OPERATION $SLUG"
             summary="Power Appsで承認済みの申請を自動準備しました。"
           fi
           gh pr create \
