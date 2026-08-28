@@ -27,7 +27,7 @@ Production deployment is started manually from the `Deploy production` workflow 
 
 ## Catalog records
 
-Add one approved public record per solution under `catalog/solutions/<slug>.json`. The public schema is documented in `catalog/schema.json` and enforced by `npm run validate:catalog`.
+The `Sync catalog lifecycle` workflow reads approved rows from the private Forms-linked SharePoint list and prepares the matching record under `catalog/solutions/<slug>.json` (including a processed thumbnail when available). Do not hand-edit a synced record; review and merge the generated PR so the SharePoint row remains the source of truth. The public schema is documented in `catalog/schema.json` and enforced by `npm run validate:catalog`.
 
 Private Forms responses, review notes, email addresses, consent records, and candidate thumbnail URLs must never be copied into this repository. Only aggregate reactions belong in `catalog/reactions.json`.
 
@@ -47,7 +47,7 @@ Copy `.env.example` to `.env.local` and fill only the public Forms URLs when the
 
 The submission form questions, privacy boundary, review-only fields, and release checklist are defined in [`docs/submission-form.md`](docs/submission-form.md).
 
-Public applicant and operator instructions are exported at `/guide/`. `/lounge/` embeds one fixed chat.exe room whenever `NEXT_PUBLIC_LOUNGE_MODE=open` and a valid room name are configured. PLUG does not add a consent screen, event-time window, or presence-based auto-close; set the mode to `closed` for an emergency shutdown. `private=1` only hides the room from chat.exe's public room list, and is not authentication. The embed keeps room movement and camera, microphone, and screen-capture permissions disabled.
+Public applicant and operator instructions are exported at `/guide/`. `/lounge/` shows a short consent page first, then embeds one fixed chat.exe room after the attendee confirms. It is available whenever `NEXT_PUBLIC_LOUNGE_MODE=open` and a valid room name are configured; PLUG does not add an event-time window or presence-based auto-close. Set the mode to `closed` for an emergency shutdown. `private=1` only hides the room from chat.exe's public room list, and is not authentication. The embed keeps room movement and camera, microphone, and screen-capture permissions disabled.
 
 The production environment must define `NEXT_PUBLIC_SUBMISSION_FORM_URL` before release. The deployment workflow passes public `NEXT_PUBLIC_*` environment variables into the static build; never store secrets in these variables.
 
