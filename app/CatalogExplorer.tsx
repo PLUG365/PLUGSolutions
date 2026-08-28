@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- cards expose an internally scrollable description. */
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactionCounts, Solution } from "../lib/catalog-types";
 
 type Props = {
@@ -20,9 +20,23 @@ function fallbackColor(slug: string) {
   return colors[score % colors.length];
 }
 
+const REACTION_API_BASE = (process.env.NEXT_PUBLIC_REACTIONS_API_URL ?? "").replace(/\/+$/, "");
+const EMPTY_COUNTS = { interested: 0, tried: 0, adopted: 0 };
+
+function readCounts(value: unknown) {
+  if (!value || typeof value !== "object") return null;
+  const counts = value as Record<string, unknown>;
+  const result = { ...EMPTY_COUNTS };
+  for (const key of Object.keys(result) as Array<keyof typeof result>) {
+    if (Number.isInteger(counts[key]) && Number(counts[key]) >= 0) result[key] = Number(counts[key]);
+  }
+  return result;
+}
+
 export default function CatalogExplorer({ solutions, reactions }: Props) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("すべて");
+  const [liveReactions, setLiveReactions] = useState(reactions);
   const filters = useMemo(
     () => ["すべて", ...new Set(solutions.flatMap((solution) => solution.categories))],
     [solutions],
@@ -45,6 +59,33 @@ export default function CatalogExplorer({ solutions, reactions }: Props) {
     });
   }, [filter, query, solutions]);
 
+  useEffect(() => {
+    if (!REACTION_API_BASE || solutions.length === 0) return undefined;
+    let cancelled = false;
+    Promise.all(
+      solutions.map(async (solution) => {
+        try {
+          const response = await fetch(`${REACTION_API_BASE}/v1/reactions/${encodeURIComponent(solution.slug)}`, {
+            headers: { Accept: "application/json" },
+          });
+          if (!response.ok) return [solution.slug, null] as const;
+          const payload: unknown = await response.json();
+          return [solution.slug, readCounts(payload && typeof payload === "object" ? (payload as { counts?: unknown }).counts : null)] as const;
+        } catch {
+          return [solution.slug, null] as const;
+        }
+      }),
+    ).then((entries) => {
+      if (cancelled) return;
+      setLiveReactions((current) => {
+        const next = { ...current };
+        for (const [slug, counts] of entries) if (counts) next[slug] = counts;
+        return next;
+      });
+    });
+    return () => { cancelled = true; };
+  }, [solutions]);
+
   return (
     <>
       <div className="catalog-controls">
@@ -65,7 +106,7 @@ export default function CatalogExplorer({ solutions, reactions }: Props) {
       {visibleSolutions.length ? (
         <div className="solution-grid">
           {visibleSolutions.map((solution, index) => {
-            const counts = reactions[solution.slug];
+            const counts = liveReactions[solution.slug];
             const reactionTotal = counts ? counts.interested + counts.tried + counts.adopted : 0;
             return (
               <article className="solution-card" key={solution.slug} tabIndex={0}>

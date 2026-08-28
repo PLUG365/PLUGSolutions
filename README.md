@@ -41,9 +41,13 @@ npm run thumbnail -- path/to/source.png solution-slug
 
 The command accepts PNG, JPEG, or WebP files up to 10 MB and 25 MP. It creates a metadata-free 1200×675 WebP at `public/images/solutions/<slug>.webp`. Use the resulting `/images/solutions/<slug>.webp` value in the approved catalog record. Do not run this command directly against an unreviewed remote URL.
 
-## Forms and analytics
+## Forms, reactions, and analytics
 
-Copy `.env.example` to `.env.local` and fill only the public Forms URLs when they are ready. Application Insights remains disabled until its collection settings, retention, region, and cost receive human review.
+Copy `.env.example` to `.env.local` and fill only the public submission/report Forms URLs and the public `NEXT_PUBLIC_REACTIONS_API_URL` when they are ready. Application Insights remains disabled until its collection settings, retention, region, and cost receive human review.
+
+### Cloudflare reactions
+
+The optional reaction API lives in [`worker/`](worker/). It uses Cloudflare Workers Free and D1 Free. Apply `worker/migrations/0001_reactions.sql`, set the fixed `ALLOWED_ORIGIN` and `CATALOG_MANIFEST_URL` in `worker/wrangler.toml`, and configure the D1 database ID before enabling the deployment workflow. The worker stores only aggregate counters and SHA-256 visitor-token hashes; raw tokens and personal data are never persisted. A hard limit of 5,000 new events per UTC day and a unique `(slug, reaction_type, visitor_hash)` key provide abuse and retry guardrails. The Cloudflare workflow skips safely when its production token/account variables are absent.
 
 The submission form questions, privacy boundary, review-only fields, and release checklist are defined in [`docs/submission-form.md`](docs/submission-form.md).
 

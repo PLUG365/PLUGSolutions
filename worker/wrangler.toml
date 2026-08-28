@@ -1,0 +1,19 @@
+name = "plug-solutions-reactions"
+main = "src/index.mjs"
+compatibility_date = "2026-08-28"
+# Use the free workers.dev endpoint until a reviewed custom route is selected.
+workers_dev = true
+
+[vars]
+# Keep these public values aligned with the production Static Web Apps origin.
+ALLOWED_ORIGIN = "https://kind-stone-076361900.7.azurestaticapps.net"
+CATALOG_MANIFEST_URL = "https://kind-stone-076361900.7.azurestaticapps.net/reaction-manifest.json"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "plug-solutions-reactions"
+database_id = "93e3e170-b76f-4599-9c00-345a8ef55d0e"
+migrations_dir = "migrations"
+
+[triggers]
+crons = ["*/30 * * * *"]

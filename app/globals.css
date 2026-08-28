@@ -274,14 +274,18 @@ button { color: inherit; }
 .solution-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .outline-button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid currentColor; border-radius: 999px; padding: 16px 21px; background: transparent; font-size: 14px; font-weight: 900; }
 .outline-button:hover { background: var(--ink); color: white; }
-.reaction-panel { width: min(1240px, calc(100% - 48px)); margin: 0 auto 96px; padding: 38px; display: grid; grid-template-columns: 1.25fr 1fr auto; gap: 42px; align-items: center; background: var(--violet); border: 1px solid var(--ink); }
+.reaction-panel { width: min(1240px, calc(100% - 48px)); margin: 0 auto 96px; padding: 38px; display: grid; grid-template-columns: 1.25fr 1fr; gap: 42px; align-items: center; background: var(--violet); border: 1px solid var(--ink); }
 .reaction-panel h2 { margin: 0; font-size: clamp(30px, 3vw, 45px); letter-spacing: -.055em; }
-.reaction-panel > div > p:last-child { margin: 12px 0 0; max-width: 520px; font-size: 14px; line-height: 1.75; }
+.reaction-panel > div:first-child > p:last-child { margin: 12px 0 0; max-width: 520px; font-size: 14px; line-height: 1.75; }
 .reaction-counts { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; }
 .reaction-counts div { padding: 8px 18px; text-align: center; border-right: 1px solid rgba(24,25,21,.25); }
 .reaction-counts div:last-child { border: 0; }
 .reaction-counts dt { font-size: 12px; }
 .reaction-counts dd { margin: 6px 0 0; font-size: 24px; font-weight: 900; }
+.reaction-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.reaction-actions .outline-button { padding: 10px 14px; font-size: 12px; }
+.reaction-actions .outline-button:disabled { cursor: not-allowed; opacity: .5; }
+.reaction-status { margin: 10px 0 0; font-size: 12px; color: rgba(24,25,21,.68); }
 .not-found-page { min-height: 100vh; padding: 12vh max(24px, calc((100vw - 1100px) / 2)); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
 .not-found-page h1 { margin: 0; font-size: clamp(58px, 8vw, 110px); line-height: .94; letter-spacing: -.08em; }
 .not-found-page > p:not(.section-index) { margin: 30px 0; color: rgba(24,25,21,.6); }

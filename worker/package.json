@@ -1,0 +1,9 @@
+{
+  "name": "plug-solutions-reactions-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/reactions.test.mjs",
+    "typecheck": "node --check src/index.mjs"
+  }
+}

@@ -162,3 +162,28 @@ test("approved export keeps raw Forms values behind a normalization gate", async
   assert.match(item.instructionsUrl, /Extract_labeled_related_urls/);
   assert.match(workflow.actions.Extract_labeled_related_urls.inputs.note, /HTTPS/);
 });
+
+test("reactions Worker deployment is manual and skips without production credentials", async () => {
+  const workflow = await readFile(new URL(".github/workflows/deploy-reactions-worker.yml", root), "utf8");
+  assertWorkflowTopLevelIsIndented(workflow);
+  assert.match(workflow, /^\s*workflow_dispatch:\s*$/m);
+  assert.match(workflow, /env\.CLOUDFLARE_API_TOKEN == ''/);
+  assert.match(workflow, /::notice::Cloudflare production credentials/);
+  assert.match(workflow, /npm run typecheck:worker && npm run test:worker/);
+  assert.match(workflow, /d1 migrations apply plug-solutions-reactions --remote/);
+  assert.match(workflow, /d1 execute plug-solutions-reactions --remote --file/);
+  assert.match(workflow, /manifest-sql\.mjs/);
+  assert.match(workflow, /npx --yes wrangler@4 deploy/);
+  assert.doesNotMatch(workflow, /^\s+push:\s*$/m);
+
+  const worker = await readFile(new URL("worker/src/index.mjs", root), "utf8");
+  assert.match(worker, /access-control-allow-origin/);
+  assert.match(worker, /DAILY_REACTION_CAP = 5000/);
+  assert.match(worker, /SHA-256|subtle\.digest/);
+  assert.doesNotMatch(worker, /console\.log|console\.error/);
+
+  const panel = await readFile(new URL("app/ReactionPanel.tsx", root), "utf8");
+  assert.match(panel, /localStorage/);
+  assert.match(panel, /disabled=\{/);
+  assert.match(panel, /NEXT_PUBLIC_REACTIONS_API_URL/);
+});

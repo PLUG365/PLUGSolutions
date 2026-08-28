@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllSolutions, getReactionCounts, getSolution } from "../../../lib/catalog";
+import ReactionPanel from "../../ReactionPanel";
 import SiteFooter from "../../SiteFooter";
 
 export const dynamicParams = false;
@@ -44,7 +45,6 @@ export default async function SolutionPage({ params }: PageProps) {
 
   const reactions = await getReactionCounts(await getAllSolutions());
   const counts = reactions[solution.slug] ?? { interested: 0, tried: 0, adopted: 0 };
-  const reactionUrl = process.env.NEXT_PUBLIC_REACTION_FORM_URL;
   const reportUrl = process.env.NEXT_PUBLIC_REPORT_FORM_URL;
   const relatedLinks = (solution.relatedUrls ?? []).filter(
     (url) => ![solution.distributionUrl, solution.sourceUrl, solution.instructionsUrl].includes(url),
@@ -92,23 +92,7 @@ export default async function SolutionPage({ params }: PageProps) {
         </div>
       </article>
 
-      <section className="reaction-panel" aria-labelledby="reaction-heading">
-        <div>
-          <p className="section-index">REACTIONS</p>
-          <h2 id="reaction-heading">作品へのフィードバック</h2>
-          <p>コメントは公開しません。匿名フォームから、作品を試した段階だけを伝えられます。</p>
-        </div>
-        <dl className="reaction-counts">
-          <div><dt>気になる</dt><dd>{counts.interested}</dd></div>
-          <div><dt>使ってみた</dt><dd>{counts.tried}</dd></div>
-          <div><dt>導入できた</dt><dd>{counts.adopted}</dd></div>
-        </dl>
-        {reactionUrl ? (
-          <a className="outline-button" href={reactionUrl} target="_blank" rel="noreferrer">匿名でリアクションする ↗</a>
-        ) : (
-          <span className="outline-button disabled" aria-disabled="true">リアクションフォーム準備中</span>
-        )}
-      </section>
+      <ReactionPanel slug={solution.slug} initialCounts={counts} />
 
       <SiteFooter reportUrl={reportUrl} />
     </main>
