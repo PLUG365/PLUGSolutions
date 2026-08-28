@@ -43,21 +43,20 @@ GitHub側の再検証後からmergeまでの競合窓は残る。merge直前に�
 - PRのCI実行を人が許可し、CI成功後にmergeした。merge SHAは `b34a73ebb92ec7beb597133e88787677912f8ba0` で、同じSHAに対するmain CIも成功した。
 - [production workflow #8](https://github.com/PLUG365/PLUGSolutions/actions/runs/33078796548) をmainから手動実行し、人が`production`を承認した後に成功した。重複起動した古い2実行はconcurrency制御でキャンセルされ、同時デプロイされなかった。
 - [公開作品ページ](https://kind-stone-076361900.7.azurestaticapps.net/solutions/decision-flow/) と一覧はHTTP 200を返し、作品名、作者X、配布先、文字サムネイルを確認した。HTMLにForms回答識別情報、同意記録、審査メモ、画像候補URL、内部版情報は存在しなかった。
-- GitHub `production` Environmentには匿名回答用の掲載フォームURLを登録済みで、Loungeは`closed`を維持している。
+- GitHub `production` Environmentには匿名回答用の掲載フォームURLを登録済み。Loungeの公開状態はproduction変数の`NEXT_PUBLIC_LOUNGE_MODE`で切り替える。
 - スマートフォンでの最終表示・リンク確認後、Canvasで同じ申請を`公開済み`にした。更新を受けた公開候補フローは成功し、`承認`専用のJSON生成処理は条件不成立でスキップされた。これにより実申請E2Eを完了とした。
 
-## PLUG Lounge pilot
+## PLUG Lounge
 
-Loungeは常設公開せず、モデレーターを置けるイベント時間だけ `pilot` にする。closed時も公開サイトから安全な案内ページへのリンクだけを表示し、iframe接続は行わない。検索エンジンには掲載させない。productionの公開変数へ、ASCII 8〜64文字のイベント固有room、タイムゾーンを含むRFC 3339形式の開始・終了日時を設定する。イベント窓はブラウザのタイマー安全上限未満（`MAX_PILOT_WINDOW_MS` = 2,147,000,000ms、約24.8日）にし、長期常設にはしない。room名と直URLはブラウザへ配られるため秘密ではなく、`private=1`も認証ではない。
+Loungeは固定roomを常設で埋め込む。productionの公開変数へ、ASCII 8〜64文字のroom名を設定し、`NEXT_PUBLIC_LOUNGE_MODE=open` にする。PLUG側では同意画面、開催時間、在室者数による自動閉室を設けない。`private=1` はchat.exeの部屋一覧から隠す設定であり、認証ではない。room名と直URLはブラウザへ配られるため秘密として扱わない。
 
-緊急時は `NEXT_PUBLIC_LOUNGE_MODE=closed` へ変更して手動再デプロイし、PLUGページからiframeを外す。再開時は旧roomを再利用せず、新しいroom名へローテーションする。これはPLUG側の接続導線を閉じる操作であり、参加者が既に知っているchat.exeの旧room直URL自体を停止・削除する機能ではない。イベント案内でもこの限界を共有する。
+緊急時は `NEXT_PUBLIC_LOUNGE_MODE=closed` へ変更して手動再デプロイし、PLUGページからiframeを外す。これはPLUG側の接続導線を閉じる操作であり、参加者が既に知っているchat.exeの旧room直URL自体を停止・削除する機能ではない。
 
 公開前にデスクトップ、iPhone Safari、Android Chromeで次を人が確認する。
 
-- 同意前と閉室中にiframeがなく、chat.exeへ接続しない。
-- 同意後に指定roomへ入り、テキスト送受信できる。
-- 別roomへ移動できず、カメラ・マイク・画面共有を使用できない。
-- ソフトキーボード表示、縦横回転、退室、終了時刻後の閉室が機能する。
-- 行動規範と第三者サービスの案内が読め、問題時に運営者が接続導線を閉じて新しいroomへ切り替えられる。既知の旧room直URLはPLUG側から停止できないことも確認する。
+- `open` と有効なroom名のとき、ページを開くと指定roomのiframeが表示される。`closed` またはroom未設定時はiframeがない。
+- テキスト送受信でき、別roomへの移動、カメラ、マイク、画面共有はPLUGページから利用できない。
+- ソフトキーボード表示、縦横回転、ページ移動後の再入室が扱いやすい。
+- 既知の旧room直URLはPLUG側から停止できないことを確認する。
 
 kick、block、reportなど十分なモデレーション手段が確認できない場合、一般公開・常設化へ進めない。

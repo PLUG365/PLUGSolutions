@@ -6,7 +6,7 @@ import SiteFooter from "../SiteFooter";
 
 export const metadata: Metadata = {
   title: "PLUG Lounge — PLUG Solutions",
-  description: "PLUGのイベントに合わせて開く、期間限定の交流ラウンジです。",
+  description: "PLUGの作品や工夫を気軽に話せる交流ラウンジです。",
   robots: {
     index: false,
     follow: false,

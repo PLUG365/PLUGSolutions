@@ -64,17 +64,23 @@ test("exports solution details with the shared footer and clear feedback wording
   assert.doesNotMatch(detail, /つなぐ × 電源を入れる × ギャップを埋める/);
 });
 
-test("exports a closed-by-default lounge without an embedded third party frame", async () => {
+test("exports a configured fixed-room lounge or a safe closed fallback", async () => {
   const lounge = await readFile(new URL("out/lounge/index.html", root), "utf8");
   const staticWebAppConfig = JSON.parse(
     await readFile(new URL("out/staticwebapp.config.json", root), "utf8"),
   );
 
   assert.match(lounge, /PLUG Lounge/);
-  assert.match(lounge, /現在は閉室中/);
   assert.match(lounge, /フッターナビゲーション/);
   assert.match(lounge, /name="robots" content="noindex, nofollow"/);
-  assert.doesNotMatch(lounge, /<iframe/i);
+  if (/<iframe/i.test(lounge)) {
+    assert.match(lounge, /https:\/\/app\.chatexe\.net\//);
+    assert.match(lounge, /private=1/);
+    assert.doesNotMatch(lounge, /開催時間外|内容を理解して接続する|第三者サービスのchat\.exe/);
+  } else {
+    assert.match(lounge, /現在は閉室中/);
+    assert.doesNotMatch(lounge, /開催時間外|内容を理解して接続する|第三者サービスのchat\.exe/);
+  }
   assert.match(
     staticWebAppConfig.globalHeaders["Content-Security-Policy"],
     /frame-src https:\/\/app\.chatexe\.net/,

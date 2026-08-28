@@ -47,7 +47,7 @@ Copy `.env.example` to `.env.local` and fill only the public Forms URLs when the
 
 The submission form questions, privacy boundary, review-only fields, and release checklist are defined in [`docs/submission-form.md`](docs/submission-form.md).
 
-Public applicant and operator instructions are exported at `/guide/`. The event-only `/lounge/` integration stays closed unless all four public lounge variables in `.env.example` are configured. It loads chat.exe only after an attendee explicitly accepts the third-party data notice; the pilot does not grant camera, microphone, or screen-capture permission.
+Public applicant and operator instructions are exported at `/guide/`. `/lounge/` embeds one fixed chat.exe room whenever `NEXT_PUBLIC_LOUNGE_MODE=open` and a valid room name are configured. PLUG does not add a consent screen, event-time window, or presence-based auto-close; set the mode to `closed` for an emergency shutdown. `private=1` only hides the room from chat.exe's public room list, and is not authentication. The embed keeps room movement and camera, microphone, and screen-capture permissions disabled.
 
 The production environment must define `NEXT_PUBLIC_SUBMISSION_FORM_URL` before release. The deployment workflow passes public `NEXT_PUBLIC_*` environment variables into the static build; never store secrets in these variables.
 
