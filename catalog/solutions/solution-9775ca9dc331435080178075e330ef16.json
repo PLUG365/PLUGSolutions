@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "slug": "solution-9775ca9dc331435080178075e330ef16",
+  "title": "発表会ツール",
+  "maker": {
+    "displayName": "みのる",
+    "xHandle": "@meccha__eeyan",
+    "xUrl": "https://x.com/meccha__eeyan"
+  },
+  "description": "社内発表会の進行をサポートする Power Apps キャンバスアプリです。\nカウントダウンタイマー・指名抽選・Teams 通知を一画面で操作できます。",
+  "type": "Power Apps / Power Automate",
+  "categories": [
+    "仕事効率化",
+    "コミュニケーション"
+  ],
+  "tags": [
+    "Power Apps",
+    "Power Automate"
+  ],
+  "distributionUrl": "https://github.com/PLUG365/PresentationSupportTool",
+  "sourceUrl": null,
+  "instructionsUrl": null,
+  "relatedUrls": [
+    "https://qiita.com/meccha__eeyan/items/edd069c017644d1e9369"
+  ],
+  "license": "配布先を確認",
+  "cost": "配布先を確認",
+  "premiumRequired": null,
+  "setupTime": "未記載",
+  "prerequisites": [],
+  "thumbnail": "/images/solutions/solution-9775ca9dc331435080178075e330ef16.webp",
+  "publishedAt": "2026-08-29",
+  "updatedAt": "2026-08-29"
+}
