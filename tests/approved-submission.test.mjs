@@ -211,6 +211,15 @@ test("normalizes Forms choices and labeled related URLs", () => {
   );
   assert.equal(normalizeRelatedUrls("ソース: http://example.com").status, "要確認");
   assert.equal(normalizeRelatedUrls("ソース: https://a.example\nソース: https://b.example").status, "要確認");
+  assert.deepEqual(
+    normalizeTypesAndUses('["Power Apps","Copilot Studio","Power Automate","Dataverse solution／PCF","デスクトップアプリ","モバイルアプリ","仕事効率化","コミュニケーション"]'),
+    {
+      status: "ok",
+      type: "Power Apps / Copilot Studio / Power Automate / Dataverse solution／PCF / モバイル／デスクトップアプリ",
+      tags: ["Power Apps", "Copilot Studio", "Power Automate", "Dataverse solution／PCF", "モバイル／デスクトップアプリ"],
+      categories: ["仕事効率化", "コミュニケーション"],
+    },
+  );
 });
 
 test("raw Forms values take precedence over legacy normalized columns", () => {
