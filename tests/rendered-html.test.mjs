@@ -52,6 +52,19 @@ test("exports public guides without private review data", async () => {
   assert.doesNotMatch(guide, /sharepoint\.com|Default-[a-f0-9-]{36}/i);
 });
 
+test("exports a privacy policy with the actual data boundaries and shared footer", async () => {
+  const privacy = await readFile(new URL("out/privacy/index.html", root), "utf8");
+
+  assert.match(privacy, /プライバシーポリシー/);
+  assert.match(privacy, /Microsoft Forms/);
+  assert.match(privacy, /Cloudflare Worker/);
+  assert.match(privacy, /localStorage/);
+  assert.match(privacy, /生のtoken、氏名、メールアドレス、Xアカウント、IPアドレス、User-Agentはアプリのデータベースへ保存しません/);
+  assert.match(privacy, /href="\/privacy\/"/);
+  assert.match(privacy, /https:\/\/x\.com\/meccha__eeyan/);
+  assert.doesNotMatch(privacy, /Default-[a-f0-9-]{36}/i);
+});
+
 test("exports solution details with the shared footer and clear feedback wording", async () => {
   const detail = await readFile(
     new URL("out/solutions/plug-solutions-e2e-test/index.html", root),

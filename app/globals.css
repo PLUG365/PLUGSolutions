@@ -420,6 +420,26 @@ button { color: inherit; }
 .review-criteria p { margin: 0; font-size: 20px; line-height: 1.8; color: rgba(24,25,21,.84); }
 .guide-note { font-size: 17px; line-height: 1.8; color: rgba(24,25,21,.8); }
 .guide-note { display: block; margin: 22px 0; }
+.privacy-content { width: min(1040px, calc(100% - 48px)); margin: 0 auto; }
+.privacy-updated { margin: 26px 0 0; font-size: 14px; color: rgba(24,25,21,.64); }
+.privacy-section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+.privacy-section:last-child { border-bottom: 0; }
+.privacy-section > h2 { margin: 0 0 24px; font-size: clamp(34px, 4vw, 54px); line-height: 1.05; letter-spacing: -.055em; }
+.privacy-section > p:not(.section-index), .privacy-list { max-width: 820px; font-size: 17px; line-height: 1.9; color: rgba(24,25,21,.82); }
+.privacy-section > p + p { margin-top: 18px; }
+.privacy-section a { text-decoration: underline; text-underline-offset: 3px; font-weight: 800; }
+.privacy-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.privacy-grid article { padding: 26px 28px; border: 1px solid var(--ink); background: #fffdfa; }
+.privacy-grid h3 { margin: 0 0 12px; font-size: 21px; letter-spacing: -.03em; }
+.privacy-grid p { margin: 0; font-size: 16px; line-height: 1.8; color: rgba(24,25,21,.8); }
+.privacy-grid p + p { margin-top: 12px; }
+.privacy-list { margin: 0; padding-left: 1.4em; }
+.privacy-list li + li { margin-top: 8px; }
+.privacy-note { font-size: 15px !important; color: rgba(24,25,21,.68) !important; }
+.privacy-callout { padding: 38px 40px; background: var(--ink); color: white; border-bottom: 0; }
+.privacy-callout .section-index, .privacy-callout > p:not(.section-index) { color: rgba(255,255,255,.86); }
+.privacy-callout > h2 { color: white; }
+.privacy-callout a { color: white; }
 .lounge-hero { border-bottom: 0; }
 .lounge-status, .lounge-consent, .lounge-room { margin-bottom: 92px; padding: 42px; border: 1px solid var(--ink); background: #fffdfa; box-shadow: 10px 10px 0 var(--ink); }
 .lounge-status.closed { background: var(--cream); }
@@ -453,6 +473,11 @@ button { color: inherit; }
   .guide-grid h3 { margin-top: 45px; }
   .guide-flow li { grid-template-columns: 1fr; gap: 10px; }
   .operator-guide { padding-left: 16px; padding-right: 16px; }
+  .privacy-content { width: calc(100% - 32px); }
+  .privacy-section { padding: 56px 0; }
+  .privacy-section > p:not(.section-index), .privacy-list { font-size: 16px; }
+  .privacy-grid { grid-template-columns: 1fr; }
+  .privacy-callout { padding: 28px 20px; }
   .lounge-status, .lounge-consent, .lounge-room { margin-bottom: 66px; padding: 24px 20px; box-shadow: 7px 7px 0 var(--ink); }
   .lounge-status h2, .lounge-consent h2 { font-size: 32px; }
   .lounge-room { width: calc(100% - 16px); padding: 8px; }
