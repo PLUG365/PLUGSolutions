@@ -77,6 +77,10 @@ test("exports a configured fixed-room lounge or a safe closed fallback", async (
     assert.match(lounge, /https:\/\/app\.chatexe\.net\//);
     assert.match(lounge, /private=1/);
     assert.doesNotMatch(lounge, /開催時間外|内容を理解して接続する|第三者サービスのchat\.exe/);
+  } else if (/内容を理解して接続する/.test(lounge)) {
+    assert.match(lounge, /外部サービスのchat\.exe/);
+    assert.match(lounge, /chat\.exe公式サイト/);
+    assert.doesNotMatch(lounge, /https:\/\/app\.chatexe\.net\//);
   } else {
     assert.match(lounge, /現在は閉室中/);
     assert.doesNotMatch(lounge, /開催時間外|内容を理解して接続する|第三者サービスのchat\.exe/);

@@ -48,13 +48,14 @@ GitHub側の再検証後からmergeまでの競合窓は残る。merge直前に�
 
 ## PLUG Lounge
 
-Loungeは固定roomを常設で埋め込む。productionの公開変数へ、ASCII 8〜64文字のroom名を設定し、`NEXT_PUBLIC_LOUNGE_MODE=open` にする。PLUG側では同意画面、開催時間、在室者数による自動閉室を設けない。`private=1` はchat.exeの部屋一覧から隠す設定であり、認証ではない。room名と直URLはブラウザへ配られるため秘密として扱わない。
+Loungeは固定roomを常設で埋め込む。productionの公開変数へ、ASCII 8〜64文字のroom名を設定し、`NEXT_PUBLIC_LOUNGE_MODE=open` にする。入室前には短い同意ページを表示し、参加者が確認した後だけiframeを生成する。PLUG側では開催時間、在室者数による自動閉室を設けない。`private=1` はchat.exeの部屋一覧から隠す設定であり、認証ではない。room名と直URLはブラウザへ配られるため秘密として扱わない。
 
 緊急時は `NEXT_PUBLIC_LOUNGE_MODE=closed` へ変更して手動再デプロイし、PLUGページからiframeを外す。これはPLUG側の接続導線を閉じる操作であり、参加者が既に知っているchat.exeの旧room直URL自体を停止・削除する機能ではない。
 
 公開前にデスクトップ、iPhone Safari、Android Chromeで次を人が確認する。
 
-- `open` と有効なroom名のとき、ページを開くと指定roomのiframeが表示される。`closed` またはroom未設定時はiframeがない。
+- `open` と有効なroom名のとき、ページを開くと同意ページが表示され、確認後に指定roomのiframeが表示される。`closed` またはroom未設定時はiframeがない。
+- 同意前はchat.exeのiframeがなく、接続が発生しない。
 - テキスト送受信でき、別roomへの移動、カメラ、マイク、画面共有はPLUGページから利用できない。
 - ソフトキーボード表示、縦横回転、ページ移動後の再入室が扱いやすい。
 - 既知の旧room直URLはPLUG側から停止できないことを確認する。
