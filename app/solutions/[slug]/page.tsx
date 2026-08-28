@@ -83,9 +83,6 @@ export default async function SolutionPage({ params }: PageProps) {
           <dl className="detail-list solution-facts">
             <div><dt>種類</dt><dd>{solution.type}</dd></div>
             <div><dt>ライセンス</dt><dd>{solution.license}</dd></div>
-            <div><dt>費用</dt><dd>{solution.cost}</dd></div>
-            <div><dt>Premium</dt><dd>{solution.premiumRequired === null ? "対象外" : solution.premiumRequired ? "必要" : "不要"}</dd></div>
-            <div><dt>導入目安</dt><dd>{solution.setupTime}</dd></div>
             <div><dt>公開／更新</dt><dd>{solution.publishedAt} ／ {solution.updatedAt}</dd></div>
             <div className="wide"><dt>前提条件</dt><dd>{solution.prerequisites.length ? solution.prerequisites.join("、") : "特になし"}</dd></div>
           </dl>

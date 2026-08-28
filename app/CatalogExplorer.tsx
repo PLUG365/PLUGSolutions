@@ -79,7 +79,7 @@ export default function CatalogExplorer({ solutions, reactions }: Props) {
                   {!solution.thumbnail && <span className="card-mark">{solution.title.slice(0, 1)}</span>}
                 </div>
                 <div className="card-body">
-                  <div className="card-topline"><span>{solution.type}</span><span>更新 {formatDate(solution.updatedAt)}</span></div>
+                  <div className="card-topline card-topline-single"><span>更新 {formatDate(solution.updatedAt)}</span></div>
                   <h3>{solution.title}</h3>
                   <p className="maker">
                     by {solution.maker.displayName} ·{" "}
@@ -89,11 +89,6 @@ export default function CatalogExplorer({ solutions, reactions }: Props) {
                   </p>
                   <p className="card-description">{solution.description}</p>
                   <div className="tag-list">{solution.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-                  <dl className="card-facts">
-                    <div><dt>導入</dt><dd>{solution.setupTime}</dd></div>
-                    <div><dt>費用</dt><dd>{solution.cost}</dd></div>
-                    <div><dt>Premium</dt><dd>{solution.premiumRequired === null ? "対象外" : solution.premiumRequired ? "必要" : "不要"}</dd></div>
-                  </dl>
                   <div className="card-footer">
                     <span>{reactionTotal > 0 ? `${reactionTotal} リアクション` : "掲載情報を確認"}</span>
                     <Link href={`/solutions/${solution.slug}/`}>詳しく見る <span aria-hidden="true">→</span></Link>

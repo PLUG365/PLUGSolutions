@@ -167,6 +167,7 @@ button { color: inherit; }
 .card-mark { position: relative; z-index: 1; display: grid; place-items: center; width: 108px; height: 108px; background: #fffdf6; color: var(--ink); border: 2px solid var(--ink); box-shadow: 8px 8px 0 rgba(24,25,21,.85); font-size: 45px; font-weight: 900; transform: rotate(-4deg); }
 .card-body { padding: 16px 20px 20px; }
 .card-topline { display: flex; justify-content: space-between; gap: 12px; font-family: ui-monospace, monospace; font-size: 13px; font-weight: 800; color: rgba(24,25,21,.76); text-transform: uppercase; }
+.card-topline-single { justify-content: flex-end; }
 .card-body h3 { margin: 13px 0 2px; font-size: 25px; letter-spacing: -.045em; }
 .maker { margin: 0; font-size: 15px; color: rgba(24,25,21,.78); }
 .maker a { display: inline-block; color: var(--ink); font-weight: 800; white-space: nowrap; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
@@ -175,12 +176,6 @@ button { color: inherit; }
 .card-description { min-height: 72px; max-height: 10.5em; margin: 17px 0; overflow-y: auto; white-space: pre-wrap; font-size: 16px; line-height: 1.75; }
 .tag-list { display: flex; flex-wrap: wrap; gap: 5px; min-height: 27px; }
 .tag-list span { border: 1px solid var(--line); border-radius: 999px; padding: 5px 8px; font-size: 12px; font-weight: 800; }
-.card-facts { display: grid; grid-template-columns: repeat(3, 1fr); margin: 18px 0 0; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.card-facts div { padding: 0 9px; border-right: 1px solid var(--line); }
-.card-facts div:first-child { padding-left: 0; }
-.card-facts div:last-child { border: 0; }
-.card-facts dt { font-size: 13px; color: rgba(24,25,21,.76); }
-.card-facts dd { margin: 3px 0 0; font-size: 15px; font-weight: 900; }
 .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; }
 .card-footer > span { font-size: 13px; color: rgba(24,25,21,.76); }
 .card-footer > span b { color: var(--ink); font-size: 15px; }
