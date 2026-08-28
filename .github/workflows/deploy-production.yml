@@ -30,7 +30,7 @@ jobs:
       NEXT_PUBLIC_LOUNGE_ROOM: ${{ vars.NEXT_PUBLIC_LOUNGE_ROOM }}
     environment:
       name: production
-      url: https://kind-stone-076361900.7.azurestaticapps.net
+      url: https://plug.minoru365.com
     steps:
       - name: Check out the tested commit
         uses: actions/checkout@v6

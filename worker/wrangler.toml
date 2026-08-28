@@ -6,8 +6,8 @@ workers_dev = true
 
 [vars]
 # Keep these public values aligned with the production Static Web Apps origin.
-ALLOWED_ORIGIN = "https://kind-stone-076361900.7.azurestaticapps.net"
-CATALOG_MANIFEST_URL = "https://kind-stone-076361900.7.azurestaticapps.net/reaction-manifest.json"
+ALLOWED_ORIGIN = "https://plug.minoru365.com"
+CATALOG_MANIFEST_URL = "https://plug.minoru365.com/reaction-manifest.json"
 
 [[d1_databases]]
 binding = "DB"
