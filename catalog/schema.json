@@ -31,6 +31,10 @@
     "distributionUrl": { "type": "string", "format": "uri", "pattern": "^https://" },
     "sourceUrl": { "type": ["string", "null"], "format": "uri", "pattern": "^https://" },
     "instructionsUrl": { "type": ["string", "null"], "format": "uri", "pattern": "^https://" },
+    "relatedUrls": {
+      "type": "array",
+      "items": { "type": "string", "format": "uri", "pattern": "^https://" }
+    },
     "license": { "type": "string", "minLength": 1 },
     "cost": { "type": "string", "minLength": 1 },
     "premiumRequired": { "type": ["boolean", "null"] },

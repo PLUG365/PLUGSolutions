@@ -46,6 +46,9 @@ export default async function SolutionPage({ params }: PageProps) {
   const counts = reactions[solution.slug] ?? { interested: 0, tried: 0, adopted: 0 };
   const reactionUrl = process.env.NEXT_PUBLIC_REACTION_FORM_URL;
   const reportUrl = process.env.NEXT_PUBLIC_REPORT_FORM_URL;
+  const relatedLinks = (solution.relatedUrls ?? []).filter(
+    (url) => ![solution.distributionUrl, solution.sourceUrl, solution.instructionsUrl].includes(url),
+  );
 
   return (
     <main className="solution-page">
@@ -91,6 +94,11 @@ export default async function SolutionPage({ params }: PageProps) {
             <a className="primary-button" href={solution.distributionUrl} target="_blank" rel="noreferrer">入手・試用する ↗</a>
             {solution.instructionsUrl && <a className="outline-button" href={solution.instructionsUrl} target="_blank" rel="noreferrer">導入手順 ↗</a>}
             {solution.sourceUrl && <a className="outline-button" href={solution.sourceUrl} target="_blank" rel="noreferrer">ソースを見る ↗</a>}
+            {relatedLinks.map((url, index) => (
+              <a className="outline-button" href={url} target="_blank" rel="noreferrer" key={url}>
+                関連リンク{index + 1} ↗
+              </a>
+            ))}
           </div>
         </div>
       </article>

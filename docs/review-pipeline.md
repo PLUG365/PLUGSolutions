@@ -115,7 +115,7 @@ GitHub Actionsは30分ごとにSharePointリストを読み取り、承認済み
 | Forms原文 | 公開JSON | 規則 |
 | --- | --- | --- |
 | `TypesAndUses`（Q6） | `type`、`categories`、`tags` | 固定マッピング。その他は安全側へ、未知は要確認 |
-| `RelatedUrls`（Q8） | `sourceUrl`、`instructionsUrl` | ソース／手順各1件のHTTPS。重複・未知・不正は停止 |
+| `RelatedUrls`（Q8） | `sourceUrl`、`instructionsUrl`、`relatedUrls` | ラベル付きURLはソース／手順へ分類し、ラベルなしのHTTPS URLも受け付けて全件を関連リンクとして保持。重複ラベル・未知・不正は停止 |
 | `XHandle` | `maker.xHandle`、`maker.xUrl` | 先頭`@`を1個補完後に検証 |
 | `Description` | `description` | 改行を保持 |
 | `DistributionUrl` | `distributionUrl` | HTTPS必須 |

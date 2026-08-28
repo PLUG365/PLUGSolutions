@@ -14,6 +14,7 @@ export type Solution = {
   distributionUrl: string;
   sourceUrl: string | null;
   instructionsUrl: string | null;
+  relatedUrls?: string[];
   license: string;
   cost: string;
   premiumRequired: boolean | null;

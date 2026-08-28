@@ -207,6 +207,27 @@ test("normalizes Forms choices and labeled related URLs", () => {
       status: "ok",
       sourceUrl: "https://github.com/PLUG365/PLUGSolutions",
       instructionsUrl: "https://example.com/setup",
+      relatedUrls: [
+        "https://github.com/PLUG365/PLUGSolutions",
+        "https://example.com/setup",
+      ],
+    },
+  );
+  assert.deepEqual(
+    normalizeRelatedUrls([
+      "https://github.com/PLUG365/DecisionFlow",
+      "https://www.youtube.com/watch?v=C-c9nRtaVm4&t=8s",
+      "https://qiita.com/meccha__eeyan/items/9b21cf93514fc04a53c7",
+    ]),
+    {
+      status: "ok",
+      sourceUrl: "https://github.com/PLUG365/DecisionFlow",
+      instructionsUrl: "https://qiita.com/meccha__eeyan/items/9b21cf93514fc04a53c7",
+      relatedUrls: [
+        "https://github.com/PLUG365/DecisionFlow",
+        "https://www.youtube.com/watch?v=C-c9nRtaVm4&t=8s",
+        "https://qiita.com/meccha__eeyan/items/9b21cf93514fc04a53c7",
+      ],
     },
   );
   assert.equal(normalizeRelatedUrls("ソース: http://example.com").status, "要確認");
@@ -239,6 +260,10 @@ test("raw Forms values take precedence over legacy normalized columns", () => {
   assert.deepEqual(result.tags, ["Web アプリ"]);
   assert.equal(result.sourceUrl, "https://github.com/PLUG365/PLUGSolutions");
   assert.equal(result.instructionsUrl, "https://example.com/setup");
+  assert.deepEqual(result.relatedUrls, [
+    "https://github.com/PLUG365/PLUGSolutions",
+    "https://example.com/setup",
+  ]);
 });
 
 test("completes a missing X prefix and applies post-P08 safe defaults", () => {
