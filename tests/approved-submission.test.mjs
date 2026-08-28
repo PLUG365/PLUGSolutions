@@ -221,13 +221,22 @@ test("normalizes Forms choices and labeled related URLs", () => {
     ]),
     {
       status: "ok",
-      sourceUrl: "https://github.com/PLUG365/DecisionFlow",
-      instructionsUrl: "https://qiita.com/meccha__eeyan/items/9b21cf93514fc04a53c7",
+      sourceUrl: null,
+      instructionsUrl: null,
       relatedUrls: [
         "https://github.com/PLUG365/DecisionFlow",
         "https://www.youtube.com/watch?v=C-c9nRtaVm4&t=8s",
         "https://qiita.com/meccha__eeyan/items/9b21cf93514fc04a53c7",
       ],
+    },
+  );
+  assert.deepEqual(
+    normalizeRelatedUrls("手順: https://example.com/setup\nhttps://www.youtube.com/watch?v=abc"),
+    {
+      status: "ok",
+      sourceUrl: null,
+      instructionsUrl: "https://example.com/setup",
+      relatedUrls: ["https://example.com/setup", "https://www.youtube.com/watch?v=abc"],
     },
   );
   assert.equal(normalizeRelatedUrls("ソース: http://example.com").status, "要確認");
