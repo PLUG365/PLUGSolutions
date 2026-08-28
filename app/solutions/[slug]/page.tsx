@@ -65,7 +65,6 @@ export default async function SolutionPage({ params }: PageProps) {
           aria-label={solution.thumbnail ? `${solution.title}のサムネイル` : `${solution.title}の文字入りサムネイル`}
         >
           {!solution.thumbnail && <span>{solution.title.slice(0, 1)}</span>}
-          <small>{solution.type}</small>
         </div>
 
         <div className="solution-detail-copy">
@@ -79,13 +78,6 @@ export default async function SolutionPage({ params }: PageProps) {
           <div className="tag-list detail-tags">
             {[...solution.categories, ...solution.tags].map((tag) => <span key={tag}>{tag}</span>)}
           </div>
-
-          <dl className="detail-list solution-facts">
-            <div><dt>種類</dt><dd>{solution.type}</dd></div>
-            <div><dt>ライセンス</dt><dd>{solution.license}</dd></div>
-            <div><dt>公開／更新</dt><dd>{solution.publishedAt} ／ {solution.updatedAt}</dd></div>
-            <div className="wide"><dt>前提条件</dt><dd>{solution.prerequisites.length ? solution.prerequisites.join("、") : "特になし"}</dd></div>
-          </dl>
 
           <div className="solution-actions">
             <a className="primary-button" href={solution.distributionUrl} target="_blank" rel="noreferrer">入手・試用する ↗</a>
