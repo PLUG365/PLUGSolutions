@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "slug": "solution-97db0c36b4284e0e9e9aa07ba7ef2f14",
+  "title": "SparkPlug",
+  "maker": {
+    "displayName": "みのる",
+    "xHandle": "@meccha__eeyan",
+    "xUrl": "https://x.com/meccha__eeyan"
+  },
+  "description": "発表者と参加者の間に流れる情報を可視化・拡張・保存する、コミュニティイベント向けのリアルタイム盛り上げ + 振り返りアプリ。参加者はQRを読むだけ、アプリのインストール不要。",
+  "type": "Web アプリ",
+  "categories": [
+    "コミュニケーション"
+  ],
+  "tags": [
+    "Web アプリ"
+  ],
+  "distributionUrl": "https://plug365.github.io/SparkPlug/",
+  "sourceUrl": null,
+  "instructionsUrl": null,
+  "relatedUrls": [
+    "https://github.com/PLUG365/SparkPlug"
+  ],
+  "license": "配布先を確認",
+  "cost": "配布先を確認",
+  "premiumRequired": null,
+  "setupTime": "未記載",
+  "prerequisites": [],
+  "thumbnail": "/images/solutions/solution-97db0c36b4284e0e9e9aa07ba7ef2f14.webp",
+  "publishedAt": "2026-08-29",
+  "updatedAt": "2026-08-29"
+}
