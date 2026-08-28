@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "slug": "decision-flow",
+  "title": "DecisionFlow",
+  "maker": {
+    "displayName": "みのる",
+    "xHandle": "@meccha__eeyan",
+    "xUrl": "https://x.com/meccha__eeyan"
+  },
+  "description": "DecisionFlow は、申請者が判断者へ意思決定を依頼し、会話・関連資料・判断結果・AI 判断を一元管理するプラットフォームです。\n\n主な機能:\n- 申請の作成・提出・判断キュー管理\n- スレッド型会話とメンション通知\n- AI による申請概要・推奨判断・判断コメントドラフト生成\n- カテゴリ別レギュレーションを使った提出前AI確認と判断者向けAI判断支援\n- 関係者への自動通知・停滞リマインド\n- Copilot Studio エージェントによる Teams / Microsoft 365 Copilot からの対話型照会",
+  "type": "Power Apps / Copilot Studio / Power Automate / Dataverse solution／PCF / モバイル／デスクトップアプリ",
+  "categories": [
+    "仕事効率化",
+    "コミュニケーション"
+  ],
+  "tags": [
+    "Power Apps",
+    "Copilot Studio",
+    "Power Automate",
+    "Dataverse solution／PCF",
+    "モバイル／デスクトップアプリ"
+  ],
+  "distributionUrl": "https://github.com/PLUG365/DecisionFlow",
+  "sourceUrl": "https://github.com/PLUG365/DecisionFlow",
+  "instructionsUrl": "https://qiita.com/meccha__eeyan/items/9b21cf93514fc04a53c7",
+  "relatedUrls": [
+    "https://github.com/PLUG365/DecisionFlow",
+    "https://www.youtube.com/watch?v=C-c9nRtaVm4&t=8s",
+    "https://qiita.com/meccha__eeyan/items/9b21cf93514fc04a53c7"
+  ],
+  "license": "配布先を確認",
+  "cost": "配布先を確認",
+  "premiumRequired": null,
+  "setupTime": "未記載",
+  "prerequisites": [],
+  "thumbnail": "/images/solutions/decision-flow.webp",
+  "publishedAt": "2026-08-28",
+  "updatedAt": "2026-08-28"
+}
