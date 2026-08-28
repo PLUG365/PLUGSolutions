@@ -77,7 +77,6 @@ export default function CatalogExplorer({ solutions, reactions }: Props) {
                 >
                   <span className="card-number">{String(index + 1).padStart(2, "0")}</span>
                   {!solution.thumbnail && <span className="card-mark">{solution.title.slice(0, 1)}</span>}
-                  <span className="art-chip">{solution.type}</span>
                 </div>
                 <div className="card-body">
                   <div className="card-topline"><span>{solution.type}</span><span>更新 {formatDate(solution.updatedAt)}</span></div>

@@ -165,7 +165,6 @@ button { color: inherit; }
 .card-art.has-thumbnail:before, .card-art.has-thumbnail:after { display: none; }
 .card-number { position: absolute; top: 13px; left: 14px; font-family: ui-monospace, monospace; font-size: 11px; font-weight: 900; }
 .card-mark { position: relative; z-index: 1; display: grid; place-items: center; width: 108px; height: 108px; background: #fffdf6; color: var(--ink); border: 2px solid var(--ink); box-shadow: 8px 8px 0 rgba(24,25,21,.85); font-size: 45px; font-weight: 900; transform: rotate(-4deg); }
-.art-chip { position: absolute; bottom: 12px; right: 12px; background: var(--ink); color: white; padding: 7px 9px; font-family: ui-monospace, monospace; font-size: 12px; font-weight: 900; text-transform: uppercase; }
 .card-body { padding: 16px 20px 20px; }
 .card-topline { display: flex; justify-content: space-between; gap: 12px; font-family: ui-monospace, monospace; font-size: 13px; font-weight: 800; color: rgba(24,25,21,.76); text-transform: uppercase; }
 .card-body h3 { margin: 13px 0 2px; font-size: 25px; letter-spacing: -.045em; }
