@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "slug": "solution-7eb6c9f63ebe4c178219652b3592898b",
+  "title": "RouletteApp",
+  "maker": {
+    "displayName": "みのる",
+    "xHandle": "@meccha__eeyan",
+    "xUrl": "https://x.com/meccha__eeyan"
+  },
+  "description": "Power Apps Code Apps（React + TypeScript + Vite）製の 3D サイコロルーレット。Dataverse のカスタムテーブル new_talktheme に登録したトークテーマをランダム抽選し、3〜10 秒のサイコロアニメーションと BGM で演出します。",
+  "type": "Power Apps / Dataverse solution／PCF",
+  "categories": [
+    "その他"
+  ],
+  "tags": [
+    "Power Apps",
+    "Dataverse solution／PCF"
+  ],
+  "distributionUrl": "https://github.com/PLUG365/RouletteApp",
+  "sourceUrl": null,
+  "instructionsUrl": null,
+  "relatedUrls": [
+    "https://qiita.com/meccha__eeyan/items/106fbeeeb933020e70fa"
+  ],
+  "license": "配布先を確認",
+  "cost": "配布先を確認",
+  "premiumRequired": null,
+  "setupTime": "未記載",
+  "prerequisites": [],
+  "thumbnail": "/images/solutions/solution-7eb6c9f63ebe4c178219652b3592898b.webp",
+  "publishedAt": "2026-08-29",
+  "updatedAt": "2026-08-29"
+}
